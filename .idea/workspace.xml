@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bcf014aa-ece3-466a-94b8-b04c45affd2c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/.vscode/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/core/biostar_tna.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/core/biostar_tna.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/core/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/core/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/core/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/core/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/core/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/erp/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/erp/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/erp/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/erp/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-10-26" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-10-27" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-10-28" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-10-29" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-10-30" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-11-02" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-11-03" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-11-05" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-11-06" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-11-10" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-11-16" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-11-20" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-11-21" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-11-24" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-12-01" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-12-14" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-12-15" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-12-16" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-12-22" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-12-23" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2020-12-29" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-01-11" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-01-12" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-01-19" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-03" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-04" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-05" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-08" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-17" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-18" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-21" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-22" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-23" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-24" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-02-25" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-02" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-03" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-05" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-11" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-17" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-18" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-26" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-29" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-30" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-03-31" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-04-09" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-05-10" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-05-28" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-06-02" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-06-03" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-06-06" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-06-11" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-06-12" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-06-23" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-08-12" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-08-13" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-08-17" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-08-18" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-08-19" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-08-20" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-08-23" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-08-25" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-08-30" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-09-01" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-09-08" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-10-24" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-10-29" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-10-30" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-11-05" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-11-06" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-11-08" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-11-09" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-11-10" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-11-15" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-11-19" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-11-20" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/logs/2021-11-21" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/model/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0002_auto_20201023_0904.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0003_auto_20201105_1230.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0004_auto_20201116_1055.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0005_auto_20201120_0955.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0006_auto_20210203_1351.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0007_history_register_name.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0008_engineer_join_date.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0009_auto_20210602_1708.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0010_auto_20210602_1719.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0011_auto_20210819_1647.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/migrations/0012_history_memo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/model/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/model/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/requirementst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/test.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front" beforeDir="false" afterPath="$PROJECT_DIR$/front" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/build.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/App/components/Modal/releaseModalGridColumns.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/App/components/Modal/releaseModalGridColumns.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/App/components/engineerSelect.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/App/components/engineerSelect.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/App/components/exportProductData.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/App/components/exportProductData.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Axios/Product/requestProductGet.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Axios/Product/requestProductGet.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Axios/Token/requestTokenCreate.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Axios/Token/requestTokenCreate.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Axios/Trade/requestTradeUpdate.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Axios/Trade/requestTradeUpdate.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Attendance/attendanceMain.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Attendance/attendanceMain.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Calendar/calendarMain.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Calendar/calendarMain.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Calendar/calendarMobileCreatePopup.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Calendar/calendarMobileCreatePopup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Calendar/calendarUsers.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Calendar/calendarUsers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Document/documentStorage.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Document/documentStorage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Employee/employeeCreate.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Employee/employeeCreate.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Employee/employeeGrid.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Employee/employeeGrid.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Employee/employeeGridColumns.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Employee/employeeGridColumns.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Employee/employeeUpdate.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Employee/employeeUpdate.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Product/productSearchModalGridColumns.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Product/productSearchModalGridColumns.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Product/productTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Product/productTable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Release/releaseGrid.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Release/releaseGrid.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Release/releaseTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Release/releaseTable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Trade/BuySale/buySaleUpdateGrid.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Trade/BuySale/buySaleUpdateGrid.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Trade/tradeTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Trade/tradeTable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/Pages/Trade/tradeTableColumns.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/Pages/Trade/tradeTableColumns.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/menu-items.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/menu-items.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/routes.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/front" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="37rZsvyAbSvKhKT3JTeEOgpupay" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.pycharm.django.structure.promotion.once.per.project&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/user/Desktop/ERPTEST&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="ERPTEST" type="Python.DjangoServer" factoryName="Django server">
+      <module name="ERPTEST" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.29188.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.29188.11" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bcf014aa-ece3-466a-94b8-b04c45affd2c" name="Changes" comment="" />
+      <created>1767663361019</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1767663361019</updated>
+      <workItem from="1767663362290" duration="138000" />
+      <workItem from="1767663522374" duration="12083000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
