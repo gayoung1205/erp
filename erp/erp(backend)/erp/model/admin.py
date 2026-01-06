@@ -1,0 +1,146 @@
+from django.contrib import admin
+from .models import (
+    Customer,
+    Product,
+    Trade,
+    Category,
+    History,
+    Calendar,
+    Engineer,
+    CTrade,
+    CCustomer,
+    CHistory,
+    CProduct,
+    CCategory,
+    Record,
+    Vacation,
+    Attendance,
+    ReleaseLog,
+)
+
+
+def make_tax(modeladmin, request, queryset):
+    queryset.update(tax_category=1)
+
+
+make_tax.short_description = "make tax"
+
+
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "created_date"]
+    search_fields = ["name"]
+
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "name",
+        "category",
+        "stock",
+        "in_price",
+        "code",
+    ]
+    search_fields = ["name"]
+
+
+class TradeAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "category_1",
+        "category_2",
+        "category_3",
+        "engineer",
+        "customer_name",
+        "customer",
+        "bank",
+        "credit",
+        "cash",
+    ]
+    search_fields = ["customer_name"]
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ["name", "category"]
+
+
+class HistoryAdmin(admin.ModelAdmin):
+    list_display = [
+        "created_date",
+        "id",
+        "name",
+        "amount",
+        "price",
+        "trade",
+        "is_released",
+        "register_name",
+        "memo",
+    ]
+    search_fields = ["name"]
+    actions = [make_tax]
+
+
+class CalendarAdmin(admin.ModelAdmin):
+    list_display = [
+        "calendarId",
+        "id",
+        "engineer",
+        "start",
+        "end",
+        "title",
+    ]
+    search_fields = ["calendar_name"]
+
+
+class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ["id", "date", "user"]
+
+
+class EngineerAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "join_date", "category"]
+
+
+class RecordAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "category",
+        "content",
+        "remark",
+        "plan",
+        "start_date",
+        "end_date",
+        "date",
+    ]
+
+
+class ReleaseLogAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "release_log_category",
+        "name",
+        "product_category",
+        "amount",
+        "register_name",
+        "memo",
+        "created_date",
+    ]
+    search_fields = ["name"]
+
+
+# Register your models here.
+admin.site.register(Customer, CustomerAdmin)
+admin.site.register(Product, ProductAdmin)
+admin.site.register(Trade, TradeAdmin)
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(History, HistoryAdmin)
+admin.site.register(Engineer, EngineerAdmin)
+admin.site.register(Record, RecordAdmin)
+admin.site.register(Vacation)
+admin.site.register(Calendar, CalendarAdmin)
+admin.site.register(Attendance, AttendanceAdmin)
+admin.site.register(ReleaseLog, ReleaseLogAdmin)
+
+admin.site.register(CCustomer)
+admin.site.register(CProduct)
+admin.site.register(CTrade)
+admin.site.register(CCategory)
+admin.site.register(CHistory)
