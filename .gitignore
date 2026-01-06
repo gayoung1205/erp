@@ -1,0 +1,19 @@
+# Python
+**/venv/
+**/__pycache__/
+*.pyc
+*.log
+db.sqlite3
+
+# Node
+**/node_modules/
+**/build/
+**/beforebuild/
+
+# IDE
+.idea/
+.vscode/
+
+# 환경 파일
+.env
+*.apk
