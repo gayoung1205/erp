@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bcf014aa-ece3-466a-94b8-b04c45affd2c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/.vscode/settings.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/core/biostar_tna.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/core/biostar_tna.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/erp/erp(backend)/erp/core/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/erp/erp(backend)/erp/core/serializers.py" afterDir="false" />
@@ -220,7 +222,7 @@
       <option name="presentableId" value="Default" />
       <updated>1767663361019</updated>
       <workItem from="1767663362290" duration="138000" />
-      <workItem from="1767663522374" duration="11265000" />
+      <workItem from="1767663522374" duration="11752000" />
     </task>
     <servers />
   </component>
