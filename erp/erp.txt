@@ -1,0 +1,4 @@
+front: react
+backend: django(erp(3))
+db: psql
+server: 아파치24
