@@ -1,0 +1,5 @@
+.dynamic-progress-modal .ant-modal-content {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  background-color: rgba(0, 0, 0, 0);
+}
