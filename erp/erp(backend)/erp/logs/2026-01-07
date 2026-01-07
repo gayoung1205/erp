@@ -1,0 +1,14 @@
+[07/Jan/2026 10:26:20] INFO [core.views:273] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 15:31:08] INFO [core.views:273] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:10:58] INFO [core.views:273] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:11:49] INFO [core.views:273] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:12:12] INFO [core.views:273] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:14:11] INFO [core.views:488] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:21:53] INFO [core.views:273] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:22:07] INFO [core.views:318] aisol 이 [테스트거래처] 고객을 생성하였습니다.
+[07/Jan/2026 16:22:08] INFO [core.views:273] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:22:17] INFO [core.views:318] aisol 이 [테스트거래처2] 고객을 생성하였습니다.
+[07/Jan/2026 16:22:17] INFO [core.views:273] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:22:21] INFO [core.views:488] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:22:44] INFO [core.views:544] aisol 이 [1] : [테스트제품] 제품을 생성하였습니다.
+[07/Jan/2026 16:22:45] INFO [core.views:488] test1 이 전체제품을 조회하였습니다.

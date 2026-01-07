@@ -42,7 +42,6 @@ urlpatterns = [
     path("grappelli/", include("grappelli.urls")),  # grappelli URLS
     path("admin/", admin.site.urls),
     path("api/", include("core.urls")),
-    path("test/", include("temp.urls")),
     re_path(r"^api-token-auth/", obtain_jwt_token),
 ] + [
     re_path(
