@@ -12,3 +12,96 @@
 [07/Jan/2026 16:22:21] INFO [core.views:488] test1 이 전체제품을 조회하였습니다.
 [07/Jan/2026 16:22:44] INFO [core.views:544] aisol 이 [1] : [테스트제품] 제품을 생성하였습니다.
 [07/Jan/2026 16:22:45] INFO [core.views:488] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:31:08] INFO [core.views:2145] test1 이 [1] : [업무일지] 전자문서를 생성하였습니다.
+[07/Jan/2026 16:31:13] INFO [core.views:2183] test1 이 [1] : [업무일지] 전자문서를 조회하였습니다.
+[07/Jan/2026 16:38:32] INFO [core.views:2145] test1 이 [2] : [업무일지] 전자문서를 생성하였습니다.
+[07/Jan/2026 16:38:38] INFO [core.views:2145] test1 이 [3] : [업무일지] 전자문서를 생성하였습니다.
+[07/Jan/2026 16:40:30] INFO [core.views:488] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:42:06] INFO [core.views:488] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:46:00] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:46:17] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:46:21] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:46:30] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:47:05] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:47:08] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:47:08] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:47:21] INFO [core.views:541] aisol 이 [2] : [테스트제품2] 제품을 생성하였습니다.
+[07/Jan/2026 16:47:21] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:47:23] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:47:38] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:47:57] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:48:32] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:48:38] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:48:41] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:48:55] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:50:19] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:50:28] INFO [core.views:665] aisol 이 전체거래내역을 조회하였습니다.
+[07/Jan/2026 16:50:33] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:50:58] INFO [core.views:665] aisol 이 전체거래내역을 조회하였습니다.
+[07/Jan/2026 16:51:12] INFO [core.views:270] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:51:14] INFO [core.views:665] aisol 이 전체거래내역을 조회하였습니다.
+[07/Jan/2026 16:51:20] INFO [core.views:270] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:51:29] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:52:00] INFO [core.views:270] test1 이 전체고객을 검색하였습니다.
+[07/Jan/2026 16:52:09] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:52:12] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:52:15] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:52:19] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:52:28] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:53:14] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:53:18] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:53:29] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:53:37] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:53:55] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:54:12] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:54:21] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:56:36] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:56:49] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:56:51] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:57:00] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:57:09] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:57:15] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:57:36] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:57:38] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:57:46] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:57:50] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:57:53] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:57:56] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:58:27] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:58:35] INFO [core.views:624] aisol 이 [2] : [테스트제품2]을 수정하였습니다.
+[07/Jan/2026 16:58:36] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:58:41] INFO [core.views:624] aisol 이 [1] : [테스트제품]을 수정하였습니다.
+[07/Jan/2026 16:58:42] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:58:46] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:58:49] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 16:58:52] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:01:39] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:02:02] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:06:02] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:06:25] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:06:29] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:06:37] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:07:09] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:07:13] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:07:17] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:07:21] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:07:32] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:12:28] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:12:32] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:12:43] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:13:11] INFO [core.views:485] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:21:03] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:21:07] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:21:30] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:21:30] INFO [core.views:1928] ['test1']님이 [테스트제품2] - [1]개를 출고품으로 등록하였습니다.
+[07/Jan/2026 17:21:56] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:22:15] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:24:15] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:24:22] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:24:34] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:24:50] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:24:53] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:24:57] INFO [core.views:1928] ['test1']님이 [테스트제품2] - [1]개를 출고품으로 등록하였습니다.
+[07/Jan/2026 17:25:03] INFO [core.views:2029] ['test1']님이 출고품 [테스트제품2]을 삭제하였습니다.
+[07/Jan/2026 17:30:05] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:30:18] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.

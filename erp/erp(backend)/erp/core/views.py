@@ -95,10 +95,7 @@ def custom_paginator(req, queryset, order):
 
     except Exception as e:
         print(e)
-        return Response(
-            data={"message": "예기치 못한 상황으로 오류가 발생하였습니다."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+        return {"count": 0, "max_page": 0, "results": []}
 
 
 def make_trade(trade_list):
@@ -253,7 +250,7 @@ class Customer(APIView):
             cus = Cus.objects.all()
             serializer = CustomerSerializer(cus, many=True)
             data = []
-            
+
             for i in serializer.data:
                 if int(receivable) == 0:
                     if i["receivable"] < 0:
@@ -425,7 +422,6 @@ class Product(APIView):
         """
             제품에 대한 리스트를 반환하는 API
         """
-        print(1)
         search = req.GET.get("search", None)
         name = req.GET.get("name", None)
         code = req.GET.get("code", None)
@@ -471,23 +467,28 @@ class Product(APIView):
                 return CustomResponse(
                     message="데이터 형식이 이상합니다.", status=status.HTTP_400_BAD_REQUEST
                 )
+        elif name and code:
+        # ✅ name과 code 둘 다 있을 때 (OR 검색)
+            pro = Pro.objects.filter(
+                Q(name__icontains=name) | Q(code__icontains=code)
+            ).order_by("-created_date")
         elif name:
-            vector = SearchVector("name")
-            pro = Pro.objects.annotate(search=vector).filter(Q(name__icontains=name))
-            if name == "":
-                pro = Pro.objects.all()
-
+        # ✅ SearchVector 제거, 단순 icontains 검색
+            pro = Pro.objects.filter(Q(name__icontains=name)).order_by("-created_date")
         elif code:
-            pro = Pro.objects.filter(code=code)
-            print(1)
-
+        # ✅ code도 부분 일치로 변경
+            pro = Pro.objects.filter(Q(code__icontains=code)).order_by("-created_date")
         else:
             pro = Pro.objects.all()
-            print(2)
 
         logger.info(f"{return_username(req.user).name} 이 전체제품을 조회하였습니다.")
 
         result = custom_paginator(req, pro, "name")
+
+        # ✅ custom_paginator 에러 처리
+        if isinstance(result, Response):
+            return result
+
         result["results"] = ProductSerializer(result["results"], many=True).data
 
         return ReturnData(data=result)
