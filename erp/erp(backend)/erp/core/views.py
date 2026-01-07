@@ -460,7 +460,7 @@ class Product(APIView):
                 if "등록자ID" in search_dict:
                     search_query &= Q(register_id__icontains=search_dict["등록자ID"])
 
-                pro = Pro.objects.filter(search_query).order_by("-created_date")
+                pro = Pro.objects.filter(search_query).order_by("-stock")  # ✅ 재고 내림차순
                 serializer = ProductSerializer(pro, many=True)
                 return ReturnData(data={"results": serializer.data})
             except:
@@ -468,27 +468,21 @@ class Product(APIView):
                     message="데이터 형식이 이상합니다.", status=status.HTTP_400_BAD_REQUEST
                 )
         elif name and code:
-        # ✅ name과 code 둘 다 있을 때 (OR 검색)
+            # name과 code 둘 다 있을 때 (OR 검색)
             pro = Pro.objects.filter(
                 Q(name__icontains=name) | Q(code__icontains=code)
-            ).order_by("-created_date")
+            ).order_by("-stock")  # ✅ 재고 내림차순
         elif name:
-        # ✅ SearchVector 제거, 단순 icontains 검색
-            pro = Pro.objects.filter(Q(name__icontains=name)).order_by("-created_date")
+            # SearchVector 제거, 단순 icontains 검색
+            pro = Pro.objects.filter(Q(name__icontains=name)).order_by("-stock")  # ✅ 재고 내림차순
         elif code:
-        # ✅ code도 부분 일치로 변경
-            pro = Pro.objects.filter(Q(code__icontains=code)).order_by("-created_date")
+            pro = Pro.objects.filter(Q(code__icontains=code)).order_by("-stock")  # ✅ 재고 내림차순
         else:
             pro = Pro.objects.all()
 
         logger.info(f"{return_username(req.user).name} 이 전체제품을 조회하였습니다.")
 
-        result = custom_paginator(req, pro, "name")
-
-        # ✅ custom_paginator 에러 처리
-        if isinstance(result, Response):
-            return result
-
+        result = custom_paginator(req, pro, "-stock")  # ✅ 재고 내림차순
         result["results"] = ProductSerializer(result["results"], many=True).data
 
         return ReturnData(data=result)

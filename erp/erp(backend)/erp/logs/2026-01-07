@@ -105,3 +105,8 @@
 [07/Jan/2026 17:25:03] INFO [core.views:2029] ['test1']님이 출고품 [테스트제품2]을 삭제하였습니다.
 [07/Jan/2026 17:30:05] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
 [07/Jan/2026 17:30:18] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:42:30] INFO [core.views:484] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:46:01] INFO [core.views:483] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:46:13] INFO [core.views:483] test1 이 전체제품을 조회하였습니다.
+[07/Jan/2026 17:46:39] INFO [core.views:539] aisol 이 [3] : [테스트제품3] 제품을 생성하였습니다.
+[07/Jan/2026 17:46:39] INFO [core.views:483] test1 이 전체제품을 조회하였습니다.
