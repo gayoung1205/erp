@@ -422,6 +422,8 @@ class ReleaseLog(models.Model):
     register_name = models.TextField(max_length=50, null=True, blank=True)
     memo = models.TextField(null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    release_register_name = models.TextField(max_length=50, null=True, blank=True)
+    release_created_date = models.DateTimeField(null=True, blank=True)
 
 
 class CCategory(models.Model):

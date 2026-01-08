@@ -1980,6 +1980,8 @@ class ReleaseView(APIView):
                         amount=history["amount"],
                         memo=release.memo,
                         register_name=return_username(req.user).name,
+                        release_register_name=release.register_name,
+                        release_created_date=release.created_date,
                     )
                     release_log.save()
 
