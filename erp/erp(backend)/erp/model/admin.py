@@ -16,6 +16,7 @@ from .models import (
     Vacation,
     Attendance,
     ReleaseLog,
+    ReleaseLogPermission,
 )
 
 
@@ -125,6 +126,15 @@ class ReleaseLogAdmin(admin.ModelAdmin):
     ]
     search_fields = ["name"]
 
+class ReleaseLogPermissionAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "department",
+        "can_view_register",
+        "can_view_sale",
+        "can_view_delete",
+    ]
+
 
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)
@@ -138,6 +148,7 @@ admin.site.register(Vacation)
 admin.site.register(Calendar, CalendarAdmin)
 admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(ReleaseLog, ReleaseLogAdmin)
+admin.site.register(ReleaseLogPermission, ReleaseLogPermissionAdmin)
 
 admin.site.register(CCustomer)
 admin.site.register(CProduct)

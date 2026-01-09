@@ -425,6 +425,18 @@ class ReleaseLog(models.Model):
     release_register_name = models.TextField(max_length=50, null=True, blank=True)
     release_created_date = models.DateTimeField(null=True, blank=True)
 
+class ReleaseLogPermission(models.Model):
+    """
+    부서별 출고 로그 열람 권한
+    """
+    id = models.AutoField(primary_key=True)
+    department = models.IntegerField(unique=True)  # 부서 (Engineer.category 값)
+    can_view_register = models.BooleanField(default=False)  # 출고등록 열람
+    can_view_sale = models.BooleanField(default=False)      # 판매내역 열람
+    can_view_delete = models.BooleanField(default=False)    # 삭제내역 열람
+    updated_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+
 
 class CCategory(models.Model):
     CUSTOMER = 0

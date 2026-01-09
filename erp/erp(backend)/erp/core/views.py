@@ -59,6 +59,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator
 import openpyxl
 from pandas import read_excel
+from model.models import ReleaseLog, ReleaseLogPermission
 
 # Create your views here.
 """
@@ -1919,6 +1920,17 @@ class ReleaseView(APIView):
             pro = get_object_or_404(Pro, id=data["product_id"])
             pro.minus_stock(data["amount"])
 
+            ReleaseLog.objects.create(
+                release_log_category=0,
+                name=his.name,
+                product_category=pro.category,
+                amount=his.amount,
+                memo=data.get("memo", ""),
+                register_name=return_username(req.user).name,
+                release_register_name=return_username(req.user).name,
+                release_created_date=his.created_date,
+            )
+
         logger.info(
             f"{[return_username(req.user).name]}님이 [{his.name}] - [{his.amount}]개를 출고품으로 등록하였습니다."
         )
@@ -2019,6 +2031,19 @@ class ReleaseDetailView(APIView):
     def delete(self, req, release_id):
         release = get_object_or_404(His, id=release_id)
         release.product.add_stock(release.amount)
+
+        # ⭐ 삭제 전에 로그 저장
+        ReleaseLog.objects.create(
+            release_log_category=4,  # 삭제
+            name=release.name,
+            product_category=release.product.category,
+            amount=release.amount,
+            memo=release.memo,
+            register_name=return_username(req.user).name,
+            release_register_name=release.register_name,
+            release_created_date=release.created_date,
+        )
+
         delete_release_name = copy.deepcopy(release.name)
         release.delete()
 
@@ -2030,25 +2055,137 @@ class ReleaseDetailView(APIView):
 
 class ReleaseLogView(APIView):
     """
-        - 출고기록 설명
+    출고기록 조회 API (권한 체크 포함)
     """
 
     def get(self, req):
-        """
-            - 최근의 출고등록, 수정, 삭제, 출고제품 판매 시에 만들어지는 30개의 로그를 조회하는 API
-            - 현재는 출고제품판매만 조회
-        """
         try:
-            release_log = ReleaseLog.objects.filter(release_log_category=1).order_by(
-                "-created_date"
-            )
-            release_log = release_log[:30]
+            # 현재 사용자의 부서 가져오기
+            engineer = Eng.objects.get(user=req.user)
+            department = engineer.category
+
+            # 해당 부서의 권한 확인
+            try:
+                permission = ReleaseLogPermission.objects.get(department=department)
+            except ReleaseLogPermission.DoesNotExist:
+                # 권한 설정이 없으면 권한 없음
+                return CustomResponse(
+                    message="열람 권한이 없습니다.",
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            # 권한에 따라 조회할 카테고리 필터링
+            allowed_categories = []
+            if permission.can_view_register:
+                allowed_categories.append(0)  # 등록
+            if permission.can_view_sale:
+                allowed_categories.append(1)  # 판매
+            if permission.can_view_delete:
+                allowed_categories.append(4)  # 삭제
+
+            # 권한이 하나도 없으면
+            if not allowed_categories:
+                return CustomResponse(
+                    message="열람 권한이 없습니다.",
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            # 권한에 맞는 로그만 조회 (100개)
+            release_log = ReleaseLog.objects.filter(
+                release_log_category__in=allowed_categories
+            ).order_by("-created_date")[:100]
+
             release_log_data = ReleaseLogSerializer(release_log, many=True).data
+
         except Exception as e:
             print(e)
             return ReturnError()
 
         return ReturnData(data=release_log_data)
+
+class ReleaseLogPermissionView(APIView):
+    """
+    출고로그 권한 관리 API
+    """
+
+    def get(self, req):
+        """
+        전체 부서별 권한 조회 (관리자만)
+        """
+        engineer = Eng.objects.get(user=req.user)
+        if engineer.category not in [2, 3]:  # 대표이사, 관리자만
+            return CustomResponse(
+                message="권한이 없습니다.",
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        departments = [
+            {"department": 0, "name": "관리"},
+            {"department": 1, "name": "지원"},
+            {"department": 2, "name": "대표이사"},
+            {"department": 3, "name": "관리자"},
+            {"department": 4, "name": "연구개발"},
+            {"department": 5, "name": "전략기획"},
+            {"department": 6, "name": "생산"},
+            {"department": 7, "name": "영업"},
+        ]
+
+        result = []
+        for dept in departments:
+            try:
+                perm = ReleaseLogPermission.objects.get(department=dept["department"])
+                result.append({
+                    "id": perm.id,
+                    "department": dept["department"],
+                    "department_name": dept["name"],
+                    "can_view_register": perm.can_view_register,
+                    "can_view_sale": perm.can_view_sale,
+                    "can_view_delete": perm.can_view_delete,
+                })
+            except ReleaseLogPermission.DoesNotExist:
+                result.append({
+                    "id": None,
+                    "department": dept["department"],
+                    "department_name": dept["name"],
+                    "can_view_register": False,
+                    "can_view_sale": False,
+                    "can_view_delete": False,
+                })
+
+        return ReturnData(data=result)
+
+    def put(self, req):
+        """
+        부서별 권한 수정 (관리자만)
+        """
+        engineer = Eng.objects.get(user=req.user)
+        if engineer.category not in [2, 3]:
+            return CustomResponse(
+                message="권한이 없습니다.",
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        data = req.data
+        department = data.get("department")
+
+        try:
+            with transaction.atomic():
+                perm, created = ReleaseLogPermission.objects.get_or_create(
+                    department=department
+                )
+                perm.can_view_register = data.get("can_view_register", False)
+                perm.can_view_sale = data.get("can_view_sale", False)
+                perm.can_view_delete = data.get("can_view_delete", False)
+                perm.save()
+
+                logger.info(
+                    f"{return_username(req.user).name}님이 부서 [{department}]의 출고로그 권한을 수정하였습니다."
+                )
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+        return ReturnAccept()
 
 
 class RecordView(APIView):
