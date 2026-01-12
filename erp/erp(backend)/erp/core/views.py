@@ -13,6 +13,7 @@ from model.models import Category as Cat
 from model.models import Engineer as Eng
 from model.models import Vacation, Record, Attendance
 from model.models import ReleaseLog
+from model.models import ProductPackage, ProductPackageItem
 
 from rest_framework import status
 from .serializers import (
@@ -28,6 +29,8 @@ from .serializers import (
     AttendanceSerializer,
     VacationSerializer,
     ReleaseLogSerializer,
+    ProductPackageSerializer,
+    ProductPackageItemSerializer,
 )
 from util.views import (
     ReturnDelete,
@@ -2104,9 +2107,6 @@ class ReleaseLogView(APIView):
         return ReturnData(data=release_log_data)
 
 class ReleaseLogPermissionView(APIView):
-    """
-    출고로그 권한 관리 API
-    """
 
     def get(self, req):
         """
@@ -2186,6 +2186,216 @@ class ReleaseLogPermissionView(APIView):
             return ReturnError()
 
         return ReturnAccept()
+
+class ProductPackageView(APIView):
+    """
+    제품 패키지 API
+    """
+
+    def get(self, req):
+        """
+        패키지 목록 조회
+        """
+        packages = ProductPackage.objects.all().order_by("-created_date")
+        packages_data = ProductPackageSerializer(packages, many=True).data
+
+        return ReturnData(data=packages_data)
+
+    def post(self, req):
+        """
+        패키지 생성
+        """
+        data = req.data
+        name = data.get("name")
+        memo = data.get("memo", "")
+        items = data.get("items", [])
+
+        if not name:
+            return CustomResponse(
+                message="패키지명을 입력해주세요.", status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if len(items) == 0:
+            return CustomResponse(
+                message="구성품을 1개 이상 추가해주세요.", status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            with transaction.atomic():
+                # 패키지 생성
+                package = ProductPackage.objects.create(
+                    name=name,
+                    memo=memo,
+                    register_name=return_username(req.user).name,
+                )
+
+                # 구성품 추가
+                for item in items:
+                    ProductPackageItem.objects.create(
+                        package=package,
+                        product_id=item["product_id"],
+                        amount=item.get("amount", 1),
+                    )
+
+                logger.info(
+                    f"{return_username(req.user).name}님이 패키지 [{package.name}]을 생성하였습니다."
+                )
+
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+        return CustomResponse(
+            data={"id": package.id},
+            message="패키지가 생성되었습니다.",
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class ProductPackageDetailView(APIView):
+    """
+    패키지 상세 API
+    """
+
+    def get(self, req, package_id):
+        """
+        패키지 상세 조회
+        """
+        package = get_object_or_404(ProductPackage, id=package_id)
+        package_data = ProductPackageSerializer(package).data
+
+        return ReturnData(data=package_data)
+
+    def put(self, req, package_id):
+        """
+        패키지 수정
+        """
+        data = req.data
+        package = get_object_or_404(ProductPackage, id=package_id)
+
+        try:
+            with transaction.atomic():
+                # 패키지 정보 수정
+                package.name = data.get("name", package.name)
+                package.memo = data.get("memo", package.memo)
+                package.save()
+
+                # 기존 구성품 삭제 후 새로 추가
+                items = data.get("items", None)
+                if items is not None:
+                    package.items.all().delete()
+                    for item in items:
+                        ProductPackageItem.objects.create(
+                            package=package,
+                            product_id=item["product_id"],
+                            amount=item.get("amount", 1),
+                        )
+
+                logger.info(
+                    f"{return_username(req.user).name}님이 패키지 [{package.name}]을 수정하였습니다."
+                )
+
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+        return ReturnAccept()
+
+    def delete(self, req, package_id):
+        """
+        패키지 삭제
+        """
+        package = get_object_or_404(ProductPackage, id=package_id)
+        delete_package_name = copy.deepcopy(package.name)
+        package.delete()
+
+        logger.info(
+            f"{return_username(req.user).name}님이 패키지 [{delete_package_name}]을 삭제하였습니다."
+        )
+
+        return ReturnDelete()
+
+
+class ReleasePackageView(APIView):
+    """
+    패키지로 출고 등록 API
+    """
+
+    def post(self, req):
+        """
+        패키지 구성품 한번에 출고 등록
+        """
+        data = req.data
+        package_id = data.get("package_id")
+
+        if not package_id:
+            return CustomResponse(
+                message="패키지를 선택해주세요.", status=status.HTTP_400_BAD_REQUEST
+            )
+
+        package = get_object_or_404(ProductPackage, id=package_id)
+        items = package.items.all()
+
+        if items.count() == 0:
+            return CustomResponse(
+                message="패키지에 구성품이 없습니다.", status=status.HTTP_400_BAD_REQUEST
+            )
+
+        created_releases = []
+
+        try:
+            with transaction.atomic():
+                for item in items:
+                    pro = item.product
+                    amount = item.amount
+
+                    # 출고 등록
+                    his = His.objects.create(
+                        name=pro.name,
+                        product_id=pro.id,
+                        amount=amount,
+                        tax_category=0,
+                        register_name=return_username(req.user).name,
+                        is_released=True,
+                        memo=f"[{package.name}] 패키지",
+                    )
+                    pro.minus_stock(amount)
+
+                    # 출고 로그
+                    ReleaseLog.objects.create(
+                        release_log_category=0,
+                        name=his.name,
+                        product_category=pro.category,
+                        amount=his.amount,
+                        memo=his.memo,
+                        register_name=return_username(req.user).name,
+                        release_register_name=return_username(req.user).name,
+                        release_created_date=his.created_date,
+                    )
+
+                    created_releases.append({
+                        "id": his.id,
+                        "name": his.name,
+                        "amount": his.amount,
+                        "created_date": his.created_date,
+                        "register_name": his.register_name,
+                        "stock": pro.stock,
+                        "product_category": pro.category,
+                    })
+
+                logger.info(
+                    f"{return_username(req.user).name}님이 패키지 [{package.name}]을 출고 등록하였습니다. ({items.count()}개 제품)"
+                )
+
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+        return CustomResponse(
+            data={"releases": created_releases, "package_name": package.name},
+            message=f"[{package.name}] 패키지가 출고 등록되었습니다. ({len(created_releases)}개 제품)",
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class RecordView(APIView):

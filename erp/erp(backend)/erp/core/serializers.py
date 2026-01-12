@@ -13,6 +13,9 @@ from model.models import (
     Attendance,
     Vacation,
     ReleaseLog,
+    ProductPackage,
+    ProductPackageItem,
+
 )
 from django.forms.models import model_to_dict
 
@@ -473,3 +476,32 @@ class CCustomerSerializer(serializers.ModelSerializer):
         tra = obj.trades.prefetch_related("histories").all()
         return ccreate_receivable(tra)
 
+class ProductPackageItemSerializer(serializers.ModelSerializer):
+    product_name = serializers.SerializerMethodField()
+    product_category = serializers.SerializerMethodField()
+    product_code = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductPackageItem
+        fields = "__all__"
+
+    def get_product_name(self, obj):
+        return obj.product.name if obj.product else ""
+
+    def get_product_category(self, obj):
+        return obj.product.category if obj.product else ""
+
+    def get_product_code(self, obj):
+        return obj.product.code if obj.product else ""
+
+
+class ProductPackageSerializer(serializers.ModelSerializer):
+    items = ProductPackageItemSerializer(many=True, read_only=True)
+    item_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductPackage
+        fields = "__all__"
+
+    def get_item_count(self, obj):
+        return obj.items.count()

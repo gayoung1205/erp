@@ -1,0 +1,15 @@
+[12/Jan/2026 09:22:32] INFO [core.views:487] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 09:38:25] INFO [core.views:274] test1 이 전체고객을 검색하였습니다.
+[12/Jan/2026 09:38:35] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 09:38:35] INFO [core.views:667] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 09:39:05] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 09:39:06] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 09:39:21] INFO [core.views:487] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 09:39:22] INFO [core.views:487] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 09:39:49] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 09:39:49] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 09:40:52] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 09:40:52] INFO [core.views:1602] test1 이 전체 직원을 조회하였습니다.
+[12/Jan/2026 09:40:52] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 09:40:52] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 09:40:52] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.

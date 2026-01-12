@@ -35,3 +35,21 @@
 [09/Jan/2026 14:17:58] INFO [core.views:271] 관리자 이 전체고객을 검색하였습니다.
 [09/Jan/2026 14:18:58] INFO [core.views:1599] test1 이 전체 직원을 조회하였습니다.
 [09/Jan/2026 14:19:02] INFO [core.views:271] test1 이 전체고객을 검색하였습니다.
+[09/Jan/2026 14:29:32] INFO [core.views:271] test1 이 전체고객을 검색하였습니다.
+[09/Jan/2026 14:43:57] INFO [core.views:274] test1 이 전체고객을 검색하였습니다.
+[09/Jan/2026 14:47:42] INFO [core.views:274] test1 이 전체고객을 검색하였습니다.
+[09/Jan/2026 14:48:06] INFO [core.views:274] test1 이 전체고객을 검색하였습니다.
+[09/Jan/2026 14:48:18] INFO [core.views:487] test1 이 전체제품을 조회하였습니다.
+[09/Jan/2026 14:48:26] INFO [core.views:2240] test1님이 패키지 [테스트패키지]을 생성하였습니다.
+[09/Jan/2026 14:48:37] INFO [core.views:2386] test1님이 패키지 [테스트패키지]을 출고 등록하였습니다. (2개 제품)
+[09/Jan/2026 14:50:36] INFO [core.views:487] test1 이 전체제품을 조회하였습니다.
+[09/Jan/2026 14:50:51] INFO [core.views:2240] test1님이 패키지 [테스트2]을 생성하였습니다.
+[09/Jan/2026 14:51:04] INFO [core.views:2386] test1님이 패키지 [테스트2]을 출고 등록하였습니다. (2개 제품)
+[09/Jan/2026 14:51:10] INFO [core.views:2053] ['test1']님이 출고품 [테스트제품]을 삭제하였습니다.
+[09/Jan/2026 16:15:14] INFO [core.views:274] test1 이 전체고객을 검색하였습니다.
+[09/Jan/2026 16:15:19] INFO [core.views:487] test1 이 전체제품을 조회하였습니다.
+[09/Jan/2026 16:18:19] INFO [core.views:487] test1 이 전체제품을 조회하였습니다.
+[09/Jan/2026 16:18:25] INFO [core.views:2240] test1님이 패키지 [ㅋㅋ]을 생성하였습니다.
+[09/Jan/2026 16:18:37] INFO [core.views:2386] test1님이 패키지 [ㅋㅋ]을 출고 등록하였습니다. (1개 제품)
+[09/Jan/2026 16:41:50] INFO [core.views:487] test1 이 전체제품을 조회하였습니다.
+[09/Jan/2026 16:44:04] INFO [core.views:667] aisol 이 전체거래내역을 조회하였습니다.

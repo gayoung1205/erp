@@ -17,6 +17,8 @@ from .models import (
     Attendance,
     ReleaseLog,
     ReleaseLogPermission,
+    ProductPackage,
+    ProductPackageItem,
 )
 
 
@@ -135,6 +137,16 @@ class ReleaseLogPermissionAdmin(admin.ModelAdmin):
         "can_view_delete",
     ]
 
+class ProductPackageItemInline(admin.TabularInline):
+    model = ProductPackageItem
+    extra = 1
+
+
+class ProductPackageAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "memo", "register_name", "created_date"]
+    search_fields = ["name"]
+    inlines = [ProductPackageItemInline]
+
 
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)
@@ -149,6 +161,8 @@ admin.site.register(Calendar, CalendarAdmin)
 admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(ReleaseLog, ReleaseLogAdmin)
 admin.site.register(ReleaseLogPermission, ReleaseLogPermissionAdmin)
+admin.site.register(ProductPackage, ProductPackageAdmin)
+admin.site.register(ProductPackageItem)
 
 admin.site.register(CCustomer)
 admin.site.register(CProduct)

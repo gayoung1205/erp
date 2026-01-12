@@ -437,6 +437,45 @@ class ReleaseLogPermission(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
     created_date = models.DateTimeField(auto_now_add=True)
 
+class ProductPackage(models.Model):
+    """
+    제품 패키지 (예: 사무용PC, 게이밍PC)
+    """
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    memo = models.TextField(null=True, blank=True)
+    register_name = models.CharField(max_length=50, null=True, blank=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class ProductPackageItem(models.Model):
+    """
+    패키지 구성품
+    """
+    id = models.AutoField(primary_key=True)
+    package = models.ForeignKey(
+        ProductPackage,
+        on_delete=models.CASCADE,
+        related_name="items",
+        related_query_name="item",
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="package_items",
+        related_query_name="package_item",
+    )
+    amount = models.IntegerField(default=1)
+    updated_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.package.name} - {self.product.name} x {self.amount}"
+
 
 class CCategory(models.Model):
     CUSTOMER = 0

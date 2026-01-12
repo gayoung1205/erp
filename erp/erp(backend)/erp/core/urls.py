@@ -33,6 +33,9 @@ from .views import (
     AccountingCalcView,
     ExportDataToExcelView,
     ReleaseLogView,
+    ProductPackageView,
+    ProductPackageDetailView,
+    ReleasePackageView,
 )
 
 
@@ -57,6 +60,9 @@ urlpatterns = [
     url(r"^test", Test.as_view()),
     url(r"^receivable", ReceivableView.as_view()),
     url(r"^dashboard", DashBoardView.as_view()),
+    url(r"^package/(?P<package_id>\d+)/$", ProductPackageDetailView.as_view()),
+    url(r"^packages", ProductPackageView.as_view()),
+    url(r"^release/package", ReleasePackageView.as_view()),
     url(r"^release/(?P<release_id>\d+)", ReleaseDetailView.as_view()),
     url(r"^release/log/permission", ReleaseLogPermissionView.as_view()),
     url(r"^release/log", ReleaseLogView.as_view()),
