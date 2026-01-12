@@ -3413,41 +3413,61 @@ class PendingStockSellView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 판매할 거래 정보 필요
         if not data.get("trade_id"):
             return CustomResponse(
                 message="판매 거래 정보가 필요합니다.",
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # ★ 판매 수량 (없으면 전체)
+        sell_amount = data.get("sell_amount", pending.amount)
+
+        # 수량 체크
+        if sell_amount > pending.amount:
+            return CustomResponse(
+                message=f"입고대기 수량({pending.amount})보다 많이 판매할 수 없습니다.",
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         with transaction.atomic():
-            # 바로판매 처리 (재고 변동 없음)
-            pending.sell_directly()
+            tra = get_object_or_404(Tra, id=data["trade_id"])
 
             # History 생성 (판매 기록)
-            tra = get_object_or_404(Tra, id=data["trade_id"])
             his = His.objects.create(
                 name=pending.product_name,
-                amount=pending.amount,
+                amount=sell_amount,  # ★ 판매 수량
                 price=data.get("price", pending.price),
                 tax_category=data.get("tax_category", 0),
                 product_id=pending.product_id,
                 trade_id=data["trade_id"],
             )
 
-            pending.history = his
-            pending.trade = tra
-            pending.save()
+            # ★ 부분 판매 vs 전체 판매
+            if sell_amount < pending.amount:
+                # 부분 판매: 남은 수량은 입고대기 유지
+                pending.amount = pending.amount - sell_amount
+                pending.save()
 
-            logger.info(
-                f"{return_username(req.user).name}님이 [{pending.product_name}] {pending.amount}개를 바로판매 처리하였습니다."
-            )
+                logger.info(
+                    f"{return_username(req.user).name}님이 [{pending.product_name}] {sell_amount}개를 바로판매 처리하였습니다. (남은 입고대기: {pending.amount}개)"
+                )
+            else:
+                # 전체 판매
+                pending.sell_directly()
+                pending.history = his
+                pending.trade = tra
+                pending.save()
+
+                logger.info(
+                    f"{return_username(req.user).name}님이 [{pending.product_name}] {sell_amount}개를 바로판매 처리하였습니다. (전체 판매 완료)"
+                )
 
         return CustomResponse(
             data={
                 "id": pending.id,
                 "product_name": pending.product_name,
-                "amount": pending.amount,
+                "sold_amount": sell_amount,
+                "remaining_amount": pending.amount if pending.status == 0 else 0,
                 "trade_id": data["trade_id"],
                 "history_id": his.id,
             },
