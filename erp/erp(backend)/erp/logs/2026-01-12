@@ -40,3 +40,147 @@
 [12/Jan/2026 11:31:45] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
 [12/Jan/2026 11:32:04] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
 [12/Jan/2026 11:32:04] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 14:45:34] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 14:45:48] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 14:45:48] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 14:46:06] INFO [core.views:960] aisol이 8 : [테스트거래처2]의 [구매] 내역을 생성하였습니다.
+[12/Jan/2026 14:46:06] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 14:46:06] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 14:46:12] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 14:46:16] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 14:46:22] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 14:46:43] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 14:46:43] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 14:46:52] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[12/Jan/2026 14:50:37] INFO [core.views:321] aisol 이 [테스트거래처3] 고객을 생성하였습니다.
+[12/Jan/2026 14:50:37] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[12/Jan/2026 14:50:45] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 14:50:45] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 14:50:53] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 14:50:53] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 14:51:05] INFO [core.views:545] aisol 이 [7] : [헤드셋] 제품을 생성하였습니다.
+[12/Jan/2026 14:51:09] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 14:51:45] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 14:51:53] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 14:52:04] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 14:52:04] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 14:52:16] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 14:53:44] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:01:01] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:03:17] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[12/Jan/2026 15:03:20] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 15:03:20] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:03:23] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:03:24] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:03:43] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:03:44] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:04:28] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:07:02] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:07:02] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:07:09] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:08:38] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:08:44] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[12/Jan/2026 15:08:49] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 15:08:49] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:08:54] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:08:54] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:08:57] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:09:18] INFO [core.views:960] aisol이 9 : [테스트거래처3]의 [구매] 내역을 생성하였습니다.
+[12/Jan/2026 15:09:19] INFO [core.views:3307] test1님이 [헤드셋] 35개를 입고대기로 등록하였습니다.
+[12/Jan/2026 15:09:19] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:09:32] INFO [core.views:3386] test1님이 [헤드셋] 35개를 입고 확정하였습니다. (재고: 35)
+[12/Jan/2026 15:09:35] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:16:47] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:16:47] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:16:56] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:16:56] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:17:00] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:17:15] INFO [core.views:960] aisol이 10 : [테스트거래처3]의 [구매] 내역을 생성하였습니다.
+[12/Jan/2026 15:17:15] INFO [core.views:3307] test1님이 [마우스] 25개를 입고대기로 등록하였습니다.
+[12/Jan/2026 15:17:15] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:18:31] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:18:31] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:18:35] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:18:36] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:18:38] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:29:03] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[12/Jan/2026 15:29:06] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 15:29:06] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:29:09] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:29:09] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:29:35] INFO [core.views:960] aisol이 11 : [테스트거래처3]의 [판매] 내역을 생성하였습니다.
+[12/Jan/2026 15:29:36] INFO [core.views:3442] test1님이 [마우스] 25개를 바로판매 처리하였습니다.
+[12/Jan/2026 15:29:36] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 15:29:36] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:30:02] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:31:14] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:31:14] INFO [core.views:347] aisol 이 [3] : [테스트거래처3] 고객을 조회하였습니다.
+[12/Jan/2026 15:33:24] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[12/Jan/2026 15:33:32] INFO [core.views:321] aisol 이 [테스트거래처4] 고객을 생성하였습니다.
+[12/Jan/2026 15:33:32] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[12/Jan/2026 15:33:40] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 15:33:40] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:33:51] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:33:51] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:34:32] INFO [core.views:960] aisol이 12 : [테스트거래처4]의 [구매] 내역을 생성하였습니다.
+[12/Jan/2026 15:34:37] INFO [core.views:960] aisol이 13 : [테스트거래처4]의 [구매] 내역을 생성하였습니다.
+[12/Jan/2026 15:34:48] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:34:48] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:35:13] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:35:14] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:35:14] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:40:42] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:40:42] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:40:46] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:43:08] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:43:08] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:45:29] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:45:30] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:47:50] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:50:15] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:50:15] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:50:30] INFO [core.views:545] aisol 이 [8] : [모니터] 제품을 생성하였습니다.
+[12/Jan/2026 15:50:35] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:51:23] INFO [core.views:960] aisol이 14 : [테스트거래처4]의 [구매] 내역을 생성하였습니다.
+[12/Jan/2026 15:51:23] INFO [core.views:3307] test1님이 [모니터] 30개를 입고대기로 등록하였습니다.
+[12/Jan/2026 15:51:24] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 15:51:27] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 15:51:34] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:00:14] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 16:00:25] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:00:25] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:04:04] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 16:06:18] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:06:18] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:06:51] INFO [core.views:960] aisol이 15 : [테스트거래처4]의 [판매] 내역을 생성하였습니다.
+[12/Jan/2026 16:06:51] INFO [core.views:3442] test1님이 [모니터] 30개를 바로판매 처리하였습니다.
+[12/Jan/2026 16:06:52] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 16:06:52] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:08:18] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 16:08:24] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:08:27] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 16:08:27] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:08:47] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:08:47] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:11:33] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 16:11:33] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:11:39] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:11:39] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:11:43] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 16:11:45] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 16:11:59] INFO [core.views:960] aisol이 16 : [테스트거래처4]의 [구매] 내역을 생성하였습니다.
+[12/Jan/2026 16:11:59] INFO [core.views:3307] test1님이 [모니터] 10개를 입고대기로 등록하였습니다.
+[12/Jan/2026 16:12:00] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:12:05] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 16:12:33] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:12:41] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:12:41] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:13:10] INFO [core.views:960] aisol이 17 : [테스트거래처4]의 [판매] 내역을 생성하였습니다.
+[12/Jan/2026 16:13:10] INFO [core.views:3442] test1님이 [모니터] 10개를 바로판매 처리하였습니다.
+[12/Jan/2026 16:13:10] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:13:10] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 16:13:25] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:13:33] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:13:33] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[12/Jan/2026 16:13:48] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 16:13:48] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
