@@ -14,6 +14,8 @@ from model.models import Engineer as Eng
 from model.models import Vacation, Record, Attendance
 from model.models import ReleaseLog
 from model.models import ProductPackage, ProductPackageItem
+from model.models import PendingStock
+from .serializers import PendingStockSerializer
 
 from rest_framework import status
 from .serializers import (
@@ -1067,8 +1069,12 @@ class TradeDetail(APIView):
                                 his.product_id = history["product_id"]
                                 pro = Pro.objects.get(id=history["product_id"])
                                 if tra.category_1 in [0, 3, 7]:
+                                    # AS, SELL, DELIVER 수정 시
                                     pro.add_stock(his.amount)
                                     pro.minus_stock(amount=history["amount"])
+                                elif tra.category_1 == 4:
+                                    # ✅ PURCHASE 수정 시 - 입고대기 사용으로 재고 변동 없음
+                                    pass
                                 else:
                                     pro.minus_stock(his.amount)
                                     pro.add_stock(amount=history["amount"])
@@ -1119,7 +1125,11 @@ class TradeDetail(APIView):
                         pro = Pro.objects.get(id=his.product_id)
                         tra = Tra.objects.get(id=his.trade_id)
                         if tra.category_1 in [0, 3, 7]:
+                            # AS, SELL, DELIVER 삭제 시 - 재고 복구 (증가)
                             pro.add_stock(his.amount)
+                        elif tra.category_1 == 4:
+                            # ✅ PURCHASE 삭제 시 - 입고대기 사용으로 재고 변동 없음
+                            pass
                         else:
                             pro.minus_stock(his.amount)
         except:
@@ -1236,13 +1246,16 @@ class History(APIView):
                     if j.get("product_id"):
                         pro = Pro.objects.get(id=j["product_id"])
                         tra = Tra.objects.get(id=j["trade_id"])
-                        flags = 1
-                        if tra.category_1 in [0, 3, 7]:
-                            # flags = -1
-                            # his.release()
-                            pro.minus_stock(his.amount)
 
+                        if tra.category_1 in [0, 3, 7]:
+                            # AS(0), SELL(3), DELIVER(7) - 재고 감소
+                            pro.minus_stock(his.amount)
+                        elif tra.category_1 == 4:
+                            # ✅ PURCHASE(4) - 입고대기 사용으로 재고 변동 없음
+                            # 프론트엔드에서 PendingStock으로 처리
+                            pass
                         else:
+                            # 기타 - 기존 로직 유지
                             pro.add_stock(amount=j["amount"])
                         # pro.stock += j["amount"] * flags
                         # pro.save()
@@ -3236,3 +3249,208 @@ class ExportDataToExcelView(APIView):
             return response
         else:
             return ReturnNoContent()
+
+class PendingStockView(APIView):
+    """입고대기 목록 조회 및 생성"""
+
+    def get(self, req):
+        """입고대기 목록 조회 (기본: 대기 상태만)"""
+        status_filter = req.GET.get("status", "0")  # 기본값: 입고대기(0)
+
+        if status_filter == "all":
+            pending = PendingStock.objects.all().order_by("-created_date")
+        else:
+            pending = PendingStock.objects.filter(
+                status=int(status_filter)
+            ).order_by("-created_date")
+
+        result = custom_paginator(req, pending, "-created_date")
+        result["results"] = PendingStockSerializer(result["results"], many=True).data
+
+        return ReturnData(data=result)
+
+    def post(self, req):
+        """입고대기 생성 (제품구매 시 호출)"""
+        data = req.data
+
+        require_data = ["product_id", "amount"]
+        miss = FindMissingData(require_data, data)
+
+        if miss["is_miss"]:
+            return CustomResponse(miss["message"], status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            with transaction.atomic():
+                pro = get_object_or_404(Pro, id=data["product_id"])
+
+                pending = PendingStock.objects.create(
+                    product=pro,
+                    product_name=pro.name,
+                    product_category=pro.category,
+                    amount=data["amount"],
+                    price=data.get("price", pro.in_price),
+                    supplier_name=data.get("supplier_name", ""),
+                    register_name=return_username(req.user).name,
+                    memo=data.get("memo", ""),
+                )
+
+                # trade_id가 있으면 연결
+                if data.get("trade_id"):
+                    pending.trade_id = data["trade_id"]
+                    pending.save()
+
+                # history_id가 있으면 연결
+                if data.get("history_id"):
+                    pending.history_id = data["history_id"]
+                    pending.save()
+
+                logger.info(
+                    f"{return_username(req.user).name}님이 [{pro.name}] {data['amount']}개를 입고대기로 등록하였습니다."
+                )
+
+                return CustomResponse(
+                    data=PendingStockSerializer(pending).data,
+                    message="입고대기 등록 성공",
+                    status=status.HTTP_201_CREATED,
+                )
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+
+class PendingStockDetailView(APIView):
+    """입고대기 상세 조회, 수정, 삭제"""
+
+    def get(self, req, pending_id):
+        """입고대기 상세 조회"""
+        pending = get_object_or_404(PendingStock, id=pending_id)
+        return ReturnData(data=PendingStockSerializer(pending).data)
+
+    def put(self, req, pending_id):
+        """입고대기 수정 (수량, 메모 등)"""
+        pending = get_object_or_404(PendingStock, id=pending_id)
+        data = req.data
+
+        if pending.status != 0:  # 대기 상태가 아니면 수정 불가
+            return CustomResponse(
+                message="입고대기 상태에서만 수정 가능합니다.",
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        for key in data:
+            if hasattr(pending, key) and key not in ["id", "status", "created_date"]:
+                setattr(pending, key, data[key])
+        pending.save()
+
+        return CustomResponse(
+            data=PendingStockSerializer(pending).data,
+            message="수정 성공",
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, req, pending_id):
+        """입고대기 삭제 (취소 처리)"""
+        pending = get_object_or_404(PendingStock, id=pending_id)
+
+        if pending.status != 0:
+            return CustomResponse(
+                message="입고대기 상태에서만 삭제 가능합니다.",
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        pending.cancel()
+
+        logger.info(
+            f"{return_username(req.user).name}님이 입고대기 [{pending.product_name}] {pending.amount}개를 취소하였습니다."
+        )
+
+        return ReturnDelete()
+
+
+class PendingStockConfirmView(APIView):
+    """입고 확정 처리"""
+
+    def post(self, req, pending_id):
+        """입고 확정 - 재고 증가"""
+        pending = get_object_or_404(PendingStock, id=pending_id)
+
+        if pending.status != 0:
+            return CustomResponse(
+                message="입고대기 상태에서만 입고 확정이 가능합니다.",
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        with transaction.atomic():
+            pending.confirm_stock()
+
+            logger.info(
+                f"{return_username(req.user).name}님이 [{pending.product_name}] {pending.amount}개를 입고 확정하였습니다. (재고: {pending.product.stock})"
+            )
+
+        return CustomResponse(
+            data={
+                "id": pending.id,
+                "product_name": pending.product_name,
+                "amount": pending.amount,
+                "new_stock": pending.product.stock,
+            },
+            message="입고 확정 완료",
+            status=status.HTTP_200_OK,
+        )
+
+
+class PendingStockSellView(APIView):
+    """바로 판매 처리 (입고 후 즉시 출고)"""
+
+    def post(self, req, pending_id):
+        """바로 판매 - 입고 + 즉시 출고"""
+        pending = get_object_or_404(PendingStock, id=pending_id)
+        data = req.data
+
+        if pending.status != 0:
+            return CustomResponse(
+                message="입고대기 상태에서만 바로판매가 가능합니다.",
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 판매할 거래 정보 필요
+        if not data.get("trade_id"):
+            return CustomResponse(
+                message="판매 거래 정보가 필요합니다.",
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        with transaction.atomic():
+            # 바로판매 처리 (재고 변동 없음)
+            pending.sell_directly()
+
+            # History 생성 (판매 기록)
+            tra = get_object_or_404(Tra, id=data["trade_id"])
+            his = His.objects.create(
+                name=pending.product_name,
+                amount=pending.amount,
+                price=data.get("price", pending.price),
+                tax_category=data.get("tax_category", 0),
+                product_id=pending.product_id,
+                trade_id=data["trade_id"],
+            )
+
+            pending.history = his
+            pending.trade = tra
+            pending.save()
+
+            logger.info(
+                f"{return_username(req.user).name}님이 [{pending.product_name}] {pending.amount}개를 바로판매 처리하였습니다."
+            )
+
+        return CustomResponse(
+            data={
+                "id": pending.id,
+                "product_name": pending.product_name,
+                "amount": pending.amount,
+                "trade_id": data["trade_id"],
+                "history_id": his.id,
+            },
+            message="바로판매 완료",
+            status=status.HTTP_200_OK,
+        )

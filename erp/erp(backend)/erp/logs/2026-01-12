@@ -13,3 +13,30 @@
 [12/Jan/2026 09:40:52] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
 [12/Jan/2026 09:40:52] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
 [12/Jan/2026 09:40:52] INFO [core.views:345] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 09:52:12] INFO [core.views:487] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 10:30:55] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 10:45:13] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 11:29:00] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[12/Jan/2026 11:29:03] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 11:29:03] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 11:29:07] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 11:29:08] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 11:29:45] INFO [core.views:545] aisol 이 [5] : [마우스] 제품을 생성하였습니다.
+[12/Jan/2026 11:29:47] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 11:30:04] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 11:30:10] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 11:30:21] INFO [core.views:960] aisol이 7 : [테스트거래처2]의 [구매] 내역을 생성하였습니다.
+[12/Jan/2026 11:30:21] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 11:30:21] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[12/Jan/2026 11:30:27] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 11:30:54] INFO [core.views:545] aisol 이 [6] : [키보드] 제품을 생성하였습니다.
+[12/Jan/2026 11:30:54] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 11:31:06] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 11:31:11] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 11:31:15] INFO [core.views:2253] test1님이 패키지 [사무용PC]을 생성하였습니다.
+[12/Jan/2026 11:31:19] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
+[12/Jan/2026 11:31:26] INFO [core.views:2399] test1님이 패키지 [사무용PC]을 출고 등록하였습니다. (2개 제품)
+[12/Jan/2026 11:31:45] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 11:31:45] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 11:32:04] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.
+[12/Jan/2026 11:32:04] INFO [core.views:347] aisol 이 [2] : [테스트거래처2] 고객을 조회하였습니다.

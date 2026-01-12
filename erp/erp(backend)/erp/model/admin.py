@@ -19,6 +19,7 @@ from .models import (
     ReleaseLogPermission,
     ProductPackage,
     ProductPackageItem,
+    PendingStock,
 )
 
 
@@ -147,6 +148,22 @@ class ProductPackageAdmin(admin.ModelAdmin):
     search_fields = ["name"]
     inlines = [ProductPackageItemInline]
 
+class PendingStockAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "product_name",
+        "product_category",
+        "amount",
+        "price",
+        "status",
+        "supplier_name",
+        "register_name",
+        "created_date",
+        "confirmed_date",
+    ]
+    search_fields = ["product_name", "supplier_name"]
+    list_filter = ["status"]
+
 
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)
@@ -163,6 +180,7 @@ admin.site.register(ReleaseLog, ReleaseLogAdmin)
 admin.site.register(ReleaseLogPermission, ReleaseLogPermissionAdmin)
 admin.site.register(ProductPackage, ProductPackageAdmin)
 admin.site.register(ProductPackageItem)
+admin.site.register(PendingStock, PendingStockAdmin)
 
 admin.site.register(CCustomer)
 admin.site.register(CProduct)

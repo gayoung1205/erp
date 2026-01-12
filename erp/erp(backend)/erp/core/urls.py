@@ -36,6 +36,10 @@ from .views import (
     ProductPackageView,
     ProductPackageDetailView,
     ReleasePackageView,
+    PendingStockView,
+    PendingStockDetailView,
+    PendingStockConfirmView,
+    PendingStockSellView,
 )
 
 
@@ -75,4 +79,8 @@ urlpatterns = [
     path("excel", ExcelView.as_view()),
     url(r"accountingCalc", AccountingCalcView.as_view()),
     url(r"export/excel/", ExportDataToExcelView.as_view()),
+    url(r"^pending-stock/(?P<pending_id>\d+)/confirm/$", PendingStockConfirmView.as_view()),
+    url(r"^pending-stock/(?P<pending_id>\d+)/sell/$", PendingStockSellView.as_view()),
+    url(r"^pending-stock/(?P<pending_id>\d+)/$", PendingStockDetailView.as_view()),
+    url(r"^pending-stocks$", PendingStockView.as_view()),
 ]

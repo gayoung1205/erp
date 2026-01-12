@@ -15,7 +15,7 @@ from model.models import (
     ReleaseLog,
     ProductPackage,
     ProductPackageItem,
-
+    PendingStock,
 )
 from django.forms.models import model_to_dict
 
@@ -505,3 +505,31 @@ class ProductPackageSerializer(serializers.ModelSerializer):
 
     def get_item_count(self, obj):
         return obj.items.count()
+
+class PendingStockSerializer(serializers.ModelSerializer):
+    status_display = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PendingStock
+        fields = [
+            "id",
+            "product",
+            "product_name",
+            "product_category",
+            "amount",
+            "price",
+            "status",
+            "status_display",
+            "trade",
+            "history",
+            "supplier_name",
+            "register_name",
+            "memo",
+            "confirmed_date",
+            "created_date",
+            "updated_date",
+        ]
+
+    def get_status_display(self, obj):
+        status_map = {0: "입고대기", 1: "입고완료", 2: "바로판매", 3: "취소"}
+        return status_map.get(obj.status, "알수없음")

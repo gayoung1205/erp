@@ -476,6 +476,92 @@ class ProductPackageItem(models.Model):
     def __str__(self):
         return f"{self.package.name} - {self.product.name} x {self.amount}"
 
+class PendingStock(models.Model):
+    """
+    입고대기 (제품구매 시 바로 재고반영 X, 입고확정 시 재고반영)
+    """
+    PENDING = 0      # 입고대기
+    CONFIRMED = 1    # 입고완료
+    SOLD = 2         # 바로판매 (입고 후 즉시 출고)
+    CANCELED = 3     # 취소
+
+    STATUS_CHOICES = (
+        (PENDING, "입고대기"),
+        (CONFIRMED, "입고완료"),
+        (SOLD, "바로판매"),
+        (CANCELED, "취소"),
+    )
+
+    id = models.AutoField(primary_key=True)
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="pending_stocks",
+        related_query_name="pending_stock",
+    )
+    product_name = models.CharField(max_length=100, null=True, blank=True)  # 제품명 (조회용)
+    product_category = models.CharField(max_length=100, null=True, blank=True)  # 제품분류
+    amount = models.IntegerField(default=0)  # 입고 수량
+    price = models.IntegerField(default=0)   # 매입단가
+    status = models.IntegerField(choices=STATUS_CHOICES, default=PENDING)
+    trade = models.ForeignKey(
+        Trade,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="pending_stocks",
+        related_query_name="pending_stock",
+    )
+    history = models.ForeignKey(
+        "History",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="pending_stocks",
+        related_query_name="pending_stock",
+    )
+    supplier_name = models.CharField(max_length=100, null=True, blank=True)  # 구입처명
+    register_name = models.CharField(max_length=50, null=True, blank=True)   # 등록자
+    memo = models.TextField(null=True, blank=True)
+    confirmed_date = models.DateTimeField(null=True, blank=True)  # 입고확정일
+    updated_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def confirm_stock(self):
+        """입고 확정 - 재고 증가"""
+        import datetime
+        if self.status == self.PENDING:
+            self.product.add_stock(self.amount)
+            self.status = self.CONFIRMED
+            self.confirmed_date = datetime.datetime.now()
+            self.save()
+            return True
+        return False
+
+    def sell_directly(self):
+        """바로 판매 - 입고 후 즉시 출고 (재고 변동 없음)"""
+        import datetime
+        if self.status == self.PENDING:
+            # 입고 + 즉시 출고 = 재고 변동 없음
+            self.status = self.SOLD
+            self.confirmed_date = datetime.datetime.now()
+            self.save()
+            return True
+        return False
+
+    def cancel(self):
+        """취소"""
+        if self.status == self.PENDING:
+            self.status = self.CANCELED
+            self.save()
+            return True
+        return False
+
+    def get_status_display_korean(self):
+        """상태 한글 표시"""
+        status_map = {0: "입고대기", 1: "입고완료", 2: "바로판매", 3: "취소"}
+        return status_map.get(self.status, "알수없음")
+
 
 class CCategory(models.Model):
     CUSTOMER = 0
