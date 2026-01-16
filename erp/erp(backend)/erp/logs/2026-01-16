@@ -10,3 +10,14 @@
 [16/Jan/2026 10:56:24] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
 [16/Jan/2026 10:58:29] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
 [16/Jan/2026 11:03:26] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[16/Jan/2026 13:58:19] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[16/Jan/2026 13:58:21] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[16/Jan/2026 13:58:26] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[16/Jan/2026 13:58:27] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[16/Jan/2026 13:58:29] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[16/Jan/2026 13:58:36] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[16/Jan/2026 13:58:36] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[16/Jan/2026 13:58:47] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[16/Jan/2026 13:59:25] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
+[16/Jan/2026 13:59:53] INFO [core.views:347] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[16/Jan/2026 13:59:53] INFO [core.views:669] aisol 이 전체거래내역을 조회하였습니다.
