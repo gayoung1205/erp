@@ -1,0 +1,4 @@
+[19/Jan/2026 09:49:10] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[19/Jan/2026 09:51:10] INFO [core.views:321] aisol 이 [동부그린] 고객을 생성하였습니다.
+[19/Jan/2026 09:51:10] INFO [core.views:276] test1 이 전체고객을 검색하였습니다.
+[19/Jan/2026 10:03:17] INFO [core.views:489] test1 이 전체제품을 조회하였습니다.
