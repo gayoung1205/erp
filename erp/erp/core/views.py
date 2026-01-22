@@ -2,6 +2,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
+import io
+from urllib.parse import quote
+import xlsxwriter
 from django.db import transaction
 from django.contrib.auth.models import User
 from model.models import Customer as Cus
@@ -65,6 +68,7 @@ from django.core.paginator import Paginator
 import openpyxl
 from pandas import read_excel
 from model.models import ReleaseLog, ReleaseLogPermission
+from urllib.parse import quote
 
 # Create your views here.
 """
@@ -2170,6 +2174,9 @@ class ReleaseLogPermissionView(APIView):
                     "can_view_register": perm.can_view_register,
                     "can_view_sale": perm.can_view_sale,
                     "can_view_delete": perm.can_view_delete,
+                    "can_export_customer": perm.can_export_customer,
+                    "can_export_trade": perm.can_export_trade,
+                    "can_export_product": perm.can_export_product,
                 })
             except ReleaseLogPermission.DoesNotExist:
                 result.append({
@@ -2179,6 +2186,9 @@ class ReleaseLogPermissionView(APIView):
                     "can_view_register": False,
                     "can_view_sale": False,
                     "can_view_delete": False,
+                    "can_export_customer": False,
+                    "can_export_trade": False,
+                    "can_export_product": False,
                 })
 
         return ReturnData(data=result)
@@ -2205,6 +2215,9 @@ class ReleaseLogPermissionView(APIView):
                 perm.can_view_register = data.get("can_view_register", False)
                 perm.can_view_sale = data.get("can_view_sale", False)
                 perm.can_view_delete = data.get("can_view_delete", False)
+                perm.can_export_customer = data.get("can_export_customer", False)
+                perm.can_export_trade = data.get("can_export_trade", False)
+                perm.can_export_product = data.get("can_export_product", False)
                 perm.save()
 
                 logger.info(
@@ -2845,426 +2858,275 @@ class AccountingCalcView(APIView):
 
 class ExportDataToExcelView(APIView):
     """
-        데이터를 Excel로 내보내기
+    데이터를 Excel로 내보내기 (권한 체크 + 기간 필터 추가)
     """
 
     def post(self, req):
         data = req.data
-        if data["type"]:
-            col_headers, col_names = [], []
-            type_datas = None
-            sheet_name, file_name = "", ""
 
-            if data["type"] == "customer":
-                try:
-                    customers = Cus.objects.all().order_by("name")
-                except Exception as e:
-                    print(e)
-                    return ReturnNoContent()
-
-                type_datas = CustomerSerializer(customers, many=True).data
-
-                file_name = "customers.xlsx"
-                sheet_name = "customers"
-
-                col_headers = [
-                    "고객(거래처)명",
-                    "등록일",
-                    "Phone",
-                    "Tel",
-                    "주소",
-                    "우편번호",
-                    "Fax",
-                    "Email",
-                    "고객분류",
-                    "가격분류",
-                    "메모",
-                    "등록자ID",
-                    "총미수금",
-                ]
-                col_names = [
-                    "name",
-                    "created_date",
-                    "phone",
-                    "tel",
-                    "address",
-                    "post_number",
-                    "fax_number",
-                    "email",
-                    "customer_grade",
-                    "price_grade",
-                    "memo",
-                    "register_id",
-                    "receivable",
-                ]
-            elif data["type"] == "product":
-                try:
-                    products = Pro.objects.all().order_by("name")
-                except:
-                    return ReturnNoContent()
-                type_datas = ProductSerializer(products, many=True).data
-
-                file_name = "product.xlsx"
-                sheet_name = "product"
-
-                col_headers = [
-                    "제품명",
-                    "제품분류",
-                    "제조사",
-                    "보관장소",
-                    "주매입처",
-                    "상품코드",
-                    "재고량",
-                    "메모",
-                    "매입금액",
-                    "매출금액",
-                    "소비자금액",
-                    "등록자ID",
-                ]
-                col_names = [
-                    "name",
-                    "category",
-                    "supplier",
-                    "container",
-                    "purchase",
-                    "code",
-                    "stock",
-                    "memo",
-                    "in_price",
-                    "out_price",
-                    "sale_price",
-                    "register_id",
-                ]
-            elif data["type"] == "trade":
-                try:
-                    if data["customer_id"]:
-                        trades = Tra.objects.filter(
-                            customer_id=data["customer_id"]
-                        ).order_by("register_date")
-                        
-                        trade_data = make_trade(trades)
-                        tra_value = trades.values()
-                        for i in range(len(tra_value)):
-                            tra_value[i]["total_price"] = trade_data["data_1"][i]
-                            tra_value[i]["total_receivable"] = trade_data["data"][i]
-                            tra_value[i]["supply_price"] = trade_data["price"][i]
-                            tra_value[i]["tax_price"] = trade_data["tax"][i]
-                            tra_value[i]["category_name1"] = get_category_name1(
-                                tra_value[i]
-                            )
-                            tra_value[i]["category_name2"] = get_category_name2(
-                                tra_value[i]
-                            )
-                            tra_value[i]["category_name3"] = get_category_name3(
-                                tra_value[i]
-                            )
-                            tra_value[i]["engineer_name"] = (
-                                trades[i].engineer.name
-                                if trades[i].engineer != None
-                                else ""
-                            )
-                            if tra_value[i]["completed_content"] != None:
-                                tra_value[i]["completed_content"] += trade_data[
-                                    "content"
-                                ][i]
-                        trades = tra_value[::-1]
-                    else:
-                        trades = (
-                            Tra.objects.all()
-                            .exclude(category_1=5)
-                            .exclude(category_1=6)
-                            .order_by("register_date")
-                            .values()
-                        )
-                        for i in trades:
-                            try:
-                                trade = Tra.objects.get(id=i["id"])
-                                price = trade.total_price()
-                                i["supply_price"] = price["price"]
-                                i["tax_price"] = price["tax"]
-                                i["in_price"] = trade.in_price()
-                                i["out_price"] = trade.out_price()
-                                i["category_name1"] = get_category_name1(i)
-                                i["category_name2"] = get_category_name2(i)
-                                i["category_name3"] = get_category_name3(i)
-                                i["engineer_name"] = trade.get_engineer_name()
-
-                            except Exception as e:
-                                print(e)
-                                i["category_name1"] = "미정"
-
-                    for i in trades:
-                        col_list_to_add = [
-                            "collect",
-                            "payment",
-                            "transaction",
-                            "payment_2",
-                            "receivable",
-                            "total_receivable",
-                        ]
-
-                        # category_1 : AS=0, COLLECTION=1, PAYMENT=2, SELL=3, PURCHASE=4, INCOME=5, OUTCOME=6, DELIVER=7, MEMO=8
-                        # category_2 : ACCEPT=0, COMPLETE=1, ONGOING=2, CANCEL=3
-                        # category_3 : INSIDE=0, OUTSIDE=1
-
-                        # column 생성 -> insert 0
-                        for col in col_list_to_add:
-                            if data["customer_id"] and col == "total_receivable":
-                                pass
-                            else:
-                                i[col] = 0
-                        # category_1이 수금, 지불일 경우 결제금액과 수금일 경우 수금금액, 지불일 경우 지불금액 설정
-                        if i["category_1"] == 1 or i["category_1"] == 2:
-                            i["payment_2"] = i["cash"] + i["credit"] + i["bank"]
-                            if i["category_1"] == 1:
-                                i["collect"] = i["cash"] + i["credit"] + i["bank"]
-                            else:
-                                i["payment"] = i["cash"] + i["credit"] + i["bank"]
-
-                        # AS, 납품, 판매, 구매 일 때 거래금액 = total_price
-                        if (
-                            i["category_1"] == 0
-                            or i["category_1"] == 3
-                            or i["category_1"] == 4
-                            or i["category_1"] == 7
-                        ):
-                            if (
-                                i["category_1"] == 0
-                                or i["category_1"] == 3
-                                or i["category_1"] == 7
-                            ):
-                                i["transaction"] = i["supply_price"] + i["tax_price"]
-                            else:
-                                i["supply_price"] + i["tax_price"]
-
-                        # 수금, 구매 일 때 당일미수금 = -total_price
-                        if i["category_1"] == 1 or i["category_1"] == 4:
-                            if i["category_1"] == 1:
-                                i["receivable"] = -(i["cash"] + i["credit"] + i["bank"])
-                            else:
-                                i["receivable"] = -(i["supply_price"] + i["tax_price"])
-
-                        # 지불, 판매, AS완료, 납품완료 일 때 당일미수금 = total_price
-                        if (
-                            i["category_1"] == 2
-                            or i["category_1"] == 3
-                            or i["category_2"] == 1
-                        ):
-                            if i["category_1"] == 2:
-                                i["receivable"] = i["cash"] + i["credit"] + i["bank"]
-                            else:
-                                i["receivable"] = i["supply_price"] + i["tax_price"]
-
-                    col_headers = [
-                        "등록일",
-                        "구분1",
-                        "AS(납품)상태",
-                        "출장/내방",
-                        "거래내역/접수내용",
-                        "고장증상",
-                        "완료내역",
-                        "메모",
-                        "방문일",
-                        "완료일",
-                        "담당자",
-                        "거래금액",
-                        "수금금액",
-                        "지불금액",
-                        "총미수금",
-                        "당일미수금",
-                        "결제금액",
-                        "공급가액",
-                        "부가세",
-                        "현금결제",
-                        "카드결제",
-                        "은행입금",
-                        "등록자ID",
-                    ]
-                    col_names = [
-                        "register_date",
-                        "category_name1",
-                        "category_name2",
-                        "category_name3",
-                        "content",
-                        "symptom",
-                        "completed_content",
-                        "memo",
-                        "visit_date",
-                        "complete_date",
-                        "engineer_name",
-                        "transaction",
-                        "collect",
-                        "payment",
-                        "total_receivable",
-                        "receivable",
-                        "payment_2",
-                        "supply_price",
-                        "tax_price",
-                        "cash",
-                        "credit",
-                        "bank",
-                        "register_id",
-                    ]
-                except:
-                    return ReturnNoContent()
-                type_datas = trades
-
-                if data["customer_id"]:
-                    try:
-                        customer_name = Cus.objects.get(id=data["customer_id"]).name
-                        file_name = f"trade({customer_name}).xlsx"
-                        file_name = urllib.parse.quote(file_name)
-                    except Exception as e:
-                        print(e)
-                        file_name = f"trade(none).xlsx"
-                else:
-                    file_name = "trade.xlsx"
-                sheet_name = "trade"
-            elif data["type"] == "accounting":
-                try:
-                    trades = (
-                        Tra.objects.filter(
-                            Q(register_date__gte=data["date"]["start_date"])
-                            & Q(register_date__lte=data["date"]["end_date"])
-                        )
-                        .exclude(category_1=8)
-                        .order_by("register_date")
-                        .values()
-                    )
-
-                    for i in trades:
-                        try:
-                            trade = Tra.objects.get(id=i["id"])
-                            price = trade.total_price()
-                            i["supply_price"] = price["price"]
-                            i["tax_price"] = price["tax"]
-                            i["in_price"] = trade.in_price()
-                            i["out_price"] = trade.out_price()
-                            i["category_name1"] = get_category_name1(i)
-                            i["category_name2"] = get_category_name2(i)
-                            i["category_name3"] = get_category_name3(i)
-                            i["engineer_name"] = trade.get_engineer_name()
-
-                            # 결제금액 초기화
-                            i["total_price"] = 0
-
-                            # 수금, 지불, 수입, 지출일 경우 결제금액  = 공급가 + 부가세
-                            if (
-                                i["category_1"] == 1
-                                or i["category_1"] == 2
-                                or i["category_1"] == 5
-                                or i["category_1"] == 6
-                            ):
-                                i["total_price"] = (
-                                    int(i["cash"]) + int(i["credit"]) + int(i["bank"])
-                                )
-
-                        except Exception as e:
-                            print(e)
-                            i["category_name1"] = "미정"
-                except Exception as e:
-                    print(e)
-                    return ReturnNoContent()
-
-                type_datas = trades
-
-                file_name = "회계목록.xlsx"
-                file_name = urllib.parse.quote(file_name)
-                sheet_name = "회계목록"
-
-                col_headers = [
-                    "등록일",
-                    "구분1",
-                    "거래내역/접수내용",
-                    "수입금액",
-                    "지출금액",
-                    "결제금액",
-                    "공급가액",
-                    "부가세",
-                    "현금결제",
-                    "카드결제",
-                    "은행입금",
-                    "메모",
-                    "등록자ID",
-                ]
-                col_names = [
-                    "register_date",
-                    "category_name1",
-                    "content",
-                    "in_price",
-                    "out_price",
-                    "total_price",
-                    "supply_price",
-                    "tax_price",
-                    "cash",
-                    "credit",
-                    "bank",
-                    "memo",
-                    "register_id",
-                ]
-            else:
-                try:
-                    records = Record.objects.filter(user=req.user).order_by("date")
-                    print(req.user)
-                    #records = Record.objects.filter().order_by("date")
-                except:
-                    return ReturnNoContent()
-                type_datas = RecordSerializer(records, many=True).data
-
-                file_name = "daily_work.xlsx"
-                sheet_name = "daily_work"
-
-                col_headers = ["등록일", "업무내용", "예정 계획", "비고",]
-                col_names = ["date", "content", "plan", "remark",]
-
-            # response = HttpResponse(content_type="application/vnd.ms-excel")
-            # response["Content-Disposition"] = f"attachment;filename*=UTF-8''{file_name}"
-
-            # wb = xlwt.Workbook(encoding="ansi")  # encoding은 ansi로 해준다.
-            # ws = wb.add_sheet(sheet_name)  # 시트 추가
-
-            # date_format = xlwt.XFStyle()
-            # date_format.num_format_str = "yyyy-mm-dd"
-
-            # # 열이름을 첫번째 행에 추가 시켜준다.
-            # for idx, col_name in enumerate(col_headers):
-            #     ws.write(row_num, idx, col_name)
-
-            # # 정보를 한줄씩 작성한다.
-            # for type_data in type_datas:
-            #     row_num += 1
-            #     for idx, col_name in enumerate(col_names):
-            #         if "date" in col_name:
-            #             ws.write(row_num, idx, type_data[col_name], date_format)
-            #         else:
-            #             ws.write(row_num, idx, type_data[col_name])
-
-            # wb.save(response)
-
-            response = HttpResponse(
-                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-            response["Content-Disposition"] = f"attachment;filename*=UTF-8''{file_name}"
-
-            wb = openpyxl.Workbook(write_only=True)
-            # 시트 추가
-            ws = wb.create_sheet(title=sheet_name)
-
-            # 열이름을 첫번째 행에 추가 시켜준다.
-            ws.append(col_headers)
-
-            # 데이터 추가
-            for type_data in type_datas:
-                row_data = []
-                for col_name in col_names:
-                    row_data.append(type_data[col_name])
-                ws.append(row_data)
-
-            wb.save(response)
-
-            return response
-        else:
+        if not data.get("type"):
             return ReturnNoContent()
+
+        try:
+            engineer = Eng.objects.get(user=req.user)
+            department = engineer.category
+
+
+            if department not in [2, 3]:
+                try:
+                    perm = ReleaseLogPermission.objects.get(department=department)
+
+                    if data["type"] == "customer" and not perm.can_export_customer:
+                        return CustomResponse(
+                            message="고객 엑셀 다운로드 권한이 없습니다.",
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+                    elif data["type"] == "trade" and not perm.can_export_trade:
+                        return CustomResponse(
+                            message="거래내역 엑셀 다운로드 권한이 없습니다.",
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+                    elif data["type"] == "product" and not perm.can_export_product:
+                        return CustomResponse(
+                            message="제품 엑셀 다운로드 권한이 없습니다.",
+                            status=status.HTTP_403_FORBIDDEN
+                        )
+                except ReleaseLogPermission.DoesNotExist:
+                    return CustomResponse(
+                        message="엑셀 다운로드 권한이 없습니다.",
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+        except Eng.DoesNotExist:
+            return CustomResponse(
+                message="사용자 정보를 찾을 수 없습니다.",
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        start_date = None
+        end_date = None
+        if data.get("date"):
+            start_date = data["date"].get("start_date")
+            end_date = data["date"].get("end_date")
+
+
+        col_headers, col_names = [], []
+        type_datas = None
+        sheet_name, file_name = "", ""
+
+        if data["type"] == "customer":
+            try:
+                customers = Cus.objects.all()
+                if start_date:
+                    customers = customers.filter(created_date__gte=start_date)
+                if end_date:
+                    customers = customers.filter(created_date__lte=end_date + " 23:59:59")
+                customers = customers.order_by("name")
+            except Exception as e:
+                print(e)
+                return ReturnNoContent()
+
+            type_datas = CustomerSerializer(customers, many=True).data
+
+            if start_date and end_date:
+                file_name = f"customers_{start_date}_{end_date}.xlsx"
+            else:
+                file_name = "customers.xlsx"
+            sheet_name = "customers"
+
+            col_headers = [
+                "고객(거래처)명",
+                "등록일",
+                "Phone",
+                "Tel",
+                "주소",
+                "우편번호",
+                "Fax",
+                "Email",
+                "고객분류",
+                "가격분류",
+                "메모",
+                "등록자ID",
+                "총미수금",
+            ]
+            col_names = [
+                "name",
+                "created_date",
+                "phone",
+                "tel",
+                "address",
+                "post_number",
+                "fax_number",
+                "email",
+                "customer_grade",
+                "price_grade",
+                "memo",
+                "register_id",
+                "receivable",
+            ]
+
+        elif data["type"] == "product":
+            try:
+                products = Pro.objects.all()
+                if start_date:
+                    products = products.filter(created_date__gte=start_date)
+                if end_date:
+                    products = products.filter(created_date__lte=end_date + " 23:59:59")
+                products = products.order_by("name")
+            except Exception as e:
+                print(e)
+                return ReturnNoContent()
+
+            type_datas = ProductSerializer(products, many=True).data
+
+            if start_date and end_date:
+                file_name = f"products_{start_date}_{end_date}.xlsx"
+            else:
+                file_name = "products.xlsx"
+            sheet_name = "products"
+
+            col_headers = [
+                "제품명",
+                "제품분류",
+                "제조사",
+                "보관장소",
+                "주매입처",
+                "재고",
+                "매입금액",
+                "매출금액",
+                "소비자금액",
+                "메모",
+            ]
+            col_names = [
+                "name",
+                "category",
+                "supplier",
+                "container",
+                "purchase",
+                "stock",
+                "in_price",
+                "out_price",
+                "sale_price",
+                "memo",
+            ]
+
+        elif data["type"] == "trade":
+            try:
+                if data.get("customer_id"):
+                    trades = Tra.objects.filter(customer_id=data["customer_id"])
+                else:
+                    trades = Tra.objects.all()
+                if start_date:
+                    trades = trades.filter(register_date__gte=start_date)
+                if end_date:
+                    trades = trades.filter(register_date__lte=end_date + " 23:59:59")
+                trades = trades.order_by("-register_date")
+            except Exception as e:
+                print(e)
+                return ReturnNoContent()
+
+            type_datas = TradeSerializer(trades, many=True).data
+
+            if start_date and end_date:
+                file_name = f"trades_{start_date}_{end_date}.xlsx"
+            else:
+                file_name = "trades.xlsx"
+            sheet_name = "trades"
+
+            col_headers = [
+                "등록일",
+                "고객명",
+                "구분1",
+                "AS(납품)상태",
+                "출장/내방",
+                "거래내역/접수내용",
+                "고장증상",
+                "완료내역",
+                "메모",
+                "방문일",
+                "완료일",
+                "담당자",
+                "공급가액",
+                "부가세",
+                "현금결제",
+                "카드결제",
+                "은행입금",
+            ]
+            col_names = [
+                "register_date",
+                "customer_name",
+                "category_name1",
+                "category_name2",
+                "category_name3",
+                "content",
+                "symptom",
+                "completed_content",
+                "memo",
+                "visit_date",
+                "complete_date",
+                "engineer_name",
+                "supply_price",
+                "tax_price",
+                "cash",
+                "credit",
+                "bank",
+            ]
+
+        if type_datas is None:
+            return ReturnNoContent()
+
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet(sheet_name)
+
+        # 헤더 스타일
+        header_format = workbook.add_format({
+            'bold': True,
+            'bg_color': '#D9E1F2',
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+        })
+
+        # 데이터 스타일
+        cell_format = workbook.add_format({
+            'border': 1,
+            'align': 'left',
+            'valign': 'vcenter',
+        })
+
+        # 헤더 작성
+        for col, header in enumerate(col_headers):
+            worksheet.write(0, col, header, header_format)
+            worksheet.set_column(col, col, 15)
+
+        # 데이터 작성
+        for row, item in enumerate(type_datas, start=1):
+            for col, col_name in enumerate(col_names):
+                value = item.get(col_name, "")
+                if value is None:
+                    value = ""
+                # 날짜 형식 처리
+                if "date" in col_name and value:
+                    value = str(value)[:10]
+                worksheet.write(row, col, value, cell_format)
+
+        workbook.close()
+        output.seek(0)
+
+        response = HttpResponse(
+            output,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = f"attachment; filename*=UTF-8''{quote(file_name)}"
+        response["Access-Control-Expose-Headers"] = "Content-Disposition"
+
+        # 로그 기록
+        logger.info(
+            f"{return_username(req.user).name}님이 {data['type']} 엑셀 다운로드 "
+            f"(기간: {start_date or '전체'} ~ {end_date or '전체'}, 건수: {len(type_datas)})"
+        )
+
+        return response
 
 class PendingStockView(APIView):
     """입고대기 목록 조회 및 생성"""

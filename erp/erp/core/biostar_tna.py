@@ -1,5 +1,4 @@
 # Module Imports
-import mariadb
 import sys
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler

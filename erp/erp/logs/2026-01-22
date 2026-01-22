@@ -1,0 +1,42 @@
+[22/Jan/2026 14:56:21] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 14:56:24] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 14:56:52] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 14:57:59] INFO [core.views:2656] test1 이 출근부를 조회하였습니다.
+[22/Jan/2026 14:58:01] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 14:58:01] INFO [core.views:2656] test1 이 출근부를 조회하였습니다.
+[22/Jan/2026 14:58:02] INFO [core.views:2656] test1 이 출근부를 조회하였습니다.
+[22/Jan/2026 14:58:03] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 14:58:03] INFO [core.views:2656] test1 이 출근부를 조회하였습니다.
+[22/Jan/2026 14:58:08] INFO [core.views:2656] test1 이 출근부를 조회하였습니다.
+[22/Jan/2026 14:58:12] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 14:58:12] INFO [core.views:2656] test1 이 출근부를 조회하였습니다.
+[22/Jan/2026 15:00:02] INFO [core.views:2656] test1 이 출근부를 조회하였습니다.
+[22/Jan/2026 15:00:17] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 15:00:47] INFO [core.views:1678] test1 이 5:복순이을 생성하였습니다.
+[22/Jan/2026 15:00:47] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 15:00:52] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 15:01:21] INFO [core.views:1631] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 15:36:43] INFO [core.views:1632] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 15:36:54] INFO [core.views:2220] test1님이 부서 [4]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:36:54] INFO [core.views:2220] test1님이 부서 [4]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:36:59] INFO [core.views:2220] test1님이 부서 [2]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:00] INFO [core.views:2220] test1님이 부서 [2]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:05] INFO [core.views:2220] test1님이 부서 [5]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:05] INFO [core.views:2220] test1님이 부서 [5]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:06] INFO [core.views:2220] test1님이 부서 [4]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:08] INFO [core.views:2220] test1님이 부서 [4]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:13] INFO [core.views:2220] test1님이 부서 [4]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:25] INFO [core.views:2220] test1님이 부서 [1]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:27] INFO [core.views:2220] test1님이 부서 [1]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:41] INFO [core.views:2220] test1님이 부서 [1]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:37:41] INFO [core.views:2220] test1님이 부서 [1]의 출고로그 권한을 수정하였습니다.
+[22/Jan/2026 15:38:00] INFO [core.views:686] aisol 이 전체거래내역을 조회하였습니다.
+[22/Jan/2026 15:38:07] INFO [core.views:277] test1 이 전체고객을 검색하였습니다.
+[22/Jan/2026 15:38:08] INFO [core.views:686] aisol 이 전체거래내역을 조회하였습니다.
+[22/Jan/2026 15:40:11] INFO [core.views:686] aisol 이 전체거래내역을 조회하였습니다.
+[22/Jan/2026 15:42:44] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[22/Jan/2026 15:42:52] INFO [core.views:3124] test1님이 trade 엑셀 다운로드 (기간: 2026-01-01 ~ 2026-01-31, 건수: 53)
+[22/Jan/2026 15:43:59] INFO [core.views:3124] test1님이 trade 엑셀 다운로드 (기간: 2026-01-01 ~ 2026-01-31, 건수: 53)
+[22/Jan/2026 15:44:22] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[22/Jan/2026 15:44:47] INFO [core.views:689] test3 이 전체거래내역을 조회하였습니다.
+[22/Jan/2026 15:44:59] INFO [core.views:689] test3 이 전체거래내역을 조회하였습니다.

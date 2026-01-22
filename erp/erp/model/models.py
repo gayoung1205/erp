@@ -1,5 +1,5 @@
 # from django.db import models
-from djongo import models
+from django.db import models
 from django.conf import settings
 
 # Create your models here.
@@ -434,6 +434,9 @@ class ReleaseLogPermission(models.Model):
     can_view_register = models.BooleanField(default=False)  # 출고등록 열람
     can_view_sale = models.BooleanField(default=False)      # 판매내역 열람
     can_view_delete = models.BooleanField(default=False)    # 삭제내역 열람
+    can_export_customer = models.BooleanField(default=False)
+    can_export_trade = models.BooleanField(default=False)
+    can_export_product = models.BooleanField(default=False)
     updated_date = models.DateTimeField(auto_now=True)
     created_date = models.DateTimeField(auto_now_add=True)
 

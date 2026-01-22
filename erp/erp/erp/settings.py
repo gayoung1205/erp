@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+os.environ['PGCLIENTENCODING'] = 'UTF8'
+os.environ['LANG'] = 'en_US.UTF-8'
 import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -85,14 +87,13 @@ WSGI_APPLICATION = "erp.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {"default": {"ENGINE": "djongo", "NAME": "mongodb",}}
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "erp",
         "USER": "postgres",
-        "PASSWORD": "123456",
+        "PASSWORD": "qwe123!@#",
         "HOST": "127.0.0.1",
         "PORT": "5432",
     }
