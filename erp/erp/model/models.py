@@ -431,12 +431,16 @@ class ReleaseLogPermission(models.Model):
     """
     id = models.AutoField(primary_key=True)
     department = models.IntegerField(unique=True)  # 부서 (Engineer.category 값)
-    can_view_register = models.BooleanField(default=False)  # 출고등록 열람
-    can_view_sale = models.BooleanField(default=False)      # 판매내역 열람
-    can_view_delete = models.BooleanField(default=False)    # 삭제내역 열람
+    can_view_register = models.BooleanField(default=False)
+    can_view_sale = models.BooleanField(default=False)
+    can_view_delete = models.BooleanField(default=False)
     can_export_customer = models.BooleanField(default=False)
     can_export_trade = models.BooleanField(default=False)
     can_export_product = models.BooleanField(default=False)
+    can_export_release = models.BooleanField(default=False)
+    can_export_release_log = models.BooleanField(default=False)
+    can_export_accounting = models.BooleanField(default=False)
+    can_export_receivable = models.BooleanField(default=False)
     updated_date = models.DateTimeField(auto_now=True)
     created_date = models.DateTimeField(auto_now_add=True)
 

@@ -2177,6 +2177,11 @@ class ReleaseLogPermissionView(APIView):
                     "can_export_customer": perm.can_export_customer,
                     "can_export_trade": perm.can_export_trade,
                     "can_export_product": perm.can_export_product,
+                    "can_export_release": perm.can_export_release,
+                    "can_export_release_log": perm.can_export_release_log,
+                    "can_export_accounting": perm.can_export_accounting,
+                    "can_export_receivable": perm.can_export_receivable,
+
                 })
             except ReleaseLogPermission.DoesNotExist:
                 result.append({
@@ -2189,6 +2194,10 @@ class ReleaseLogPermissionView(APIView):
                     "can_export_customer": False,
                     "can_export_trade": False,
                     "can_export_product": False,
+                    "can_export_release": False,
+                    "can_export_release_log": False,
+                    "can_export_accounting": False,
+                    "can_export_receivable": False,
                 })
 
         return ReturnData(data=result)
@@ -2218,6 +2227,10 @@ class ReleaseLogPermissionView(APIView):
                 perm.can_export_customer = data.get("can_export_customer", False)
                 perm.can_export_trade = data.get("can_export_trade", False)
                 perm.can_export_product = data.get("can_export_product", False)
+                perm.can_export_release = data.get("can_export_release", False)
+                perm.can_export_release_log = data.get("can_export_release_log", False)
+                perm.can_export_accounting = data.get("can_export_accounting", False)
+                perm.can_export_receivable = data.get("can_export_receivable", False)
                 perm.save()
 
                 logger.info(
@@ -2858,7 +2871,7 @@ class AccountingCalcView(APIView):
 
 class ExportDataToExcelView(APIView):
     """
-    데이터를 Excel로 내보내기 (권한 체크 + 기간 필터 추가)
+    데이터를 Excel로 내보내기 (권한 체크 + 기간 필터)
     """
 
     def post(self, req):
@@ -2867,28 +2880,33 @@ class ExportDataToExcelView(APIView):
         if not data.get("type"):
             return ReturnNoContent()
 
+        export_type = data["type"]
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # 권한 체크
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         try:
             engineer = Eng.objects.get(user=req.user)
             department = engineer.category
 
-
-            if department not in [2, 3]:
+            if department not in [2, 3]:  # 대표이사, 관리자 제외
                 try:
                     perm = ReleaseLogPermission.objects.get(department=department)
 
-                    if data["type"] == "customer" and not perm.can_export_customer:
+                    permission_map = {
+                        "customer": perm.can_export_customer,
+                        "trade": perm.can_export_trade,
+                        "product": perm.can_export_product,
+                        "release": perm.can_export_release,
+                        "release_log": perm.can_export_release_log,
+                        "accounting": perm.can_export_accounting,
+                        "receivable": perm.can_export_receivable,
+                        "receivable_minus": perm.can_export_receivable,
+                    }
+
+                    if not permission_map.get(export_type, False):
                         return CustomResponse(
-                            message="고객 엑셀 다운로드 권한이 없습니다.",
-                            status=status.HTTP_403_FORBIDDEN
-                        )
-                    elif data["type"] == "trade" and not perm.can_export_trade:
-                        return CustomResponse(
-                            message="거래내역 엑셀 다운로드 권한이 없습니다.",
-                            status=status.HTTP_403_FORBIDDEN
-                        )
-                    elif data["type"] == "product" and not perm.can_export_product:
-                        return CustomResponse(
-                            message="제품 엑셀 다운로드 권한이 없습니다.",
+                            message="엑셀 다운로드 권한이 없습니다.",
                             status=status.HTTP_403_FORBIDDEN
                         )
                 except ReleaseLogPermission.DoesNotExist:
@@ -2902,175 +2920,174 @@ class ExportDataToExcelView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # 날짜 필터
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         start_date = None
         end_date = None
         if data.get("date"):
             start_date = data["date"].get("start_date")
             end_date = data["date"].get("end_date")
 
-
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # 타입별 데이터 조회
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         col_headers, col_names = [], []
         type_datas = None
         sheet_name, file_name = "", ""
 
-        if data["type"] == "customer":
+        # ━━━ 고객 ━━━
+        if export_type == "customer":
             try:
-                customers = Cus.objects.all()
+                queryset = Cus.objects.all()
                 if start_date:
-                    customers = customers.filter(created_date__gte=start_date)
+                    queryset = queryset.filter(created_date__gte=start_date)
                 if end_date:
-                    customers = customers.filter(created_date__lte=end_date + " 23:59:59")
-                customers = customers.order_by("name")
+                    queryset = queryset.filter(created_date__lte=end_date + " 23:59:59")
+                queryset = queryset.order_by("name")
             except Exception as e:
                 print(e)
                 return ReturnNoContent()
 
-            type_datas = CustomerSerializer(customers, many=True).data
-
-            if start_date and end_date:
-                file_name = f"customers_{start_date}_{end_date}.xlsx"
-            else:
-                file_name = "customers.xlsx"
+            type_datas = CustomerSerializer(queryset, many=True).data
+            file_name = f"customers_{start_date or 'all'}_{end_date or 'all'}.xlsx" if start_date or end_date else "customers.xlsx"
             sheet_name = "customers"
+            col_headers = ["고객명", "등록일", "Phone", "Tel", "주소", "우편번호", "Fax", "Email", "고객분류", "가격분류", "메모", "등록자ID", "총미수금"]
+            col_names = ["name", "created_date", "phone", "tel", "address", "post_number", "fax_number", "email", "customer_grade", "price_grade", "memo", "register_id", "receivable"]
 
-            col_headers = [
-                "고객(거래처)명",
-                "등록일",
-                "Phone",
-                "Tel",
-                "주소",
-                "우편번호",
-                "Fax",
-                "Email",
-                "고객분류",
-                "가격분류",
-                "메모",
-                "등록자ID",
-                "총미수금",
-            ]
-            col_names = [
-                "name",
-                "created_date",
-                "phone",
-                "tel",
-                "address",
-                "post_number",
-                "fax_number",
-                "email",
-                "customer_grade",
-                "price_grade",
-                "memo",
-                "register_id",
-                "receivable",
-            ]
-
-        elif data["type"] == "product":
+        # ━━━ 제품 ━━━
+        elif export_type == "product":
             try:
-                products = Pro.objects.all()
+                queryset = Pro.objects.all()
                 if start_date:
-                    products = products.filter(created_date__gte=start_date)
+                    queryset = queryset.filter(created_date__gte=start_date)
                 if end_date:
-                    products = products.filter(created_date__lte=end_date + " 23:59:59")
-                products = products.order_by("name")
+                    queryset = queryset.filter(created_date__lte=end_date + " 23:59:59")
+                queryset = queryset.order_by("name")
             except Exception as e:
                 print(e)
                 return ReturnNoContent()
 
-            type_datas = ProductSerializer(products, many=True).data
-
-            if start_date and end_date:
-                file_name = f"products_{start_date}_{end_date}.xlsx"
-            else:
-                file_name = "products.xlsx"
+            type_datas = ProductSerializer(queryset, many=True).data
+            file_name = f"products_{start_date or 'all'}_{end_date or 'all'}.xlsx" if start_date or end_date else "products.xlsx"
             sheet_name = "products"
+            col_headers = ["제품명", "제품분류", "제조사", "보관장소", "주매입처", "코드", "재고", "매입금액", "매출금액", "소비자금액", "메모"]
+            col_names = ["name", "category", "supplier", "container", "purchase", "code", "stock", "in_price", "out_price", "sale_price", "memo"]
 
-            col_headers = [
-                "제품명",
-                "제품분류",
-                "제조사",
-                "보관장소",
-                "주매입처",
-                "재고",
-                "매입금액",
-                "매출금액",
-                "소비자금액",
-                "메모",
-            ]
-            col_names = [
-                "name",
-                "category",
-                "supplier",
-                "container",
-                "purchase",
-                "stock",
-                "in_price",
-                "out_price",
-                "sale_price",
-                "memo",
-            ]
-
-        elif data["type"] == "trade":
+        # ━━━ 거래내역 ━━━
+        elif export_type == "trade":
             try:
                 if data.get("customer_id"):
-                    trades = Tra.objects.filter(customer_id=data["customer_id"])
+                    queryset = Tra.objects.filter(customer_id=data["customer_id"])
                 else:
-                    trades = Tra.objects.all()
+                    queryset = Tra.objects.all()
                 if start_date:
-                    trades = trades.filter(register_date__gte=start_date)
+                    queryset = queryset.filter(register_date__gte=start_date)
                 if end_date:
-                    trades = trades.filter(register_date__lte=end_date + " 23:59:59")
-                trades = trades.order_by("-register_date")
+                    queryset = queryset.filter(register_date__lte=end_date + " 23:59:59")
+                queryset = queryset.order_by("-register_date")
             except Exception as e:
                 print(e)
                 return ReturnNoContent()
 
-            type_datas = TradeSerializer(trades, many=True).data
-
-            if start_date and end_date:
-                file_name = f"trades_{start_date}_{end_date}.xlsx"
-            else:
-                file_name = "trades.xlsx"
+            type_datas = TradeSerializer(queryset, many=True).data
+            file_name = f"trades_{start_date or 'all'}_{end_date or 'all'}.xlsx" if start_date or end_date else "trades.xlsx"
             sheet_name = "trades"
+            col_headers = ["등록일", "고객명", "구분1", "AS상태", "출장/내방", "내용", "고장증상", "완료내역", "메모", "방문일", "완료일", "담당자", "공급가액", "부가세", "현금", "카드", "은행"]
+            col_names = ["register_date", "customer_name", "category_name1", "category_name2", "category_name3", "content", "symptom", "completed_content", "memo", "visit_date", "complete_date", "engineer_name", "supply_price", "tax_price", "cash", "credit", "bank"]
 
-            col_headers = [
-                "등록일",
-                "고객명",
-                "구분1",
-                "AS(납품)상태",
-                "출장/내방",
-                "거래내역/접수내용",
-                "고장증상",
-                "완료내역",
-                "메모",
-                "방문일",
-                "완료일",
-                "담당자",
-                "공급가액",
-                "부가세",
-                "현금결제",
-                "카드결제",
-                "은행입금",
-            ]
-            col_names = [
-                "register_date",
-                "customer_name",
-                "category_name1",
-                "category_name2",
-                "category_name3",
-                "content",
-                "symptom",
-                "completed_content",
-                "memo",
-                "visit_date",
-                "complete_date",
-                "engineer_name",
-                "supply_price",
-                "tax_price",
-                "cash",
-                "credit",
-                "bank",
-            ]
+        # ━━━ 출고내역 ━━━
+        elif export_type == "release":
+            try:
+                from django.db.models import Q
+                queryset = His.objects.filter(Q(trade=None) & Q(is_released=True))
+                if start_date:
+                    queryset = queryset.filter(created_date__gte=start_date)
+                if end_date:
+                    queryset = queryset.filter(created_date__lte=end_date + " 23:59:59")
+                queryset = queryset.order_by("-created_date")
+            except Exception as e:
+                print(e)
+                return ReturnNoContent()
 
+            type_datas = HistorySerializer(queryset, many=True).data
+            file_name = f"release_{start_date or 'all'}_{end_date or 'all'}.xlsx" if start_date or end_date else "release.xlsx"
+            sheet_name = "release"
+            col_headers = ["제품명", "제품분류", "수량", "메모", "등록자", "등록일"]
+            col_names = ["name", "product_category", "amount", "memo", "register_name", "created_date"]
+
+        # ━━━ 출고로그 ━━━
+        elif export_type == "release_log":
+            try:
+                queryset = ReleaseLog.objects.all()
+                if start_date:
+                    queryset = queryset.filter(created_date__gte=start_date)
+                if end_date:
+                    queryset = queryset.filter(created_date__lte=end_date + " 23:59:59")
+                queryset = queryset.order_by("-created_date")
+            except Exception as e:
+                print(e)
+                return ReturnNoContent()
+
+            type_datas = ReleaseLogSerializer(queryset, many=True).data
+            file_name = f"release_log_{start_date or 'all'}_{end_date or 'all'}.xlsx" if start_date or end_date else "release_log.xlsx"
+            sheet_name = "release_log"
+            col_headers = ["구분", "제품명", "제품분류", "수량", "메모", "등록자", "원등록자", "원등록일", "로그생성일"]
+            col_names = ["release_log_category_name", "name", "product_category", "amount", "memo", "register_name", "release_register_name", "release_created_date", "created_date"]
+
+        # ━━━ 회계 ━━━
+        elif export_type == "accounting":
+            try:
+                queryset = Tra.objects.filter(category_1__in=[5, 6])  # 수입, 지출
+                if start_date:
+                    queryset = queryset.filter(register_date__gte=start_date)
+                if end_date:
+                    queryset = queryset.filter(register_date__lte=end_date + " 23:59:59")
+                queryset = queryset.order_by("-register_date")
+            except Exception as e:
+                print(e)
+                return ReturnNoContent()
+
+            type_datas = TradeSerializer(queryset, many=True).data
+            file_name = f"accounting_{start_date or 'all'}_{end_date or 'all'}.xlsx" if start_date or end_date else "accounting.xlsx"
+            sheet_name = "accounting"
+            col_headers = ["등록일", "구분", "내용", "공급가액", "부가세", "현금", "카드", "은행", "메모", "등록자"]
+            col_names = ["register_date", "category_name1", "content", "supply_price", "tax_price", "cash", "credit", "bank", "memo", "register_id"]
+
+        # ━━━ 미수금현황 ━━━
+        elif export_type == "receivable":
+            try:
+                queryset = Cus.objects.filter(receivable__gt=0).order_by("-receivable")
+            except Exception as e:
+                print(e)
+                return ReturnNoContent()
+
+            type_datas = CustomerSerializer(queryset, many=True).data
+            file_name = "receivable_plus.xlsx"
+            sheet_name = "receivable"
+            col_headers = ["고객명", "Phone", "Tel", "주소", "미수금"]
+            col_names = ["name", "phone", "tel", "address", "receivable"]
+
+        # ━━━ 지불금현황 ━━━
+        elif export_type == "receivable_minus":
+            try:
+                queryset = Cus.objects.filter(receivable__lt=0).order_by("receivable")
+            except Exception as e:
+                print(e)
+                return ReturnNoContent()
+
+            type_datas = CustomerSerializer(queryset, many=True).data
+            file_name = "receivable_minus.xlsx"
+            sheet_name = "receivable"
+            col_headers = ["고객명", "Phone", "Tel", "주소", "지불금"]
+            col_names = ["name", "phone", "tel", "address", "receivable"]
+
+        else:
+            return ReturnNoContent()
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # 엑셀 파일 생성
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         if type_datas is None:
             return ReturnNoContent()
 
@@ -3078,7 +3095,6 @@ class ExportDataToExcelView(APIView):
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet(sheet_name)
 
-        # 헤더 스타일
         header_format = workbook.add_format({
             'bold': True,
             'bg_color': '#D9E1F2',
@@ -3086,28 +3102,23 @@ class ExportDataToExcelView(APIView):
             'align': 'center',
             'valign': 'vcenter',
         })
-
-        # 데이터 스타일
         cell_format = workbook.add_format({
             'border': 1,
             'align': 'left',
             'valign': 'vcenter',
         })
 
-        # 헤더 작성
         for col, header in enumerate(col_headers):
             worksheet.write(0, col, header, header_format)
             worksheet.set_column(col, col, 15)
 
-        # 데이터 작성
         for row, item in enumerate(type_datas, start=1):
             for col, col_name in enumerate(col_names):
                 value = item.get(col_name, "")
                 if value is None:
                     value = ""
-                # 날짜 형식 처리
                 if "date" in col_name and value:
-                    value = str(value)[:10]
+                    value = str(value)[:10] if len(str(value)) >= 10 else str(value)
                 worksheet.write(row, col, value, cell_format)
 
         workbook.close()
@@ -3120,9 +3131,8 @@ class ExportDataToExcelView(APIView):
         response["Content-Disposition"] = f"attachment; filename*=UTF-8''{quote(file_name)}"
         response["Access-Control-Expose-Headers"] = "Content-Disposition"
 
-        # 로그 기록
         logger.info(
-            f"{return_username(req.user).name}님이 {data['type']} 엑셀 다운로드 "
+            f"{return_username(req.user).name}님이 {export_type} 엑셀 다운로드 "
             f"(기간: {start_date or '전체'} ~ {end_date or '전체'}, 건수: {len(type_datas)})"
         )
 

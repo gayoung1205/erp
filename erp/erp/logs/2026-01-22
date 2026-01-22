@@ -40,3 +40,12 @@
 [22/Jan/2026 15:44:22] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
 [22/Jan/2026 15:44:47] INFO [core.views:689] test3 이 전체거래내역을 조회하였습니다.
 [22/Jan/2026 15:44:59] INFO [core.views:689] test3 이 전체거래내역을 조회하였습니다.
+[22/Jan/2026 16:00:52] INFO [core.views:689] test3 이 전체거래내역을 조회하였습니다.
+[22/Jan/2026 16:00:53] INFO [core.views:280] 복순이 이 전체고객을 검색하였습니다.
+[22/Jan/2026 16:01:10] INFO [core.views:280] test1 이 전체고객을 검색하였습니다.
+[22/Jan/2026 16:01:25] INFO [core.views:509] test1 이 전체제품을 조회하였습니다.
+[22/Jan/2026 16:58:40] INFO [core.views:509] test1 이 전체제품을 조회하였습니다.
+[22/Jan/2026 16:58:54] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[22/Jan/2026 16:59:25] INFO [core.views:509] test1 이 전체제품을 조회하였습니다.
+[22/Jan/2026 16:59:34] INFO [core.views:3134] test1님이 product 엑셀 다운로드 (기간: 2026-01-01 ~ 2026-01-31, 건수: 10)
+[22/Jan/2026 17:00:07] INFO [core.views:3134] test1님이 release 엑셀 다운로드 (기간: 2026-01-01 ~ 2026-01-31, 건수: 8)
