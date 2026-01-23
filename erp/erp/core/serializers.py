@@ -105,15 +105,14 @@ def ctotal_price(his):
 class CustomerSerializer(serializers.ModelSerializer):
     receivable = serializers.SerializerMethodField()
     address = serializers.SerializerMethodField()
+    last_receivable_date = serializers.SerializerMethodField()
 
     class Meta:
         model = Customer
         fields = "__all__"
 
     def get_receivable(self, obj):
-        
         tra = Trade.objects.filter(customer_id=obj.id)
-        
         return create_receivable(tra)
 
     def get_address(self, obj):
@@ -123,6 +122,18 @@ class CustomerSerializer(serializers.ModelSerializer):
             if obj.address_2:
                 address_sum += obj.address_2
         return address_sum
+
+    def get_last_receivable_date(self, obj):
+        # 미수금 발생 거래: AS(0), 판매(3), 납품(7)
+        last_trade = Trade.objects.filter(
+            customer_id=obj.id,
+            category_1__in=[0, 3, 7]
+        ).order_by('-register_date').first()
+
+        if last_trade and last_trade.register_date:
+            return last_trade.register_date
+
+        return None
 
 
 class ProductSerializer(serializers.ModelSerializer):
