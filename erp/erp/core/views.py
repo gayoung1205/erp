@@ -1749,6 +1749,38 @@ class EngineerDetail(APIView):
             print(e)
             return ReturnError()
 
+    def delete(self, req, engineer_id):
+        """
+        직원 삭제 (비활성 직원만 삭제 가능)
+        """
+        try:
+            eng = Eng.objects.get(id=engineer_id)
+        except:
+            return ReturnNoContent()
+
+        if eng.is_active:
+            return CustomResponse(
+                message="활성 직원은 삭제할 수 없습니다. 먼저 비활성화 해주세요.",
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            with transaction.atomic():
+                user = eng.user
+                delete_eng_id = copy.deepcopy(eng.id)
+                delete_eng_name = copy.deepcopy(eng.name)
+
+                eng.delete()
+                user.delete()
+
+                logger.info(
+                    f"{return_username(req.user).name} 이 {delete_eng_id}:{delete_eng_name} 직원을 삭제하였습니다."
+                )
+            return ReturnDelete()
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
 
 class HistoryAllDelete(APIView):
     def delete(self, req, trade_id):

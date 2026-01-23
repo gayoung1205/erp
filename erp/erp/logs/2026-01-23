@@ -1,0 +1,18 @@
+[23/Jan/2026 09:12:40] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[23/Jan/2026 09:33:01] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[23/Jan/2026 09:33:57] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[23/Jan/2026 09:34:03] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[23/Jan/2026 09:34:06] INFO [core.views:1705] test1 이 5:복순이을 조회하였습니다.
+[23/Jan/2026 09:34:08] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[23/Jan/2026 09:34:17] INFO [core.views:1705] test1 이 5:복순이을 조회하였습니다.
+[23/Jan/2026 09:34:19] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[23/Jan/2026 09:34:22] INFO [core.views:1705] test1 이 5:복순이을 조회하였습니다.
+[23/Jan/2026 09:36:04] INFO [core.views:1705] test1 이 5:복순이을 조회하였습니다.
+[23/Jan/2026 09:36:07] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[23/Jan/2026 09:36:14] INFO [core.views:1705] test1 이 5:복순이을 조회하였습니다.
+[23/Jan/2026 09:36:16] INFO [core.views:1744] test1 이 5:복순이 직원을 수정하였습니다.
+[23/Jan/2026 09:36:16] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[23/Jan/2026 09:36:36] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[23/Jan/2026 09:36:39] INFO [core.views:1705] test1 이 5:복순이을 조회하였습니다.
+[23/Jan/2026 09:36:41] INFO [core.views:1776] test1 이 5:복순이 직원을 삭제하였습니다.
+[23/Jan/2026 09:36:41] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.

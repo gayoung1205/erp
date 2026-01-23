@@ -35,6 +35,7 @@ class Engineer(models.Model):
     RESEARCH = 4
     PLANNING = 5
     PRODUCTION = 6
+    SALES = 7
     STATUS_CHOICES = (
         (MANAGE, "관리"),
         (SUPPORT, "지원"),
@@ -43,6 +44,7 @@ class Engineer(models.Model):
         (RESEARCH, "연구개발"),
         (PLANNING, "전략기획"),
         (PRODUCTION, "생산"),
+        (SALES, "영업홍보")
     )
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
