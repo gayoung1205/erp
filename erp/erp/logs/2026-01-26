@@ -43,3 +43,48 @@
 [26/Jan/2026 11:21:59] INFO [core.views:2268] test1님이 부서 [4]의 출고로그 권한을 수정하였습니다.
 [26/Jan/2026 11:21:59] INFO [core.views:2268] test1님이 부서 [4]의 출고로그 권한을 수정하였습니다.
 [26/Jan/2026 11:22:03] INFO [core.views:280] test1 이 전체고객을 검색하였습니다.
+[26/Jan/2026 11:23:32] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 11:32:09] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 11:32:27] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 11:36:33] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 11:36:41] INFO [core.views:280] test1 이 전체고객을 검색하였습니다.
+[26/Jan/2026 11:36:46] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 11:37:12] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 11:39:36] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 11:39:44] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 11:40:14] INFO [core.views:1635] 테스트2 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 11:40:37] INFO [core.views:509] 테스트2 이 전체제품을 조회하였습니다.
+[26/Jan/2026 11:41:08] INFO [core.views:689] test2 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 11:45:08] INFO [core.views:689] test2 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 11:46:05] INFO [core.views:689] test2 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 11:47:03] INFO [core.views:2714] 테스트2 이 출근부를 조회하였습니다.
+[26/Jan/2026 11:47:18] INFO [core.views:2714] 테스트2 이 출근부를 조회하였습니다.
+[26/Jan/2026 11:47:43] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 11:47:55] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 12:03:08] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 12:03:46] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 12:03:49] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 14:33:35] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 14:33:36] INFO [core.views:280] test1 이 전체고객을 검색하였습니다.
+[26/Jan/2026 14:33:40] INFO [core.views:280] test1 이 전체고객을 검색하였습니다.
+[26/Jan/2026 14:33:56] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 14:37:15] INFO [core.views:1635] aisol 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 14:37:18] INFO [core.views:1635] aisol 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 14:44:37] INFO [core.views:1635] aisol 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 14:44:51] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 14:45:48] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 14:45:53] INFO [core.views:280] admin 이 전체고객을 검색하였습니다.
+[26/Jan/2026 14:45:55] INFO [core.views:509] admin 이 전체제품을 조회하였습니다.
+[26/Jan/2026 14:45:56] INFO [core.views:280] admin 이 전체고객을 검색하였습니다.
+[26/Jan/2026 14:46:00] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 14:47:38] INFO [core.views:509] 가콩 이 전체제품을 조회하였습니다.
+[26/Jan/2026 14:47:40] INFO [core.views:280] 가콩 이 전체고객을 검색하였습니다.
+[26/Jan/2026 14:47:47] INFO [core.views:689] ig1854 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 14:47:53] INFO [core.views:689] ig1854 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 14:47:57] INFO [core.views:689] ig1854 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 14:47:59] INFO [core.views:689] ig1854 이 전체거래내역을 조회하였습니다.
+[26/Jan/2026 14:48:07] INFO [core.views:2727] 가콩 이 출근부를 조회하였습니다.
+[26/Jan/2026 14:48:10] INFO [core.views:1635] 가콩 이 전체 직원을 조회하였습니다.
+[26/Jan/2026 14:48:10] INFO [core.views:2727] 가콩 이 출근부를 조회하였습니다.
+[26/Jan/2026 14:48:12] INFO [core.views:280] 가콩 이 전체고객을 검색하였습니다.
+[26/Jan/2026 14:48:14] INFO [core.views:509] 가콩 이 전체제품을 조회하였습니다.

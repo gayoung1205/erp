@@ -2128,15 +2128,22 @@ class ReleaseLogView(APIView):
 
     def get(self, req):
         try:
-            # 현재 사용자의 부서 가져오기
             engineer = Eng.objects.get(user=req.user)
             department = engineer.category
+
+            # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            # [수정] 관리(0), 대표이사(2)는 전체 권한
+            # 기존: if department in [2, 3]:
+            # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            if department in [0, 2]:
+                release_log = ReleaseLog.objects.all().order_by("-created_date")[:100]
+                release_log_data = ReleaseLogSerializer(release_log, many=True).data
+                return ReturnData(data=release_log_data)
 
             # 해당 부서의 권한 확인
             try:
                 permission = ReleaseLogPermission.objects.get(department=department)
             except ReleaseLogPermission.DoesNotExist:
-                # 권한 설정이 없으면 권한 없음
                 return CustomResponse(
                     message="열람 권한이 없습니다.",
                     status=status.HTTP_403_FORBIDDEN
@@ -2145,20 +2152,18 @@ class ReleaseLogView(APIView):
             # 권한에 따라 조회할 카테고리 필터링
             allowed_categories = []
             if permission.can_view_register:
-                allowed_categories.append(0)  # 등록
+                allowed_categories.append(0)
             if permission.can_view_sale:
-                allowed_categories.append(1)  # 판매
+                allowed_categories.append(1)
             if permission.can_view_delete:
-                allowed_categories.append(4)  # 삭제
+                allowed_categories.append(4)
 
-            # 권한이 하나도 없으면
             if not allowed_categories:
                 return CustomResponse(
                     message="열람 권한이 없습니다.",
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-            # 권한에 맞는 로그만 조회 (100개)
             release_log = ReleaseLog.objects.filter(
                 release_log_category__in=allowed_categories
             ).order_by("-created_date")[:100]
@@ -2175,10 +2180,14 @@ class ReleaseLogPermissionView(APIView):
 
     def get(self, req):
         """
-        전체 부서별 권한 조회 (관리자만)
+        전체 부서별 권한 조회
         """
         engineer = Eng.objects.get(user=req.user)
-        if engineer.category not in [2, 3]:  # 대표이사, 관리자만
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # [수정] 관리(0), 대표이사(2)만 접근 가능
+        # 기존: if engineer.category not in [2, 3]:
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        if engineer.category not in [0, 2]:
             return CustomResponse(
                 message="권한이 없습니다.",
                 status=status.HTTP_403_FORBIDDEN
@@ -2236,10 +2245,14 @@ class ReleaseLogPermissionView(APIView):
 
     def put(self, req):
         """
-        부서별 권한 수정 (관리자만)
+        부서별 권한 수정
         """
         engineer = Eng.objects.get(user=req.user)
-        if engineer.category not in [2, 3]:
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # [수정] 관리(0), 대표이사(2)만 수정 가능
+        # 기존: if engineer.category not in [2, 3]:
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        if engineer.category not in [0, 2]:
             return CustomResponse(
                 message="권한이 없습니다.",
                 status=status.HTTP_403_FORBIDDEN
@@ -2921,7 +2934,7 @@ class ExportDataToExcelView(APIView):
             engineer = Eng.objects.get(user=req.user)
             department = engineer.category
 
-            if department not in [2, 3]:  # 대표이사, 관리자 제외
+            if department not in [0, 2]:
                 try:
                     perm = ReleaseLogPermission.objects.get(department=department)
 
