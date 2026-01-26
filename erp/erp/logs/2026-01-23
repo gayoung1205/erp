@@ -55,3 +55,6 @@
 [23/Jan/2026 15:23:45] INFO [core.views:1635] test1 이 전체 직원을 조회하였습니다.
 [23/Jan/2026 15:23:45] INFO [core.views:351] aisol 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
 [23/Jan/2026 15:23:53] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[23/Jan/2026 15:54:15] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[23/Jan/2026 16:17:08] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
+[23/Jan/2026 16:19:49] INFO [core.views:689] aisol 이 전체거래내역을 조회하였습니다.
