@@ -2122,52 +2122,10 @@ class ReleaseDetailView(APIView):
 
 
 class ReleaseLogView(APIView):
-    """
-    출고기록 조회 API (권한 체크 포함)
-    """
-
     def get(self, req):
         try:
-            engineer = Eng.objects.get(user=req.user)
-            department = engineer.category
-
-            # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            # [수정] 관리(0), 대표이사(2)는 전체 권한
-            # 기존: if department in [2, 3]:
-            # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            if department in [0, 2]:
-                release_log = ReleaseLog.objects.all().order_by("-created_date")[:100]
-                release_log_data = ReleaseLogSerializer(release_log, many=True).data
-                return ReturnData(data=release_log_data)
-
-            # 해당 부서의 권한 확인
-            try:
-                permission = ReleaseLogPermission.objects.get(department=department)
-            except ReleaseLogPermission.DoesNotExist:
-                return CustomResponse(
-                    message="열람 권한이 없습니다.",
-                    status=status.HTTP_403_FORBIDDEN
-                )
-
-            # 권한에 따라 조회할 카테고리 필터링
-            allowed_categories = []
-            if permission.can_view_register:
-                allowed_categories.append(0)
-            if permission.can_view_sale:
-                allowed_categories.append(1)
-            if permission.can_view_delete:
-                allowed_categories.append(4)
-
-            if not allowed_categories:
-                return CustomResponse(
-                    message="열람 권한이 없습니다.",
-                    status=status.HTTP_403_FORBIDDEN
-                )
-
-            release_log = ReleaseLog.objects.filter(
-                release_log_category__in=allowed_categories
-            ).order_by("-created_date")[:100]
-
+            # 권한 체크 없이 모든 사용자 조회 가능
+            release_log = ReleaseLog.objects.all().order_by("-created_date")[:100]
             release_log_data = ReleaseLogSerializer(release_log, many=True).data
 
         except Exception as e:
@@ -2182,16 +2140,6 @@ class ReleaseLogPermissionView(APIView):
         """
         전체 부서별 권한 조회
         """
-        engineer = Eng.objects.get(user=req.user)
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # [수정] 관리(0), 대표이사(2)만 접근 가능
-        # 기존: if engineer.category not in [2, 3]:
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        if engineer.category not in [0, 2]:
-            return CustomResponse(
-                message="권한이 없습니다.",
-                status=status.HTTP_403_FORBIDDEN
-            )
 
         departments = [
             {"department": 0, "name": "관리"},
@@ -2965,18 +2913,12 @@ class ExportDataToExcelView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # 날짜 필터
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         start_date = None
         end_date = None
         if data.get("date"):
             start_date = data["date"].get("start_date")
             end_date = data["date"].get("end_date")
 
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # 타입별 데이터 조회
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         col_headers, col_names = [], []
         type_datas = None
         sheet_name, file_name = "", ""
