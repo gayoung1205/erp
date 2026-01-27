@@ -38,3 +38,6 @@
 [27/Jan/2026 14:07:03] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
 [27/Jan/2026 14:07:04] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
 [27/Jan/2026 14:07:05] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
+[27/Jan/2026 15:07:31] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
+[27/Jan/2026 15:07:36] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
+[27/Jan/2026 15:08:06] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
