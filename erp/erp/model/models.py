@@ -37,13 +37,13 @@ class Engineer(models.Model):
     PRODUCTION = 6
     SALES = 7
     STATUS_CHOICES = (
-        (MANAGE, "관리"),
-        (SUPPORT, "지원"),
+        (MANAGE, "경영관리"),
+        (SUPPORT, "기술지원"),
         (CHIEF, "대표이사"),
         (ADMIN, "관리자"),
         (RESEARCH, "연구개발"),
         (PLANNING, "전략기획"),
-        (PRODUCTION, "생산"),
+        (PRODUCTION, "생산품질관리"),
         (SALES, "영업홍보")
     )
     id = models.AutoField(primary_key=True)

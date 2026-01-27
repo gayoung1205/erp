@@ -346,7 +346,7 @@ class RecordSerializer(serializers.ModelSerializer):
             return -1
 
     def get_department(self, obj):
-        category = ["관리", "지원", "대표이사", "서버관리자", "연구개발", "전략기획", "생산", "영업"]
+        category = ["경영관리", "기술지원", "대표이사", "서버관리자", "연구개발", "전략기획", "생산품질관리", "영업홍보"]
         return category[Engineer.objects.get(user=obj.user).category]
 
 

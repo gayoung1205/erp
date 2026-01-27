@@ -2177,14 +2177,14 @@ class ReleaseLogPermissionView(APIView):
         """
 
         departments = [
-            {"department": 0, "name": "관리"},
-            {"department": 1, "name": "지원"},
+            {"department": 0, "name": "경영관리"},
+            {"department": 1, "name": "기술지원"},
             {"department": 2, "name": "대표이사"},
             {"department": 3, "name": "관리자"},
             {"department": 4, "name": "연구개발"},
             {"department": 5, "name": "전략기획"},
-            {"department": 6, "name": "생산"},
-            {"department": 7, "name": "영업"},
+            {"department": 6, "name": "생산품질관리"},
+            {"department": 7, "name": "영업홍보"},
         ]
 
         result = []
