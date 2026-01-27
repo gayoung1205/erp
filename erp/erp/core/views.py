@@ -685,7 +685,7 @@ class Trade(APIView):
             category = req.GET.get("category", None)
             category_1 = ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모"]
             category_2 = ["접수", "완료", "진행", "취소"]
-            category_3 = ["출장", "내방"]
+            category_3 = ["출장", "내방", "공사", "내부처리"]
             logger.info(f"{req.user.username} 이 전체거래내역을 조회하였습니다.")
 
             if search:

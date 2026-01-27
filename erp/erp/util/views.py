@@ -81,7 +81,7 @@ def get_category_name2(obj):
 def get_category_name3(obj):
     if obj["category_3"] == None:
         return " "
-    category = ["출장", "내방"]
+    category = ["출장", "내방", "공사", "내부처리"]
     return category[obj["category_3"]]
 
 
