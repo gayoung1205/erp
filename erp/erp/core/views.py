@@ -2227,14 +2227,9 @@ class ReleaseLogPermissionView(APIView):
         return ReturnData(data=result)
 
     def put(self, req):
-        """
-        부서별 권한 수정
-        """
+
         engineer = Eng.objects.get(user=req.user)
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # [수정] 관리(0), 대표이사(2)만 수정 가능
-        # 기존: if engineer.category not in [2, 3]:
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
         if engineer.category not in [0, 2]:
             return CustomResponse(
                 message="권한이 없습니다.",
@@ -2249,16 +2244,20 @@ class ReleaseLogPermissionView(APIView):
                 perm, created = ReleaseLogPermission.objects.get_or_create(
                     department=department
                 )
-                perm.can_view_register = data.get("can_view_register", False)
-                perm.can_view_sale = data.get("can_view_sale", False)
-                perm.can_view_delete = data.get("can_view_delete", False)
-                perm.can_export_customer = data.get("can_export_customer", False)
-                perm.can_export_trade = data.get("can_export_trade", False)
-                perm.can_export_product = data.get("can_export_product", False)
-                perm.can_export_release = data.get("can_export_release", False)
-                perm.can_export_release_log = data.get("can_export_release_log", False)
-                perm.can_export_accounting = data.get("can_export_accounting", False)
-                perm.can_export_receivable = data.get("can_export_receivable", False)
+
+                # 출고로그 열람 권한
+                perm.can_view_register = data.get("can_view_register", perm.can_view_register)
+                perm.can_view_sale = data.get("can_view_sale", perm.can_view_sale)
+                perm.can_view_delete = data.get("can_view_delete", perm.can_view_delete)
+
+                # 엑셀 다운로드 권한
+                perm.can_export_customer = data.get("can_export_customer", perm.can_export_customer)
+                perm.can_export_trade = data.get("can_export_trade", perm.can_export_trade)
+                perm.can_export_product = data.get("can_export_product", perm.can_export_product)
+                perm.can_export_release = data.get("can_export_release", perm.can_export_release)
+                perm.can_export_release_log = data.get("can_export_release_log", perm.can_export_release_log)
+                perm.can_export_accounting = data.get("can_export_accounting", perm.can_export_accounting)
+                perm.can_export_receivable = data.get("can_export_receivable", perm.can_export_receivable)
                 perm.save()
 
                 logger.info(
