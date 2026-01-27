@@ -12,3 +12,29 @@
 [27/Jan/2026 10:35:17] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
 [27/Jan/2026 10:35:50] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
 [27/Jan/2026 10:35:51] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
+[27/Jan/2026 10:37:51] INFO [core.views:1705] admin 이 4:테스트2을 조회하였습니다.
+[27/Jan/2026 10:51:17] INFO [core.views:1705] admin 이 4:테스트2을 조회하였습니다.
+[27/Jan/2026 14:06:31] INFO [core.views:1705] admin 이 4:테스트2을 조회하였습니다.
+[27/Jan/2026 14:06:36] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
+[27/Jan/2026 14:06:37] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
+[27/Jan/2026 14:06:51] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
+[27/Jan/2026 14:06:51] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:06:51] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:06:53] INFO [core.views:1127] admin123이 [53] : [테스트거래처]의 [AS] 내역을 수정하였습니다.
+[27/Jan/2026 14:06:53] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:06:53] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
+[27/Jan/2026 14:06:54] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:06:55] INFO [core.views:1127] admin123이 [53] : [테스트거래처]의 [AS] 내역을 수정하였습니다.
+[27/Jan/2026 14:06:55] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:06:55] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
+[27/Jan/2026 14:06:55] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:06:58] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
+[27/Jan/2026 14:07:01] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:07:01] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
+[27/Jan/2026 14:07:01] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:07:02] INFO [core.views:1127] admin123이 [52] : [테스트거래처]의 [AS] 내역을 수정하였습니다.
+[27/Jan/2026 14:07:03] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:07:03] INFO [core.views:1635] admin 이 전체 직원을 조회하였습니다.
+[27/Jan/2026 14:07:03] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[27/Jan/2026 14:07:04] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
+[27/Jan/2026 14:07:05] INFO [core.views:689] admin123 이 전체거래내역을 조회하였습니다.
