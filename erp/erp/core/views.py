@@ -1954,8 +1954,6 @@ class DashBoardView(APIView):
                 "month_amount": month_amount,
                 "year_amount": year_amount,
                 "permission": eng.category,
-                "is_staff": eng.is_staff,
-                "is_superuser": req.user.is_superuser,
             }
         )
 
@@ -2536,101 +2534,20 @@ class RecordView(APIView):
 
         return ReturnGood(data=record_data)
 
-    def put(self, req, record_id):
-        """
-            url 형식 record/{record_id}?submit=(0,1)&reject=(0,1)&approve=(0,1)&leader_approve=(0,1)
-        """
-        submit = req.GET.get("submit", None)
-        reject = req.GET.get("reject", None)
-        approve = req.GET.get("approve", None)
-        leader_approve = req.GET.get("leader_approve", None)  # ★ 추가
-        data = req.data
-
-        with transaction.atomic():
-            record = get_object_or_404(Record, id=record_id)
-            engineer = Eng.objects.get(user=req.user)
-            record_engineer = Eng.objects.get(user=record.user)
-
-            # 본인 문서일 경우 내용 수정 가능
-            if record.user == req.user:
-                for key in data:
-                    if key not in [
-                        "is_submit",
-                        "is_leader_approved",
-                        "is_approved",
-                        "is_reject",
-                        "reject_content",
-                        "user",
-                    ]:
-                        setattr(record, key, data[key])
-
-            # ★ 제출 처리
-            if submit:
-                record.is_submit = True
-                record.is_reject = False  # 재제출 시 반려 상태 초기화
-                record.is_leader_approved = False  # 재제출 시 팀장 승인 초기화
-                record.is_approved = False  # 재제출 시 최종 승인 초기화
-                record.reject_content = ""  # 반려 사유 초기화
-
-                # ★ 팀장이 없는 부서면 바로 대표이사 대기 상태로
-                has_leader = Eng.objects.filter(
-                    category=record_engineer.category,
-                    is_staff=True
-                ).exclude(user=record.user).exists()
-
-                if not has_leader:
-                    record.is_leader_approved = True  # 팀장 스킵
-
-            # ★ 팀장 승인 처리 (팀장 또는 대표이사)
-            if leader_approve:
-                can_leader_approve = False
-
-                # 대표이사는 모든 문서 팀장 승인 가능
-                if req.user.is_superuser:
-                    can_leader_approve = True
-                # 팀장은 같은 부서 문서만 승인 가능
-                elif engineer.is_staff and engineer.category == record_engineer.category:
-                    can_leader_approve = True
-
-                if can_leader_approve:
-                    record.is_leader_approved = True
-                    logger.info(
-                        f"{return_username(req.user).name} 이 [{record.id}] : [{record.category}] 전자문서를 팀장 승인하였습니다."
-                    )
-
-            # ★ 최종 승인 처리 (대표이사만 가능)
-            if approve and req.user.is_superuser:
-                if record.is_leader_approved:  # 팀장 승인이 된 경우에만
-                    record.is_approved = True
-                    logger.info(
-                        f"{return_username(req.user).name} 이 [{record.id}] : [{record.category}] 전자문서를 최종 승인하였습니다."
-                    )
-
-            # ★ 반려 처리 (팀장 또는 대표이사)
-            if reject:
-                can_reject = False
-
-                # 대표이사는 모든 문서 반려 가능
-                if req.user.is_superuser:
-                    can_reject = True
-                # 팀장은 같은 부서 문서만 반려 가능
-                elif engineer.is_staff and engineer.category == record_engineer.category:
-                    can_reject = True
-
-                if can_reject:
-                    record.is_reject = True
-                    record.reject_content = data.get("reject_content", "")
-                    logger.info(
-                        f"{return_username(req.user).name} 이 [{record.id}] : [{record.category}] 전자문서를 반려하였습니다."
-                    )
-
-            record.save()
-
-        return ReturnAccept()
-
     def post(self, req):
         """
             전자문서 생성 API
+            ---
+                # 내용
+                - category - CharField ((0, 업무일지), (1, 휴가신청))
+                - content - TextField 내용
+                - is_submit - BooleanField 제출상태 확인
+                - is_approved - BooleandField 승인여부 확인
+                - is_reject - BooleanField 반려여부 확인
+                - reject_contnet - Text 반려사유 확인
+                - date - DateField 제출 날짜
+                - start_date - DateTimeField 휴가신청 시 사용
+                - end_date - DateTimeField 휴가신청 시 사용
         """
         data = req.data
         category_index = ["업무일지", "휴가신청"]
@@ -2642,28 +2559,14 @@ class RecordView(APIView):
             for key in data:
                 if key not in [
                     "is_submit",
-                    "is_leader_approved",
                     "is_approved",
                     "is_reject",
                     "reject_content",
                     "category",
                 ]:
                     setattr(record, key, data[key])
-
-            # ★ 제출 처리
             if data.get("is_submit"):
-                record.is_submit = True
-
-                # ★ 팀장이 없는 부서면 바로 대표이사 대기 상태로
-                record_engineer = Eng.objects.get(user=req.user)
-                has_leader = Eng.objects.filter(
-                    category=record_engineer.category,
-                    is_staff=True
-                ).exclude(user=req.user).exists()
-
-                if not has_leader:
-                    record.is_leader_approved = True
-
+                record.is_submit = True if data["is_submit"] else False
             record.save()
             logger.info(
                 f"{return_username(req.user).name} 이 [{record.id}] : [{record.category}] 전자문서를 생성하였습니다."

@@ -319,7 +319,6 @@ class RecordSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     department = serializers.SerializerMethodField()
-    approval_status = serializers.SerializerMethodField()  # ★ 추가
 
     class Meta:
         model = Record
@@ -349,25 +348,6 @@ class RecordSerializer(serializers.ModelSerializer):
     def get_department(self, obj):
         category = ["경영관리", "기술지원", "대표이사", "서버관리자", "연구개발", "전략기획", "생산품질관리", "영업홍보"]
         return category[Engineer.objects.get(user=obj.user).category]
-
-    def get_approval_status(self, obj):
-        """
-        0 = 임시저장
-        1 = 팀장 대기
-        2 = 대표이사 대기
-        3 = 최종 승인
-        4 = 반려
-        """
-        if obj.is_reject:
-            return 4
-        elif obj.is_approved:
-            return 3
-        elif obj.is_leader_approved:
-            return 2
-        elif obj.is_submit:
-            return 1
-        else:
-            return 0
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
