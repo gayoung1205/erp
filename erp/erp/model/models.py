@@ -338,14 +338,10 @@ class Calendar(models.Model):
 
 class Record(models.Model):
     DAILY_WORK = "업무일지"
-    # APPROVAL = "결재"
-    # REPORT = "보고"
     VACATION = "휴가신청"
 
     CHOICES = [
         (DAILY_WORK, "업무일지"),
-        # (APPROVAL, "결재"),
-        # (REPORT, "보고"),
         (VACATION, "휴가신청"),
     ]
     id = models.AutoField(primary_key=True)
@@ -361,6 +357,7 @@ class Record(models.Model):
     remark = models.TextField(default="", blank=True, null=True)
     plan = models.TextField(default="", blank=True, null=True)
     is_submit = models.BooleanField(default=False)
+    is_leader_approved = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
     reject_content = models.TextField(default="", blank=True)
     is_reject = models.BooleanField(default=False)
