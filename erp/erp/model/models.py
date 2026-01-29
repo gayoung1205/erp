@@ -79,6 +79,7 @@ class Product(models.Model):
     out_price = models.IntegerField(null=True, blank=True, default=0)
     sale_price = models.IntegerField(null=True, blank=True, default=0)
     register_id = models.CharField(max_length=50, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     updated_date = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
@@ -96,6 +97,16 @@ class Product(models.Model):
             self.save()
         except:
             return False
+        return True
+
+    def deactivate(self):
+        self.is_active = False
+        self.save()
+        return True
+
+    def activate(self):
+        self.is_active = True
+        self.save()
         return True
 
 

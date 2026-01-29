@@ -429,13 +429,12 @@ class Product(APIView):
     """
 
     def get(self, req):
-        """
-            제품에 대한 리스트를 반환하는 API
-        """
+
         search = req.GET.get("search", None)
         name = req.GET.get("name", None)
         code = req.GET.get("code", None)
         category = req.GET.get("category", None)
+        is_active = req.GET.get("isActive", "true")
 
         if search:
             try:
@@ -473,45 +472,55 @@ class Product(APIView):
 
                 pro = Pro.objects.filter(search_query)
 
+                # ✅ 추가: 활성화 필터 적용
+                if is_active == "true":
+                    pro = pro.filter(is_active=True)
+                elif is_active == "false":
+                    pro = pro.filter(is_active=False)
+                # is_active == "all" 이면 필터 적용 안함
+
                 if category:
                     pro = pro.filter(category__iexact=category)
 
-                pro = pro.order_by("-stock")  # 재고 내림차순
+                pro = pro.order_by("-stock")
                 serializer = ProductSerializer(pro, many=True)
                 return ReturnData(data={"results": serializer.data})
             except:
                 return CustomResponse(
-                    message="데이터 형식이 이상합니다.",
-                    status=status.HTTP_400_BAD_REQUEST
+                    message="데이터 형식이 이상합니다.", status=status.HTTP_400_BAD_REQUEST
                 )
-        elif name and code:
-            pro = Pro.objects.filter(
-                Q(name__icontains=name) | Q(code__icontains=code)
-            )
-            if category:
-                pro = pro.filter(category__iexact=category)
-            pro = pro.order_by("-stock")
-        elif name:
-            pro = Pro.objects.filter(Q(name__icontains=name))
-            if category:
-                pro = pro.filter(category__iexact=category)
-            pro = pro.order_by("-stock")
-        elif code:
-            pro = Pro.objects.filter(Q(code__icontains=code))
-            if category:
-                pro = pro.filter(category__iexact=category)
-            pro = pro.order_by("-stock")
-        else:
-            pro = Pro.objects.all()
-            if category:
-                pro = pro.filter(category__iexact=category)
 
-        logger.info(f"{return_username(req.user).name} 이 전체제품을 조회하였습니다.")
+        # name 또는 code 검색 (거래 등록 시 제품 검색용)
+        if name or code:
+            try:
+                pro = Pro.objects.filter(
+                    Q(name__icontains=name) | Q(code__icontains=code)
+                )
+                # ✅ 추가: 활성화된 제품만 검색 (거래 등록 시)
+                if is_active == "true":
+                    pro = pro.filter(is_active=True)
+                elif is_active == "false":
+                    pro = pro.filter(is_active=False)
 
-        result = custom_paginator(req, pro, "-stock")
-        result["results"] = ProductSerializer(result["results"], many=True).data
+                serializer = ProductSerializer(pro, many=True)
+                return ReturnData(data={"results": serializer.data})
+            except:
+                return ReturnError()
 
-        return ReturnData(data=result)
+        # 전체 목록 조회
+        try:
+            # ✅ 수정: 활성화 필터 적용
+            if is_active == "true":
+                pro = Pro.objects.filter(is_active=True).order_by("-stock")
+            elif is_active == "false":
+                pro = Pro.objects.filter(is_active=False).order_by("-stock")
+            else:
+                pro = Pro.objects.all().order_by("-stock")
+
+            serializer = ProductSerializer(pro, many=True)
+            return ReturnData(data={"results": serializer.data})
+        except:
+            return ReturnError()
 
     def post(self, req):
         """
@@ -618,20 +627,7 @@ class ProductDetail(APIView):
 
     def put(self, req, product_id):
         """
-            제품을 생성하는 API
-            ---
-            # 내용
-                - name : 제품명(Char)
-                - category : 제품 분류(Char)
-                - supplier : 공급자(Char)
-                - container : 보관장소(Char)
-                - purchase : 주매입처(Char)
-                - code : 제품코드(Char)
-                - stock : 재고량(Int)
-                - memo : 제품메모(Char)
-                - in_price : 매입금액(INT)
-                - out_price : 매출금액(INT)
-                - sale_price : 소비자금액(INT)
+            제품을 수정하는 API
         """
         try:
             pro = Pro.objects.get(id=product_id)
@@ -650,6 +646,48 @@ class ProductDetail(APIView):
         return Response(
             data={"message": "데이터를 성공적으로 수정하였습니다."}, status=status.HTTP_202_ACCEPTED
         )
+
+
+    def patch(self, req, product_id):
+        """
+            제품 활성화/비활성화 토글 API
+            ---
+            # 내용
+                - action : "deactivate" 또는 "activate"
+        """
+        try:
+            pro = Pro.objects.get(id=product_id)
+        except:
+            return Response(
+                data={"message": "해당하는 데이터를 찾을 수 없습니다."},
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
+        action = req.data.get("action", None)
+
+        if action == "deactivate":
+            pro.deactivate()
+            logger.info(
+                f"{return_username(req.user).name} 이 [{pro.id}] : [{pro.name}] 제품을 비활성화하였습니다."
+            )
+            return Response(
+                data={"message": f"[{pro.name}] 제품이 비활성화되었습니다."},
+                status=status.HTTP_202_ACCEPTED,
+            )
+        elif action == "activate":
+            pro.activate()
+            logger.info(
+                f"{return_username(req.user).name} 이 [{pro.id}] : [{pro.name}] 제품을 활성화하였습니다."
+            )
+            return Response(
+                data={"message": f"[{pro.name}] 제품이 활성화되었습니다."},
+                status=status.HTTP_202_ACCEPTED,
+            )
+        else:
+            return Response(
+                data={"message": "action 값이 올바르지 않습니다. (deactivate 또는 activate)"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class AllTrade(APIView):
@@ -1481,13 +1519,11 @@ class Category(APIView):
     """
 
     def get(self, req):
-        """
-            카테고리 데이터를 반환 Category Parameter 가 없는 경우 None 으로 전체 데이터 반환
-            Category의 경우 0은 고객 , 1은 상품
-        """
         try:
             category = req.GET.get("category", None)
-            if category is not None:
+
+            # ✅ 추가: "undefined" 또는 빈 문자열 처리
+            if category is not None and category != "undefined" and category != "":
                 cat = Cat.objects.filter(category=int(category)).order_by("name")
             else:
                 try:
