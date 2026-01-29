@@ -20,6 +20,7 @@ from .models import (
     ProductPackage,
     ProductPackageItem,
     PendingStock,
+    AsInternalProcess,
 )
 
 
@@ -164,6 +165,19 @@ class PendingStockAdmin(admin.ModelAdmin):
     search_fields = ["product_name", "supplier_name"]
     list_filter = ["status"]
 
+class AsInternalProcessAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "trade",
+        "engineer",
+        "process_date",
+        "content",
+        "register_name",
+        "created_date",
+    ]
+    search_fields = ["content", "register_name"]
+    list_filter = ["engineer"]
+
 
 # Register your models here.
 admin.site.register(Customer, CustomerAdmin)
@@ -181,6 +195,7 @@ admin.site.register(ReleaseLogPermission, ReleaseLogPermissionAdmin)
 admin.site.register(ProductPackage, ProductPackageAdmin)
 admin.site.register(ProductPackageItem)
 admin.site.register(PendingStock, PendingStockAdmin)
+admin.site.register(AsInternalProcess, AsInternalProcessAdmin)
 
 admin.site.register(CCustomer)
 admin.site.register(CProduct)

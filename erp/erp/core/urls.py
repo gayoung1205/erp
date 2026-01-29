@@ -40,6 +40,8 @@ from .views import (
     PendingStockDetailView,
     PendingStockConfirmView,
     PendingStockSellView,
+    AsInternalProcessView,
+    AsInternalProcessDetailView,
 )
 
 
@@ -83,4 +85,6 @@ urlpatterns = [
     url(r"^pending-stock/(?P<pending_id>\d+)/sell/$", PendingStockSellView.as_view()),
     url(r"^pending-stock/(?P<pending_id>\d+)/$", PendingStockDetailView.as_view()),
     url(r"^pending-stocks$", PendingStockView.as_view()),
+    url(r"^as-internal-process/(?P<process_id>\d+)/$", AsInternalProcessDetailView.as_view()),
+    url(r"^as-internal-processes", AsInternalProcessView.as_view()),
 ]

@@ -28,3 +28,137 @@
 [29/Jan/2026 10:33:29] INFO [core.views:2609] admin 이 [7] : [업무일지] 전자문서를 조회하였습니다.
 [29/Jan/2026 10:33:51] INFO [core.views:2571] 가콩 이 [8] : [업무일지] 전자문서를 생성하였습니다.
 [29/Jan/2026 14:34:03] INFO [core.views:670] admin 이 [9] : [본체] 제품을 비활성화하였습니다.
+[29/Jan/2026 14:50:08] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 14:50:08] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 14:50:10] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 14:50:10] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 14:50:11] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 14:50:22] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 14:50:26] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 14:50:39] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 14:50:39] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 14:50:39] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 14:50:43] INFO [core.views:1165] admin123이 [54] : [테스트거래처]의 [AS] 내역을 수정하였습니다.
+[29/Jan/2026 14:50:44] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 14:50:44] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 14:50:44] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 14:50:46] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 14:50:46] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 14:50:49] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 14:50:49] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 14:50:49] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:05:41] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:05:41] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:05:41] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:05:55] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:05:55] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:05:55] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:05:59] INFO [core.views:1165] admin123이 [54] : [테스트거래처]의 [AS] 내역을 수정하였습니다.
+[29/Jan/2026 15:06:01] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:06:01] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:06:01] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:06:07] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:06:11] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:06:11] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:06:11] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:06:13] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:08:25] INFO [core.views:1018] admin123이 55 : [None]의 [AS] 내역을 생성하였습니다.
+[29/Jan/2026 15:08:29] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:08:29] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:08:29] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:08:34] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:09:44] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:09:44] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:09:45] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:10:34] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:10:35] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:10:35] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:10:36] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:10:37] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:10:40] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:10:40] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:10:40] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:23:32] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:23:32] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:23:33] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:23:50] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:23:50] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:23:50] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:23:52] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:24:00] INFO [core.views:1018] admin123이 56 : [None]의 [AS] 내역을 생성하였습니다.
+[29/Jan/2026 15:24:05] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:24:05] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:24:05] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:24:08] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:24:12] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:24:12] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:24:12] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:29:29] INFO [core.views:280] admin 이 전체고객을 검색하였습니다.
+[29/Jan/2026 15:30:19] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:30:19] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:30:24] INFO [core.views:280] admin 이 전체고객을 검색하였습니다.
+[29/Jan/2026 15:30:27] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:30:27] INFO [core.views:351] admin123 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[29/Jan/2026 15:30:28] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:30:28] INFO [core.views:351] admin123 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[29/Jan/2026 15:30:32] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:30:32] INFO [core.views:351] admin123 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[29/Jan/2026 15:30:32] INFO [core.views:351] admin123 이 [4] : [테스트거래처4] 고객을 조회하였습니다.
+[29/Jan/2026 15:30:41] INFO [core.views:280] admin 이 전체고객을 검색하였습니다.
+[29/Jan/2026 15:30:43] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:30:43] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:30:43] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:30:43] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:30:46] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:30:46] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:30:46] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:30:57] INFO [core.views:1018] admin123이 57 : [매산여고]의 [AS] 내역을 생성하였습니다.
+[29/Jan/2026 15:30:57] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:30:57] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:31:02] INFO [core.views:727] admin123 이 전체거래내역을 조회하였습니다.
+[29/Jan/2026 15:31:05] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:31:05] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:31:06] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:31:12] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:31:12] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:31:13] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:31:21] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:31:21] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:31:21] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:32:14] INFO [core.views:1165] admin123이 [57] : [매산여고]의 [AS] 내역을 수정하였습니다.
+[29/Jan/2026 15:32:15] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:32:15] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:32:15] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:32:18] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:32:28] INFO [core.views:3486] admin님이 AS #57에 내부처리를 등록하였습니다.
+[29/Jan/2026 15:33:14] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:33:14] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:33:14] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:37:17] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:37:17] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:37:17] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:38:56] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:38:56] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:38:56] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:38:59] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:38:59] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:38:59] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:39:39] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:39:39] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:39:39] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:39:41] INFO [core.views:1165] admin123이 [57] : [매산여고]의 [AS] 내역을 수정하였습니다.
+[29/Jan/2026 15:39:42] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:39:42] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:39:42] INFO [core.views:351] admin123 이 [5] : [매산여고] 고객을 조회하였습니다.
+[29/Jan/2026 15:40:11] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:40:11] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:40:11] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:40:12] INFO [core.views:1165] admin123이 [49] : [테스트거래처]의 [AS] 내역을 수정하였습니다.
+[29/Jan/2026 15:40:13] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:40:13] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:40:13] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:40:14] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:40:22] INFO [core.views:3486] admin님이 AS #49에 내부처리를 등록하였습니다.
+[29/Jan/2026 15:49:28] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[29/Jan/2026 15:49:28] INFO [core.views:1671] admin 이 전체 직원을 조회하였습니다.
+[29/Jan/2026 15:49:28] INFO [core.views:351] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.

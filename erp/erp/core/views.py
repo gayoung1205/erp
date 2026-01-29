@@ -1910,11 +1910,11 @@ class ReceivableView(APIView):
 class MyasView(APIView):
     def get(self, req):
         try:
-            if req.user.is_superuser:
-                my_as = Tra.objects.filter(category_1=0).filter(category_2__in=[0, 2])
-            else:
-                eng = Eng.objects.prefetch_related("trades").get(user=req.user.id)
-                my_as = eng.trades.filter(category_2__in=[0, 2])
+            my_as = (
+                Tra.objects.filter(category_1=0)
+                .filter(category_2__in=[0, 2])
+                .order_by("-register_date")
+            )
         except Exception as e:
             print(e)
             return CustomResponse
@@ -3419,3 +3419,142 @@ class PendingStockSellView(APIView):
             message="바로판매 완료",
             status=status.HTTP_200_OK,
         )
+
+from model.models import AsInternalProcess
+from .serializers import AsInternalProcessSerializer
+
+
+class AsInternalProcessView(APIView):
+    """
+    AS 내부처리 API
+    """
+
+    def get(self, req):
+        """
+        특정 AS의 내부처리 목록 조회
+        """
+        trade_id = req.GET.get("trade_id", None)
+
+        if trade_id is None:
+            return CustomResponse(
+                message="trade_id가 필요합니다.",
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            internal_processes = AsInternalProcess.objects.filter(
+                trade_id=trade_id
+            ).order_by("-process_date")
+
+            data = AsInternalProcessSerializer(internal_processes, many=True).data
+            return ReturnData(data=data)
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+    def post(self, req):
+        """
+        내부처리 등록
+        """
+        data = req.data
+        trade_id = data.get("trade_id")
+        engineer_id = data.get("engineer_id")
+        process_date = data.get("process_date")
+        content = data.get("content")
+        memo = data.get("memo", "")
+
+        if not trade_id or not engineer_id or not content:
+            return CustomResponse(
+                message="필수 항목을 입력해주세요.",
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            with transaction.atomic():
+                engineer = Eng.objects.get(id=engineer_id)
+                register_name = return_username(req.user).name
+
+                internal_process = AsInternalProcess.objects.create(
+                    trade_id=trade_id,
+                    engineer=engineer,
+                    process_date=process_date,
+                    content=content,
+                    memo=memo,
+                    register_name=register_name,
+                )
+
+                logger.info(
+                    f"{register_name}님이 AS #{trade_id}에 내부처리를 등록하였습니다."
+                )
+
+                return ReturnCreate()
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+
+class AsInternalProcessDetailView(APIView):
+    """
+    AS 내부처리 상세 API
+    """
+
+    def get(self, req, process_id):
+        """
+        내부처리 상세 조회
+        """
+        try:
+            internal_process = AsInternalProcess.objects.get(id=process_id)
+            data = AsInternalProcessSerializer(internal_process).data
+            return ReturnData(data=data)
+        except AsInternalProcess.DoesNotExist:
+            return ReturnNoContent()
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+    def put(self, req, process_id):
+        """
+        내부처리 수정
+        """
+        try:
+            internal_process = AsInternalProcess.objects.get(id=process_id)
+        except AsInternalProcess.DoesNotExist:
+            return ReturnNoContent()
+
+        try:
+            with transaction.atomic():
+                for key in req.data:
+                    if key == "engineer_id":
+                        internal_process.engineer_id = req.data[key]
+                    elif key not in ["id", "trade_id", "register_name", "created_date", "updated_date"]:
+                        setattr(internal_process, key, req.data[key])
+                internal_process.save()
+
+                logger.info(
+                    f"{return_username(req.user).name}님이 내부처리 #{process_id}를 수정하였습니다."
+                )
+
+                return ReturnAccept()
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+    def delete(self, req, process_id):
+        """
+        내부처리 삭제
+        """
+        try:
+            internal_process = AsInternalProcess.objects.get(id=process_id)
+            trade_id = internal_process.trade_id
+            internal_process.delete()
+
+            logger.info(
+                f"{return_username(req.user).name}님이 AS #{trade_id}의 내부처리 #{process_id}를 삭제하였습니다."
+            )
+
+            return ReturnDelete()
+        except AsInternalProcess.DoesNotExist:
+            return ReturnNoContent()
+        except Exception as e:
+            print(e)
+            return ReturnError()

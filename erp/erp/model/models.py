@@ -147,8 +147,15 @@ class Trade(models.Model):
 
     INSIDE = 0
     OUTSIDE = 1
+    CONSTRUCTION = 2
+    INTERNAL = 3
 
-    STATUS_CHOICES_3 = ((INSIDE, "INSIDE"), (OUTSIDE, "OUTSIDE"))
+    STATUS_CHOICES_3 = (
+        (INSIDE, "INSIDE"),
+        (OUTSIDE, "OUTSIDE"),
+        (CONSTRUCTION, "CONSTRUCTION"),
+        (INTERNAL, "INTERNAL"),
+    )
 
     id = models.AutoField(primary_key=True)
     category_1 = models.IntegerField(choices=STATUS_CHOICES_1, null=True)
@@ -772,3 +779,33 @@ class CHistory(models.Model):
     )
     updated_date = models.DateTimeField(auto_now=True)
     created_date = models.DateTimeField(auto_now_add=True)
+
+class AsInternalProcess(models.Model):
+    """
+    AS 내부처리 기록
+    하나의 AS에 여러 명이 처리한 기록을 남길 수 있음
+    """
+    id = models.AutoField(primary_key=True)
+    trade = models.ForeignKey(
+        Trade,
+        on_delete=models.CASCADE,
+        related_name="internal_processes",
+        related_query_name="internal_process",
+    )
+    engineer = models.ForeignKey(
+        Engineer,
+        on_delete=models.DO_NOTHING,
+        related_name="internal_processes",
+        related_query_name="internal_process",
+        null=True,
+        blank=True,
+    )
+    process_date = models.DateTimeField(null=True, blank=True)  # 처리일
+    content = models.TextField(null=True, blank=True)  # 처리 내용
+    memo = models.TextField(null=True, blank=True)  # 참고사항
+    register_name = models.CharField(max_length=50, null=True, blank=True)  # 등록자명
+    updated_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"AS #{self.trade_id} - {self.engineer.name if self.engineer else 'Unknown'}"

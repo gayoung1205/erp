@@ -544,3 +544,15 @@ class PendingStockSerializer(serializers.ModelSerializer):
     def get_status_display(self, obj):
         status_map = {0: "입고대기", 1: "입고완료", 2: "바로판매", 3: "취소"}
         return status_map.get(obj.status, "알수없음")
+
+from model.models import AsInternalProcess
+
+class AsInternalProcessSerializer(serializers.ModelSerializer):
+    engineer_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AsInternalProcess
+        fields = "__all__"
+
+    def get_engineer_name(self, obj):
+        return obj.engineer.name if obj.engineer else ""
