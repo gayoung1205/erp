@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>AIPBL</title>
+    {% load static %}
+    <link rel="icon" href="{% static 'img/favicon.png' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/jquery-ui/css/jquery-ui.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}?v=3" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/glass-effects.css' %}?v=1" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/header-redesign.css' %}?v=1" />
+    <link rel="stylesheet" href="{% static 'simplebar/dist/simplebar.css' %}"/>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Logo" class="brand-logo">
+            <span class="brand-text">AIPBL</span>
+        </a>
+
+        <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarResponsive"
+                aria-controls="navbarResponsive"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon" style="width: 1em; height: 1em;"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">홈</a></li>
+
+                <li class="nav-item dropdown">
+                    <button class="btn dropdown-toggle {% if permission and permission != 0 %}disabled{% endif %}"
+                            type="button" id="systemDropdown" data-toggle="dropdown" aria-expanded="false">
+                        시스템관리
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="systemDropdown">
+                        <a class="dropdown-item" href="{% url 'system_template' %}">시스템 관리</a>
+                        <a class="dropdown-item" href="{% url 'on_device' %}">온디바이스 관리</a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if permission and permission > 1 %}disabled{% endif %}" href="{% url 'profile_template' %}">즐겨찾기</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'video_wall' %}" id="videoWallNavBtn">
+                        <i class="fas fa-th"></i> 비디오월
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'splitter' %}" id="splitterNavBtn">
+                        <i class="fas fa-clone"></i> 모니터링
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="manualDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-download"></i> 매뉴얼 다운로드
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="manualDropdown">
+                        <li><a class="dropdown-item" href="{% static 'manuals/user_manual.pdf' %}" download="AI그룹러닝시스템_사용자매뉴얼.pdf">
+                            <i class="fas fa-file-pdf text-danger"></i> PDF 버전</a></li>
+                        <li><a class="dropdown-item" href="{% static 'manuals/user_manual.pptx' %}" download="AI그룹러닝시스템_사용자매뉴얼.pptx">
+                            <i class="fas fa-file-powerpoint text-primary"></i> PowerPoint 버전</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            계정
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{% url 'logout_auth' %}">로그아웃</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% include 'file/file_opening_modal.html' %}
+
+{% block content %}{% endblock content %}
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        // 햄버거 버튼 (navbar-toggler) 수동 처리
+        $('.navbar-toggler').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var target = $(this).data('target');
+            $(target).toggleClass('show');
+
+            // aria-expanded 속성 업데이트
+            var isExpanded = $(target).hasClass('show');
+            $(this).attr('aria-expanded', isExpanded);
+        });
+
+        // Bootstrap 4 드롭다운 수동 초기화
+        $('.dropdown-toggle').each(function() {
+            $(this).dropdown();
+        });
+
+        // 또는 클릭 이벤트 직접 처리 (위가 안 되면 이걸 사용)
+        $('.dropdown-toggle').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // 다른 열린 드롭다운 닫기
+            $('.dropdown-menu.show').not($(this).next('.dropdown-menu')).removeClass('show');
+
+            // 현재 드롭다운 토글
+            $(this).next('.dropdown-menu').toggleClass('show');
+        });
+
+        $(document).on('click', '[data-toggle="modal"]', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var $btn = $(this);
+            var target = $btn.attr('data-target');
+
+            // ✅ relatedTarget을 전달하기 위해 이벤트 트리거
+            var modal = $(target);
+            var showEvent = $.Event('show.bs.modal', { relatedTarget: this });
+            modal.trigger(showEvent);
+            modal.modal('show');
+        });
+
+        // 외부 클릭 시 닫기 (드롭다운 + 네비게이션 메뉴)
+        $(document).on('click', function(e) {
+            // 드롭다운 닫기
+            if (!$(e.target).closest('.dropdown').length) {
+                $('.dropdown-menu').removeClass('show');
+            }
+            // 네비게이션 메뉴 닫기
+            if (!$(e.target).closest('.navbar').length) {
+                $('.navbar-collapse').removeClass('show');
+                $('.navbar-toggler').attr('aria-expanded', 'false');
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 현재 모드 조회
+        fetch('/api/device_mode/')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('deviceModeBadge');
+                if (badge && data.success) {
+                    badge.textContent = data.mode_name;
+                    badge.className = data.mode === 1
+                        ? 'badge bg-success ms-1'
+                        : 'badge bg-secondary ms-1';
+                    badge.style.fontSize = '0.7em';
+                }
+            })
+            .catch(err => {
+                console.log('모드 조회 실패:', err);
+            });
+    });
+</script>
+
+<script src="{% static 'vendor/jquery-ui/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'simplebar/dist/simplebar.min.js' %}"></script>
+
+{% block javascript %}
+{% endblock javascript %}
+
+</body>
+</html>

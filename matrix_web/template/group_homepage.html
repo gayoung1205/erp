@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+{% load filter_tags %}
+
+{# 메인 홈페이지와 동일한 CSS 로드 #}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      {% if main %}
+      <div class="card matrix-card">
+        <div class="card-body">
+          <div class="row">
+            {% for i in port_range %}
+            <div class="col-3">
+              <div class="control">
+                <img src="{% static 'img/icon1.png' %}" />
+              </div>
+              {# 그라디언트 버튼 클래스 적용 #}
+              <button class="btn btn-outline-gradient kvm"
+                      name="kvm_button"
+                      value="{{ main.id }}-{{ i }}">
+                {{ main|monitor_name:i }}
+              </button>
+              <div class="form-group">
+                {# monitor-select 클래스 추가 (화살표 포함) #}
+                <select class="form-control form-control-sm monitor-select"
+                        name="input_select"
+                        id="input_select-{{ i|stringformat:'02d' }}-{{ main.id }}">
+                  {% for j in port_range %}
+                  <option {% if main|option_selected:i == j %}selected{% endif %}
+                          value="{{ j|stringformat:'02d' }}">
+                    {{ main|monitor_name:j }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i> 연결된 장비가 없습니다.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLabel">ERROR</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+  $('select[name=input_select]').on('change', function () {
+    var id = $(this).attr('id').split('-');
+    var target = id[1];
+    var mat_id = id[2];
+    var input = $(this).val();
+    $.ajax({
+      type: 'GET',
+      url: `{% url 'control' %}?id=${mat_id}&input=${input}&target=${target}`,
+      success: function (res) {},
+      error: function (res) {
+        $('#errorModal').modal('show')
+        $('#errorModal .modal-body span').text(JSON.stringify(res.responseText))
+      },
+    });
+  });
+
+  $('button[name=kvm_button]').on('click', function () {
+    var val = $(this).val().split('-');
+    var mat_id = val[0];
+    var input = val[1];
+
+    $.ajax({
+      type: 'GET',
+      url: `{% url 'kvm' %}?id=${mat_id}&input=${input}`,
+      success: function (res) {},
+      error: function (res) {
+        $('#errorModal').modal('show')
+        $('#errorModal .modal-body span').text(JSON.stringify(res.responseText))
+      },
+    });
+  });
+</script>
+{% endblock javascript %}

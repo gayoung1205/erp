@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load filter_tags %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/splitter.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- 헤더 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1 fw-bold text-dark">
+                <i class="fas fa-clone"></i> Splitter 설정
+            </h4>
+            <p class="text-muted mb-0 small">하나의 모니터에서 여러 입력을 분할 표시합니다</p>
+        </div>
+        <span class="badge bg-secondary" id="statusBadge">
+            <i class="fas fa-circle"></i> <span id="statusText">대기 중</span>
+        </span>
+    </div>
+
+    <div class="row g-4">
+        <!-- 왼쪽: 분할 미리보기만 -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-tv"></i> 분할 미리보기
+                    </h6>
+                </div>
+                <div class="card-body p-4 d-flex align-items-center">
+                    <div class="splitter-preview mode-1 w-100" id="splitterPreview">
+                        <div class="preview-cell active"><span class="preview-number">1</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <!-- 분할 모드 선택 -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-th-large"></i> 분할 모드
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mode-selector">
+                        <div class="d-flex gap-2 flex-wrap justify-content-center">
+                            <button class="btn btn-mode active" data-mode="0" data-windows="1">
+                                <i class="fas fa-square"></i>
+                                <span>1분할</span>
+                            </button>
+                            <button class="btn btn-mode" data-mode="1" data-windows="4">
+                                <i class="fas fa-columns"></i>
+                                <span>1+3분할</span>
+                            </button>
+                            <button class="btn btn-mode" data-mode="2" data-windows="4">
+                                <i class="fas fa-th-large"></i>
+                                <span>4분할</span>
+                            </button>
+                            <button class="btn btn-mode" data-mode="3" data-windows="16">
+                                <i class="fas fa-th"></i>
+                                <span>16분할</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 입력 소스 -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-plug"></i> 입력 소스
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <select class="form-select" id="inputSourceSelect">
+                        {% for i in 1|range_tag:17 %}
+                        <option value="{{ i }}">Input {{ i|stringformat:"02d" }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- 적용 버튼 -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body">
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-lg" id="sendTestBtn">
+                            <i class="fas fa-paper-plane"></i> 적용
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toastNotification" class="toast" role="alert">
+        <div class="toast-body d-flex align-items-center" id="toastMessage"></div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/splitter.js' %}"></script>
+{% endblock javascript %}

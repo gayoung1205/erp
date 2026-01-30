@@ -1,0 +1,277 @@
+/* ========================================
+   Splitter - 깔끔한 모던 디자인
+   ======================================== */
+
+/* 컨테이너 */
+.container-fluid.py-4 {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+}
+
+/* ========================================
+   아이콘과 텍스트 간격 (전역)
+   ======================================== */
+i.fas, i.far, i.fab {
+    margin-right: 8px !important;
+}
+
+.badge i.fas,
+.badge i.far {
+    margin-right: 6px !important;
+}
+
+/* ========================================
+   상태 배지
+   ======================================== */
+#statusBadge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ========================================
+   카드 스타일
+   ======================================== */
+.card {
+    border-radius: 12px;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.card-header h6 {
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* ========================================
+   드롭다운 (select) - 글씨 크기 강화
+   ======================================== */
+.form-select,
+select.form-select,
+#inputSourceSelect {
+    font-size: 18px !important;
+    padding: 14px 16px !important;
+    border-radius: 10px !important;
+    border: 2px solid #dee2e6 !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+}
+
+.form-select:focus,
+select.form-select:focus,
+#inputSourceSelect:focus {
+    border-color: #495057 !important;
+    box-shadow: 0 0 0 3px rgba(73, 80, 87, 0.1) !important;
+}
+
+.form-select option,
+select.form-select option,
+#inputSourceSelect option {
+    font-size: 18px !important;
+    padding: 12px !important;
+}
+
+/* ========================================
+   분할 미리보기
+   ======================================== */
+.splitter-preview {
+    aspect-ratio: 16/9;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px solid #dee2e6;
+    display: grid;
+    gap: 4px;
+    padding: 4px;
+    transition: all 0.3s ease;
+}
+
+/* 1분할 */
+.splitter-preview.mode-1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+/* 1+3분할 (큰 화면 1개 + 작은 화면 3개 세로) */
+.splitter-preview.mode-1-3 {
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.splitter-preview.mode-1-3 .preview-cell:first-child {
+    grid-row: 1 / 4;
+}
+
+/* 4분할 */
+.splitter-preview.mode-4 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+/* 16분할 */
+.splitter-preview.mode-16 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+/* 미리보기 셀 */
+.preview-cell {
+    background: #ffffff;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.preview-cell:hover {
+    border-color: #6c757d;
+    background: #f8f9fa;
+}
+
+.preview-cell.active {
+    background: #495057;
+    border-color: #495057;
+}
+
+.preview-cell.active .preview-number {
+    color: #ffffff;
+}
+
+.preview-number {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+.splitter-preview.mode-16 .preview-number {
+    font-size: 0.9rem;
+}
+
+/* ========================================
+   모드 선택 버튼
+   ======================================== */
+.mode-selector .btn-mode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 24px;
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #495057;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.mode-selector .btn-mode:hover {
+    border-color: #6c757d;
+    background: #f8f9fa;
+}
+
+.mode-selector .btn-mode.active {
+    border-color: #495057;
+    background: #495057;
+    color: #ffffff;
+}
+
+.mode-selector .btn-mode i {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    margin-right: 0 !important;
+}
+
+.mode-selector .btn-mode span {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ========================================
+   버튼 스타일
+   ======================================== */
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: #495057 !important;
+    border-color: #495057 !important;
+}
+
+.btn-primary:hover {
+    background: #343a40 !important;
+    border-color: #343a40 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn-lg {
+    padding: 14px 24px;
+    font-size: 1rem;
+}
+
+/* ========================================
+   Toast 스타일
+   ======================================== */
+.toast {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toast.bg-success {
+    background: #198754 !important;
+    color: white;
+}
+
+.toast.bg-danger {
+    background: #dc3545 !important;
+    color: white;
+}
+
+/* ========================================
+   반응형
+   ======================================== */
+@media (max-width: 992px) {
+    .container-fluid.py-4 {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+
+    .mode-selector .btn-mode {
+        padding: 12px 16px;
+        min-width: 80px;
+    }
+
+    .mode-selector .btn-mode i {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .mode-selector .d-flex {
+        justify-content: center;
+    }
+
+    .mode-selector .btn-mode {
+        flex: 1;
+        min-width: 70px;
+    }
+}
+
+.mode-selector .btn-mode {
+    border: 2px solid #dee2e6; 
+    border-radius: 12px;
+}
+
+.mode-selector .btn-mode.active {
+    border-color: #495057;
+    background: #495057;
+    color: #ffffff;
+}
