@@ -69,6 +69,8 @@ import openpyxl
 from pandas import read_excel
 from model.models import ReleaseLog, ReleaseLogPermission
 from urllib.parse import quote
+from model.models import AsInternalProcess
+from .serializers import AsInternalProcessSerializer
 
 # Create your views here.
 """
@@ -2945,9 +2947,6 @@ class ExportDataToExcelView(APIView):
 
         export_type = data["type"]
 
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        # 권한 체크
-        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         try:
             engineer = Eng.objects.get(user=req.user)
             department = engineer.category
@@ -3420,8 +3419,6 @@ class PendingStockSellView(APIView):
             status=status.HTTP_200_OK,
         )
 
-from model.models import AsInternalProcess
-from .serializers import AsInternalProcessSerializer
 
 
 class AsInternalProcessView(APIView):

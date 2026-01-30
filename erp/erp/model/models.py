@@ -199,16 +199,16 @@ class Trade(models.Model):
         return ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모"][self.category_1]
 
     def get_category_name2(self):
-        if obj.category_2 == None:
+        if self.category_2 == None:
             return " "
         category = ["접수", "완료", "진행", "취소"]
-        return category[obj.category_2]
+        return category[self.category_2]
 
     def get_category_name3(self):
-        if obj.category_3 == None:
+        if self.category_3 == None:
             return " "
-        category = ["출장", "내방"]
-        return category[obj.category_3]
+        category = ["출장", "내방", "공사", "내부처리"]
+        return category[self.category_3]
 
     def get_engineer_name(self):
         try:
