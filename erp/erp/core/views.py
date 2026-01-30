@@ -2164,7 +2164,7 @@ class ReleaseLogView(APIView):
             department = engineer.category
 
             # 관리(0), 대표이사(2)는 전체 조회
-            if department in [0, 2]:
+            if department in [0, 2, 3]:
                 release_log = ReleaseLog.objects.all().order_by("-created_date")[:100]
                 release_log_data = ReleaseLogSerializer(release_log, many=True).data
                 return ReturnData(data=release_log_data)
@@ -2266,7 +2266,7 @@ class ReleaseLogPermissionView(APIView):
 
         engineer = Eng.objects.get(user=req.user)
 
-        if engineer.category not in [0, 2]:
+        if engineer.category not in [0, 2, 3]:
             return CustomResponse(
                 message="권한이 없습니다.",
                 status=status.HTTP_403_FORBIDDEN
@@ -2952,7 +2952,7 @@ class ExportDataToExcelView(APIView):
             engineer = Eng.objects.get(user=req.user)
             department = engineer.category
 
-            if department not in [0, 2]:
+            if department not in [0, 2, 3]:
                 try:
                     perm = ReleaseLogPermission.objects.get(department=department)
 
