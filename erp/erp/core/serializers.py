@@ -156,6 +156,7 @@ class TradeSerializer(serializers.ModelSerializer):
     customer_id = serializers.SerializerMethodField()
     engineer_id = serializers.SerializerMethodField()
     engineer_name = serializers.SerializerMethodField()
+    internal_process_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Trade
@@ -225,6 +226,13 @@ class TradeSerializer(serializers.ModelSerializer):
             return " "
         category = ["출장", "내방", "공사", "내부처리"]
         return category[obj.category_3]
+
+    def get_internal_process_count(self, obj):
+        """AS 내부처리 건수 반환"""
+        try:
+            return obj.internal_processes.count()
+        except:
+            return 0
 
 
 class AllTradeSerializer(serializers.ModelSerializer):

@@ -873,7 +873,7 @@ class Trade(APIView):
             elif category is not None:
                 tra = (
                     Tra.objects.filter(category_1=category)
-                    .prefetch_related("customer")
+                    .prefetch_related("customer", "internal_processes")
                     .order_by("-register_date","-category_2")
                 )
                 result = custom_paginator(req, tra, None)
@@ -1915,6 +1915,7 @@ class MyasView(APIView):
             my_as = (
                 Tra.objects.filter(category_1=0)
                 .filter(category_2__in=[0, 2])
+                .prefetch_related("internal_processes")
                 .order_by("-register_date")
             )
         except Exception as e:
@@ -2197,6 +2198,26 @@ class ReleaseLogView(APIView):
 
             release_log = ReleaseLog.objects.filter(
                 release_log_category__in=allowed_categories
+            ).order_by("-created_date")[:100]
+
+            release_log_data = ReleaseLogSerializer(release_log, many=True).data
+
+        except Exception as e:
+            print(e)
+            return ReturnError()
+
+        return ReturnData(data=release_log_data)
+
+class ReleaseLogRecentView(APIView):
+    """
+    최근 출고판매내역 API (권한 체크 없음 - 출고내역 페이지용)
+    판매(category=1) 데이터만 반환
+    """
+    def get(self, req):
+        try:
+            # 판매(release_log_category=1)만 조회, 최근 100건
+            release_log = ReleaseLog.objects.filter(
+                release_log_category=1
             ).order_by("-created_date")[:100]
 
             release_log_data = ReleaseLogSerializer(release_log, many=True).data
