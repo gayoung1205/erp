@@ -32,7 +32,6 @@ class ExcelExport:
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet()
 
-        # 공급가, 부가세, 총금액 계산
         for i in data["his"]:
             tax_set = ExcelExport.calc_tax_category(
                 i["tax_category"], i["price"], i["amount"]
@@ -41,7 +40,6 @@ class ExcelExport:
             i["surtax"] = tax_set["surtax"]
             i["total_price"] = tax_set["total_price"]
 
-        # column 높이 설정
         column_width = [
             1,
             7,

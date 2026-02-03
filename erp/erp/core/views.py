@@ -2139,9 +2139,8 @@ class ReleaseDetailView(APIView):
         release = get_object_or_404(His, id=release_id)
         release.product.add_stock(release.amount)
 
-        # ⭐ 삭제 전에 로그 저장
         ReleaseLog.objects.create(
-            release_log_category=4,  # 삭제
+            release_log_category=4,
             name=release.name,
             product_category=release.product.category,
             amount=release.amount,
@@ -2166,13 +2165,11 @@ class ReleaseLogView(APIView):
             engineer = Eng.objects.get(user=req.user)
             department = engineer.category
 
-            # 관리(0), 대표이사(2)는 전체 조회
             if department in [0, 2, 3]:
                 release_log = ReleaseLog.objects.all().order_by("-created_date")[:100]
                 release_log_data = ReleaseLogSerializer(release_log, many=True).data
                 return ReturnData(data=release_log_data)
 
-            # 해당 부서의 권한 확인
             try:
                 permission = ReleaseLogPermission.objects.get(department=department)
             except ReleaseLogPermission.DoesNotExist:
@@ -2181,7 +2178,6 @@ class ReleaseLogView(APIView):
                     status=status.HTTP_403_FORBIDDEN
                 )
 
-            # 권한에 따라 조회할 카테고리 필터링
             allowed_categories = []
             if permission.can_view_register:
                 allowed_categories.append(0)
@@ -2215,7 +2211,6 @@ class ReleaseLogRecentView(APIView):
     """
     def get(self, req):
         try:
-            # 판매(release_log_category=1)만 조회, 최근 100건
             release_log = ReleaseLog.objects.filter(
                 release_log_category=1
             ).order_by("-created_date")[:100]

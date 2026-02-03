@@ -92,3 +92,4 @@
 [02/Feb/2026 10:03:05] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
 [02/Feb/2026 10:06:59] INFO [core.views:2768] admin 이 출근부를 조회하였습니다.
 [02/Feb/2026 10:07:00] INFO [core.views:1673] admin 이 전체 직원을 조회하였습니다.
+[02/Feb/2026 17:40:00] INFO [core.views:1673] admin 이 전체 직원을 조회하였습니다.
