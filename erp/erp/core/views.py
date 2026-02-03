@@ -2570,6 +2570,13 @@ class RecordView(APIView):
 
         record = record.order_by("-created_date")
 
+        start_date = req.GET.get("start_date", None)
+        end_date = req.GET.get("end_date", None)
+        if start_date:
+            record = record.filter(date__gte=start_date)
+        if end_date:
+            record = record.filter(date__lte=end_date)
+
         if category is not None:
             category_index = ["업무일지", "휴가신청"]
             record = record.filter(category=category_index[category])

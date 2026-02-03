@@ -73,3 +73,6 @@
 [03/Feb/2026 13:39:48] INFO [core.views:2663] 가콩 이 [6] : [업무일지] 전자문서를 조회하였습니다.
 [03/Feb/2026 13:40:37] INFO [core.views:2663] admin 이 [8] : [업무일지] 전자문서를 조회하였습니다.
 [03/Feb/2026 13:41:41] INFO [core.views:1673] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 14:30:41] INFO [core.views:1673] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 14:30:44] INFO [core.views:1673] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 14:31:16] INFO [core.views:282] admin 이 전체고객을 검색하였습니다.
