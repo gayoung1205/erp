@@ -1079,7 +1079,7 @@ class TradeDetail(APIView):
         try:
             tra = Tra.objects.get(id=trade_id)
         except:
-            return ReturnNoContent
+            return ReturnNoContent()
         try:
             with transaction.atomic():
                 memo = ""
@@ -1193,7 +1193,7 @@ class TradeDetail(APIView):
                         else:
                             pro.minus_stock(his.amount)
         except:
-            ReturnError()
+            return ReturnError()
 
         try:
             trade = Tra.objects.get(id=trade_id)
@@ -1208,9 +1208,6 @@ class TradeDetail(APIView):
                 f"{return_username(req.user).name} 이 [{delete_tra_id}] : [{delete_tra_customer_name}]의 [{delete_tra_get_category}] 거래내역을 삭제하였습니다."
             )
 
-            # his = His.objects.filter(trade_id=trade_id)
-            # for i in his:
-            #     i.delete()
         except:
             return ReturnNoContent()
 
@@ -1247,7 +1244,7 @@ class History(APIView):
                 if trade_id is None:
                     his = His.objects.all()
                 else:
-                    if Tra.objects.filter({id: trade_id}).count() == 0:
+                    if Tra.objects.filter(id=trade_id).count() == 0:
                         return CustomResponse(
                             message="해당하는 데이터가 존재하지않습니다.",
                             status=status.HTTP_400_BAD_REQUEST,
@@ -1398,10 +1395,12 @@ class HistoryDetail(APIView):
                     tra = Tra.objects.get(id=his.trade_id)
                     if tra.category_1 in [0, 3, 7]:
                         pro.add_stock(his.amount)
+                    elif tra.category_1 == 4:
+                        pass
                     else:
                         pro.minus_stock(his.amount)
         except:
-            ReturnError()
+            return ReturnError()
 
         try:
             his = His.objects.get(id=history_id)
@@ -1571,7 +1570,7 @@ class Category(APIView):
 
             return ReturnCreate()
         except IntegrityError:
-            CustomResponse(
+            return CustomResponse(
                 message="해당하는 데이터가 이미 존재합니다", status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
@@ -1614,7 +1613,7 @@ class CategoryDetail(APIView):
                     setattr(cat, i, req.data[i])
                 cat.save()
         except IntegrityError:
-            CustomResponse(
+            return CustomResponse(
                 message="해당하는 데이터가 이미 존재합니다", status=status.HTTP_400_BAD_REQUEST
             )
         except:
@@ -1759,7 +1758,7 @@ class EngineerDetail(APIView):
         try:
             user = User.objects.get(id=req.data["user"])
         except:
-            ReturnNoContent()
+            return ReturnNoContent()
 
         try:
             with transaction.atomic():
@@ -1831,10 +1830,12 @@ class HistoryAllDelete(APIView):
                         tra = Tra.objects.get(id=his.trade_id)
                         if tra.category_1 in [0, 3, 7]:
                             pro.add_stock(his.amount)
+                        elif tra.category_1 == 4:
+                            pass
                         else:
                             pro.minus_stock(his.amount)
         except:
-            ReturnError()
+            return ReturnError()
         try:
             his = His.objects.filter(trade_id=trade_id)
             for i in his:
@@ -1920,7 +1921,10 @@ class MyasView(APIView):
             )
         except Exception as e:
             print(e)
-            return CustomResponse
+            return CustomResponse(
+                message="데이터를 불러오는 중 오류가 발생하였습니다.",
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
         result = custom_paginator(req, my_as, None)
         result["results"] = TradeSerializer(result["results"], many=True).data
         return ReturnData(data=result)
@@ -2866,10 +2870,10 @@ class VacationDetailView(APIView):
                 delete_vacation_start_date = copy.deepcopy(vacation.start_date)
                 delete_vacation_end_date = copy.deepcopy(vacation.end_date)
                 vacation.delete()
+                logger.info(
+                    f"{return_username(req.user).name} 이 [{delete_vacation_id}] : [{delete_vacation_start_date} - {delete_vacation_end_date}] 휴가를 취소하였습니다."
+                )
                 return ReturnDelete()
-        logger.info(
-            f"{return_username(req.user).name} 이 [{delete_vacation_id}] : [{delete_vacation_start_date} - {delete_vacation_end_date}] 휴가를 취소하였습니다."
-        )
 
         return CustomResponse(message="권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
 

@@ -76,3 +76,7 @@
 [03/Feb/2026 14:30:41] INFO [core.views:1673] admin 이 전체 직원을 조회하였습니다.
 [03/Feb/2026 14:30:44] INFO [core.views:1673] admin 이 전체 직원을 조회하였습니다.
 [03/Feb/2026 14:31:16] INFO [core.views:282] admin 이 전체고객을 검색하였습니다.
+[03/Feb/2026 16:09:32] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
+[03/Feb/2026 16:09:34] INFO [core.views:1670] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:09:34] INFO [core.views:353] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[03/Feb/2026 16:09:34] INFO [core.views:353] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
