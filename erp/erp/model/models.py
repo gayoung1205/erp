@@ -343,7 +343,7 @@ class Calendar(models.Model):
     category = models.TextField(null=True, blank=True, default="time")
     engineer = models.ForeignKey(
         Engineer,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="calendars",
         related_query_name="calendar",
         default=None,
@@ -370,9 +370,11 @@ class Record(models.Model):
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="records",
         related_query_name="record",
+        null=True,
+        blank=True,
     )
     category = models.CharField(max_length=100, choices=CHOICES, default=DAILY_WORK)
     content = models.TextField(null=True, blank=True, default="")

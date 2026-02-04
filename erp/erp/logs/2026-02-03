@@ -80,3 +80,80 @@
 [03/Feb/2026 16:09:34] INFO [core.views:1670] admin 이 전체 직원을 조회하였습니다.
 [03/Feb/2026 16:09:34] INFO [core.views:353] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
 [03/Feb/2026 16:09:34] INFO [core.views:353] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[03/Feb/2026 16:31:59] INFO [core.views:282] admin 이 전체고객을 검색하였습니다.
+[03/Feb/2026 16:32:18] INFO [core.views:327] admin123 이 [복콩이회사] 고객을 생성하였습니다.
+[03/Feb/2026 16:32:18] INFO [core.views:282] admin 이 전체고객을 검색하였습니다.
+[03/Feb/2026 16:32:28] INFO [core.views:576] admin123 이 [12] : [널위한멜로디2] 제품을 생성하였습니다.
+[03/Feb/2026 16:32:37] INFO [core.views:672] admin 이 [6] : [키보드] 제품을 비활성화하였습니다.
+[03/Feb/2026 16:32:43] INFO [core.views:681] admin 이 [6] : [키보드] 제품을 활성화하였습니다.
+[03/Feb/2026 16:32:44] INFO [core.views:353] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[03/Feb/2026 16:32:47] INFO [core.views:353] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[03/Feb/2026 16:32:52] INFO [core.views:3357] admin님이 [본체] 5개를 입고 확정하였습니다. (재고: 5)
+[03/Feb/2026 16:33:01] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
+[03/Feb/2026 16:33:01] INFO [core.views:353] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:03] INFO [core.views:353] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:03] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:33:03] INFO [core.views:353] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:07] INFO [core.views:282] admin 이 전체고객을 검색하였습니다.
+[03/Feb/2026 16:33:09] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
+[03/Feb/2026 16:33:09] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:09] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
+[03/Feb/2026 16:33:10] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:12] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:12] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:33:12] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:20] INFO [core.views:1020] admin123이 60 : [복콩이회사]의 [AS] 내역을 생성하였습니다.
+[03/Feb/2026 16:33:20] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
+[03/Feb/2026 16:33:20] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:25] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:25] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:33:26] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:26] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:26] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:33:27] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:29] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
+[03/Feb/2026 16:33:29] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:36] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
+[03/Feb/2026 16:33:39] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:39] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:33:39] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:40] INFO [core.views:1167] admin123이 [60] : [복콩이회사]의 [AS] 내역을 수정하였습니다.
+[03/Feb/2026 16:33:40] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:40] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:33:40] INFO [core.views:353] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[03/Feb/2026 16:33:42] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:33:49] INFO [core.views:3510] admin님이 AS #60에 내부처리를 등록하였습니다.
+[03/Feb/2026 16:33:51] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:33:54] INFO [core.views:3510] admin님이 AS #60에 내부처리를 등록하였습니다.
+[03/Feb/2026 16:33:57] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
+[03/Feb/2026 16:34:06] INFO [core.views:729] admin123 이 전체거래내역을 조회하였습니다.
+[03/Feb/2026 16:34:42] INFO [core.views:2774] admin 이 출근부를 조회하였습니다.
+[03/Feb/2026 16:34:44] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 16:34:49] INFO [core.views:1742] admin 이 8:콩콩이을 조회하였습니다.
+[03/Feb/2026 17:01:27] INFO [core.views:1781] admin 이 8:콩콩이 직원을 수정하였습니다.
+[03/Feb/2026 17:01:28] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:01:32] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:01:33] INFO [core.views:1742] admin 이 8:콩콩이을 조회하였습니다.
+[03/Feb/2026 17:01:38] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:01:40] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:01:41] INFO [core.views:1742] admin 이 8:콩콩이을 조회하였습니다.
+[03/Feb/2026 17:01:42] INFO [core.views:1781] admin 이 8:콩콩이 직원을 수정하였습니다.
+[03/Feb/2026 17:01:42] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:02:26] INFO [core.views:1742] admin 이 8:콩콩이을 조회하였습니다.
+[03/Feb/2026 17:10:15] INFO [core.views:1742] admin 이 8:콩콩이을 조회하였습니다.
+[03/Feb/2026 17:10:50] INFO [core.views:1742] admin 이 8:콩콩이을 조회하였습니다.
+[03/Feb/2026 17:10:57] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:10:59] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:11:00] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:11:01] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:11:01] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:11:19] INFO [core.views:1719] admin 이 9:걍을 생성하였습니다.
+[03/Feb/2026 17:11:19] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:11:34] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:11:36] INFO [core.views:1742] admin 이 9:걍을 조회하였습니다.
+[03/Feb/2026 17:11:38] INFO [core.views:1781] admin 이 9:걍 직원을 수정하였습니다.
+[03/Feb/2026 17:11:39] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:11:40] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
+[03/Feb/2026 17:11:41] INFO [core.views:1742] admin 이 9:걍을 조회하였습니다.
+[03/Feb/2026 17:11:42] INFO [core.views:1813] admin 이 9:걍 직원을 삭제하였습니다.
+[03/Feb/2026 17:11:43] INFO [core.views:1672] admin 이 전체 직원을 조회하였습니다.
