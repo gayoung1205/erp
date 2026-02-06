@@ -740,44 +740,34 @@ class Trade(APIView):
                     if "제품내역" in search_dict:
                         his_search_query &= Q(name__icontains=search_dict["제품내역"])
                     if "통합검색" in search_dict:
-                        his_search_query &= Q(name__icontains=search_dict["통합검색"])
+                        his_search_query |= Q(name__icontains=search_dict["통합검색"])
                         search_query |= Q(register_date__icontains=search_dict["통합검색"])
+
                         try:
-                            if datetime.datetime.strptime(
-                                search_dict["통합검색"], "%Y-%m-%d"
-                            ):
+                            if datetime.datetime.strptime(search_dict["통합검색"], "%Y-%m-%d"):
                                 search_query |= Q(visit_date=search_dict["통합검색"])
                                 search_query |= Q(complete_date=search_dict["통합검색"])
                         except Exception as e:
-                            print(e)
                             pass
 
                         if search_dict["통합검색"] in category_1:
-                            search_query |= Q(
-                                category_1=category_1.index(search_dict["통합검색"])
-                            )
+                            search_query |= Q(category_1=category_1.index(search_dict["통합검색"]))
                         if search_dict["통합검색"] in category_2:
-                            search_query |= Q(
-                                category_2=category_2.index(search_dict["통합검색"])
-                            )
+                            search_query |= Q(category_2=category_2.index(search_dict["통합검색"]))
                         if search_dict["통합검색"] in category_3:
-                            search_query |= Q(
-                                category_3=category_3.index(search_dict["통합검색"])
-                            )
+                            search_query |= Q(category_3=category_3.index(search_dict["통합검색"]))
 
                         search_query |= Q(content__icontains=search_dict["통합검색"])
                         search_query |= Q(symptom__icontains=search_dict["통합검색"])
-                        search_query |= Q(
-                            completed_content__icontains=search_dict["통합검색"]
-                        )
+                        search_query |= Q(completed_content__icontains=search_dict["통합검색"])
                         search_query |= Q(memo__icontains=search_dict["통합검색"])
-                        if Eng.objects.filter(Q(name__icontains=search_dict["통합검색"])):
-                            search_query |= Q(
-                                engineer_id=Eng.objects.get(
-                                    name__icontains=search_dict["통합검색"]
-                                ).id
-                            )
-                        search_query |= Q(register_id=search_dict["통합검색"])
+
+                        engineers = Eng.objects.filter(Q(name__icontains=search_dict["통합검색"]))
+                        if engineers.exists():
+                            engineer_ids = list(engineers.values_list('id', flat=True))
+                            search_query |= Q(engineer_id__in=engineer_ids)
+
+                        search_query |= Q(register_id__icontains=search_dict["통합검색"])
                         search_query |= Q(customer_name__icontains=search_dict["통합검색"])
                     if "등록일" in search_dict:
                         search_query &= Q(register_date__icontains=search_dict["등록일"])
@@ -830,7 +820,6 @@ class Trade(APIView):
                         his_tra_id = []
 
                         for i in first_search:
-                            # history가 출고일 경우 trade_id가 None이기 때문에 제외
                             if i.trade_id is not None:
                                 if i.trade_id not in his_tra_id:
                                     his_tra_id.append(i.trade_id)
@@ -3351,23 +3340,45 @@ class PendingStockConfirmView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        with transaction.atomic():
-            pending.confirm_stock()
+        try:
+            with transaction.atomic():
+                result = pending.confirm_stock()
 
-            logger.info(
-                f"{return_username(req.user).name}님이 [{pending.product_name}] {pending.amount}개를 입고 확정하였습니다. (재고: {pending.product.stock})"
+                if not result:
+                    return CustomResponse(
+                        message="입고 확정 처리에 실패했습니다. 상태를 확인해주세요.",
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                pending.refresh_from_db()
+
+                if pending.status != 1:
+                    return CustomResponse(
+                        message="입고 확정이 완료되지 않았습니다.",
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    )
+
+                logger.info(
+                    f"{return_username(req.user).name}님이 [{pending.product_name}] {pending.amount}개를 입고 확정하였습니다. (재고: {pending.product.stock})"
+                )
+
+            return CustomResponse(
+                data={
+                    "id": pending.id,
+                    "product_name": pending.product_name,
+                    "amount": pending.amount,
+                    "new_stock": pending.product.stock,
+                },
+                message="입고 확정 완료",
+                status=status.HTTP_200_OK,
             )
 
-        return CustomResponse(
-            data={
-                "id": pending.id,
-                "product_name": pending.product_name,
-                "amount": pending.amount,
-                "new_stock": pending.product.stock,
-            },
-            message="입고 확정 완료",
-            status=status.HTTP_200_OK,
-        )
+        except Exception as e:
+            print(e)
+            return CustomResponse(
+                message="입고 확정 중 오류가 발생했습니다.",
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class PendingStockSellView(APIView):
