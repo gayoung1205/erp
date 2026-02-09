@@ -206,7 +206,7 @@ class Customer(APIView):
         search = req.GET.get("search", None)
         sort = req.GET.get("sort", None)
         receivable = req.GET.get("receivable", None)
-        
+
         if search:
             try:
                 search_dict = {}
@@ -485,8 +485,9 @@ class Product(APIView):
                     pro = pro.filter(category__iexact=category)
 
                 pro = pro.order_by("-stock")
-                serializer = ProductSerializer(pro, many=True)
-                return ReturnData(data={"results": serializer.data})
+                result = custom_paginator(req, pro, None)
+                result["results"] = ProductSerializer(result["results"], many=True).data
+                return ReturnData(data=result)
             except:
                 return CustomResponse(
                     message="데이터 형식이 이상합니다.", status=status.HTTP_400_BAD_REQUEST
@@ -498,29 +499,29 @@ class Product(APIView):
                 pro = Pro.objects.filter(
                     Q(name__icontains=name) | Q(code__icontains=code)
                 )
-                # ✅ 추가: 활성화된 제품만 검색 (거래 등록 시)
                 if is_active == "true":
                     pro = pro.filter(is_active=True)
                 elif is_active == "false":
                     pro = pro.filter(is_active=False)
 
-                serializer = ProductSerializer(pro, many=True)
-                return ReturnData(data={"results": serializer.data})
+                result = custom_paginator(req, pro, None)
+                result["results"] = ProductSerializer(result["results"], many=True).data
+                return ReturnData(data=result)
             except:
                 return ReturnError()
 
         # 전체 목록 조회
         try:
-            # ✅ 수정: 활성화 필터 적용
             if is_active == "true":
-                pro = Pro.objects.filter(is_active=True).order_by("-stock")
+                pro = Pro.objects.filter(is_active=True)
             elif is_active == "false":
-                pro = Pro.objects.filter(is_active=False).order_by("-stock")
+                pro = Pro.objects.filter(is_active=False)
             else:
                 pro = Pro.objects.all().order_by("-stock")
 
-            serializer = ProductSerializer(pro, many=True)
-            return ReturnData(data={"results": serializer.data})
+            result = custom_paginator(req, pro, "-stock")
+            result["results"] = ProductSerializer(result["results"], many=True).data
+            return ReturnData(data=result)
         except:
             return ReturnError()
 
