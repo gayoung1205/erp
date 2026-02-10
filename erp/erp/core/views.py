@@ -31,6 +31,7 @@ from .serializers import (
     CategorySerializer,
     EngineerSerializer,
     RecordSerializer,
+    RecordListSerializer,
     AttendanceSerializer,
     VacationSerializer,
     ReleaseLogSerializer,
@@ -881,8 +882,6 @@ class Trade(APIView):
                     tra = tra.exclude(category_1=5).exclude(category_1=6)
                 result = custom_paginator(req, tra, "-register_date")
                 result["results"] = result["results"].values()
-                # tra = tra[0:500]
-                # category_1 = ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모"]
                 for i in result["results"]:
                     try:
                         trade = Tra.objects.get(id=i["id"])
@@ -919,30 +918,6 @@ class Trade(APIView):
                     tra_value[i]["completed_content"] += data["content"][i]
             result = {"results": tra_value[::-1]}
             return ReturnData(data=result)
-            # result = custom_paginator(req, tra, None)
-            # if not result:
-            #     return ReturnNoContent()
-            # data = make_trade(result["results"])
-            # tra_value = result["results"].values()
-
-            # for i in range(len(tra_value)):
-            #     tra_value[i]["total_price"] = data["data_1"][i]
-            #     tra_value[i]["total_receivable"] = data["data"][i]
-            #     tra_value[i]["supply_price"] = data["price"][i]
-            #     tra_value[i]["tax_price"] = data["tax"][i]
-            #     tra_value[i]["category_name1"] = get_category_name1(tra_value[i])
-            #     tra_value[i]["category_name2"] = get_category_name2(tra_value[i])
-            #     tra_value[i]["category_name3"] = get_category_name3(tra_value[i])
-            #     tra_value[i]["engineer_name"] = (
-            #         result["results"][i].engineer.name
-            #         if result["results"][i].engineer != None
-            #         else ""
-            #     )
-            #     if tra_value[i]["completed_content"] != None:
-            #         tra_value[i]["completed_content"] += data["content"][i]
-            # result["results"] = tra_value
-
-            # return ReturnData(data=result)
 
         except Exception as e:
             print(e)
@@ -2540,11 +2515,6 @@ class RecordView(APIView):
     """
 
     def get(self, req):
-        """
-            전자문서 조회하는 API
-            임시저장인 경우 본인만 확인 가능
-            제출완료를 했을 경우 본인과 관리자만 확인 가능
-        """
         category = (
             int(req.GET.get("category", None))
             if req.GET.get("category", None)
@@ -2553,20 +2523,23 @@ class RecordView(APIView):
         engineer = Eng.objects.get(user=req.user)
         is_accept = req.GET.get("accept", None)
         is_all = req.GET.get("all", None)
+        view_type = req.GET.get("view_type", None)
+        filter_user_id = req.GET.get("user_id", None)  # ★ 드롭다운에서 선택한 직원의 user_id
+
         if req.user.is_superuser:
-            record = Record.objects.filter(Q(is_submit=True) | Q(user=req.user))
+            record = Record.objects.select_related('user').filter(
+                Q(is_submit=True) | Q(user=req.user)
+            )
         elif engineer.is_staff:
-            engineers = Eng.objects.filter(category=engineer.category)
-            cnt = 0
-            for i in engineers:
-                if cnt:
-                    record |= Record.objects.filter(Q(user=i.user))
-                else:
-                    record = Record.objects.filter(Q(user=i.user))
-                    cnt = 1
+            dept_user_ids = Eng.objects.filter(
+                category=engineer.category
+            ).values_list('user_id', flat=True)
+            record = Record.objects.select_related('user').filter(
+                user_id__in=dept_user_ids
+            )
             record = record.filter(Q(is_submit=True) | Q(user=req.user))
         else:
-            record = Record.objects.filter(user=req.user)
+            record = Record.objects.select_related('user').filter(user=req.user)
 
         record = record.order_by("-created_date")
 
@@ -2580,20 +2553,55 @@ class RecordView(APIView):
         if category is not None:
             category_index = ["업무일지", "휴가신청"]
             record = record.filter(category=category_index[category])
+
+        if view_type == 'mine':
+            record = record.filter(user=req.user)
+        elif view_type == 'team':
+            record = record.exclude(user=req.user)
+
+        if filter_user_id:
+            record = record.filter(user__username=filter_user_id)
+
         if is_all is None:
             if is_accept:
                 record = record.filter(Q(is_approved=True) | Q(is_reject=True))
                 result = custom_paginator(req, record, "-created_date")
-                result["results"] = RecordSerializer(result["results"], many=True).data
+                engineers = self._build_engineers_dict(result["results"])
+                result["results"] = RecordListSerializer(
+                    result["results"], many=True, context={'engineers': engineers}
+                ).data
                 return ReturnData(data=result)
             else:
                 record = record.filter(Q(is_approved=False) & Q(is_reject=False))
 
-        record_data = RecordSerializer(record, many=True).data
+                has_team_docs = False
+                if req.user.is_superuser or engineer.is_staff:
+                    has_team_docs = record.exclude(user=req.user).exists()
 
-        # logger.info(f"{return_username(req.user).name} 이 전자문서 전체를 조회하였습니다.")
+                result = custom_paginator(req, record, "-created_date")
+                engineers = self._build_engineers_dict(result["results"])
+                result["results"] = RecordListSerializer(
+                    result["results"], many=True, context={'engineers': engineers}
+                ).data
+                result["has_team_docs"] = has_team_docs
 
+                return ReturnData(data=result)
+
+        engineers = self._build_engineers_dict(record)
+        record_data = RecordListSerializer(
+            record, many=True, context={'engineers': engineers}
+        ).data
         return ReturnGood(data=record_data)
+
+    def _build_engineers_dict(self, queryset):
+        if hasattr(queryset, 'values_list'):
+            user_ids = queryset.values_list('user_id', flat=True)
+        else:
+            user_ids = [r.user_id for r in queryset]
+        return {
+            eng.user_id: eng
+            for eng in Eng.objects.filter(user_id__in=user_ids)
+        }
 
     def post(self, req):
         """
@@ -3160,6 +3168,193 @@ class ExportDataToExcelView(APIView):
             sheet_name = "receivable"
             col_headers = ["고객명", "Phone", "Tel", "주소", "지불금"]
             col_names = ["name", "phone", "tel", "address", "receivable"]
+
+        # ━━━ 업무일지 ━━━
+        elif export_type == "record":
+            try:
+                if req.user.is_superuser:
+                    queryset = Record.objects.select_related('user').filter(is_submit=True)
+                elif engineer.is_staff:
+                    dept_user_ids = Eng.objects.filter(
+                        category=engineer.category
+                    ).values_list('user_id', flat=True)
+                    queryset = Record.objects.select_related('user').filter(
+                        user_id__in=dept_user_ids, is_submit=True
+                    )
+                else:
+                    queryset = Record.objects.select_related('user').filter(user=req.user)
+
+                if start_date:
+                    queryset = queryset.filter(date__gte=start_date)
+                if end_date:
+                    queryset = queryset.filter(date__lte=end_date)
+
+                filter_user_id = data.get("user_id")
+                if filter_user_id:
+                    queryset = queryset.filter(user__username=filter_user_id)
+
+                queryset = queryset.order_by("-date")
+
+                user_ids = queryset.values_list('user_id', flat=True)
+                engineers_dict = {
+                    eng.user_id: eng
+                    for eng in Eng.objects.filter(user_id__in=user_ids)
+                }
+                category_list = ["경영관리", "기술지원", "대표이사", "서버관리자", "연구개발", "전략기획", "생산품질관리", "영업홍보"]
+
+                type_datas = []
+                for record in queryset:
+                    eng = engineers_dict.get(record.user_id)
+                    eng_name = eng.name if eng else '알수없음'
+                    dept = category_list[eng.category] if eng else '알수없음'
+
+                    status_text = '임시저장'
+                    if record.is_submit and not record.is_approved and not record.is_reject:
+                        status_text = '제출완료'
+                    elif record.is_submit and record.is_approved:
+                        status_text = '승인'
+                    elif record.is_submit and record.is_reject:
+                        status_text = '반려'
+
+                    type_datas.append({
+                        'username': eng_name,
+                        'department': dept,
+                        'category': record.category,
+                        'date': str(record.date) if record.date else '',
+                        'content': record.content or '',
+                        'remark': record.remark or '',
+                        'plan': record.plan or '',
+                        'status': status_text,
+                        'created_date': str(record.created_date)[:10] if record.created_date else '',
+                    })
+
+            except Exception as e:
+                print(e)
+                return ReturnNoContent()
+
+            total_count = len(type_datas)
+            date_info = f"{start_date or '처음'} ~ {end_date or '현재'}" if (start_date or end_date) else "전체기간"
+
+            filter_eng_name = "전체"
+            if filter_user_id:
+                filter_eng = None
+                try:
+                    filter_eng = Eng.objects.get(user__username=filter_user_id)
+                except:
+                    pass
+                if filter_eng:
+                    filter_eng_name = filter_eng.name
+
+            output = io.BytesIO()
+            workbook = xlsxwriter.Workbook(output)
+            worksheet = workbook.add_worksheet("업무일지")
+
+            title_format = workbook.add_format({
+                'bold': True, 'font_size': 16, 'align': 'left', 'valign': 'vcenter',
+            })
+            info_format = workbook.add_format({
+                'font_size': 11, 'align': 'left', 'valign': 'vcenter', 'color': '#555555',
+            })
+            count_format = workbook.add_format({
+                'bold': True, 'font_size': 14, 'align': 'left', 'valign': 'vcenter',
+                'color': '#0066CC', 'bottom': 2, 'bottom_color': '#0066CC',
+            })
+            header_format = workbook.add_format({
+                'bold': True, 'bg_color': '#D9E1F2', 'border': 1,
+                'align': 'center', 'valign': 'vcenter',
+            })
+            cell_format = workbook.add_format({
+                'border': 1, 'align': 'left', 'valign': 'vcenter', 'text_wrap': True,
+            })
+            date_cell_format = workbook.add_format({
+                'border': 1, 'align': 'center', 'valign': 'vcenter',
+            })
+            summary_header_format = workbook.add_format({
+                'bold': True, 'bg_color': '#E2EFDA', 'border': 1,
+                'align': 'center', 'valign': 'vcenter',
+            })
+            summary_cell_format = workbook.add_format({
+                'border': 1, 'align': 'center', 'valign': 'vcenter',
+            })
+            summary_count_format = workbook.add_format({
+                'border': 1, 'align': 'center', 'valign': 'vcenter',
+                'bold': True, 'font_size': 12,
+            })
+
+            worksheet.merge_range('A1:I1', '업무일지', title_format)
+            worksheet.set_row(0, 30)
+
+            worksheet.merge_range('A2:I2', f'직원: {filter_eng_name}  |  기간: {date_info}', info_format)
+
+            worksheet.merge_range('A3:I3', f'{filter_eng_name}: {total_count}건', count_format)
+            worksheet.set_row(2, 25)
+
+            current_row = 4
+
+            if not filter_user_id:
+                from collections import Counter
+                name_counter = Counter()
+                dept_map = {}
+                for item in type_datas:
+                    name_counter[item['username']] += 1
+                    dept_map[item['username']] = item['department']
+
+                sorted_summary = name_counter.most_common()
+
+                worksheet.write(current_row, 0, '직원명', summary_header_format)
+                worksheet.write(current_row, 1, '부서', summary_header_format)
+                worksheet.write(current_row, 2, '작성건수', summary_header_format)
+                current_row += 1
+
+                for name, cnt in sorted_summary:
+                    worksheet.write(current_row, 0, name, summary_cell_format)
+                    worksheet.write(current_row, 1, dept_map.get(name, ''), summary_cell_format)
+                    worksheet.write(current_row, 2, cnt, summary_count_format)
+                    current_row += 1
+
+                worksheet.write(current_row, 0, '합계', summary_header_format)
+                worksheet.write(current_row, 1, '', summary_header_format)
+                worksheet.write(current_row, 2, total_count, summary_count_format)
+                current_row += 2
+
+            col_headers = ["직원명", "부서", "구분", "등록일", "업무내용", "특이사항", "내일계획", "상태", "작성일"]
+            col_widths = [10, 12, 10, 12, 40, 30, 30, 10, 12]
+
+            for col, header in enumerate(col_headers):
+                worksheet.write(current_row, col, header, header_format)
+                worksheet.set_column(col, col, col_widths[col])
+            current_row += 1
+
+            col_names = ["username", "department", "category", "date", "content", "remark", "plan", "status", "created_date"]
+            for item in type_datas:
+                for col, col_name in enumerate(col_names):
+                    value = item.get(col_name, "")
+                    if col_name in ['date', 'created_date']:
+                        worksheet.write(current_row, col, value, date_cell_format)
+                    else:
+                        worksheet.write(current_row, col, value, cell_format)
+                current_row += 1
+
+            workbook.close()
+            output.seek(0)
+
+            name_part = f"{filter_eng_name}_" if filter_user_id else ""
+            date_part = f"{start_date or 'all'}_{end_date or 'all'}" if (start_date or end_date) else "전체"
+            file_name = f"업무일지_{name_part}{date_part}_{total_count}건.xlsx"
+
+            response = HttpResponse(
+                output,
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+            response["Content-Disposition"] = f"attachment; filename*=UTF-8''{quote(file_name)}"
+            response["Access-Control-Expose-Headers"] = "Content-Disposition"
+
+            logger.info(
+                f"{return_username(req.user).name}님이 업무일지 엑셀 다운로드 "
+                f"(직원: {filter_eng_name}, 기간: {date_info}, 건수: {total_count})"
+            )
+
+            return response
 
         else:
             return ReturnNoContent()
