@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Row, Col, Card } from 'react-bootstrap';
 import Grid from '@toast-ui/react-grid';
 import 'tui-grid/dist/tui-grid.css';
@@ -8,16 +9,23 @@ import 'antd/dist/antd.css';
 import requestReleaseLogGet from '../../Axios/Release/requestReleaseLogGet';
 
 const ReleaseLogTable = () => {
+    const history = useHistory();
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [hasPermission, setHasPermission] = useState(true);
 
     useEffect(() => {
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // [수정] 프론트엔드 하드코딩 권한 체크 제거
+        // 백엔드 API가 권한을 체크하므로, API 응답에 따라 처리
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         requestReleaseLogGet()
             .then((res) => {
-                if (res !== undefined) {
+                if (res !== undefined && res !== null) {
                     setData(res);
+                    setHasPermission(true);
                 } else {
+                    // API에서 권한 없음 (403) 또는 에러 발생 시
                     setHasPermission(false);
                 }
                 setLoading(false);
@@ -111,12 +119,9 @@ const ReleaseLogTable = () => {
                                 </div>
                             ) : !hasPermission ? (
                                 <div style={{ textAlign: 'center', padding: '50px 0', color: '#999' }}>
-                                    <p style={{ fontSize: '16px' }}>열람 권한이 없습니다.</p>
-                                    <p>관리자에게 문의하세요.</p>
-                                </div>
-                            ) : data.length === 0 ? (
-                                <div style={{ textAlign: 'center', padding: '50px 0', color: '#999' }}>
-                                    <p style={{ fontSize: '16px' }}>조회된 내역이 없습니다.</p>
+                                    <i className="feather icon-lock" style={{ fontSize: '48px', marginBottom: '15px', display: 'block' }} />
+                                    <p>출고 로그 열람 권한이 없습니다.</p>
+                                    <p style={{ fontSize: '12px' }}>관리자에게 권한을 요청하세요.</p>
                                 </div>
                             ) : (
                                 <Grid

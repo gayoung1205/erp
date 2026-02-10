@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback } from 'react';
+import React, { useState, memo, useCallback, useEffect } from 'react';
 import { Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { isEmptyObject } from 'jquery';
 import Aux from '../../hoc/_Aux';
@@ -11,6 +11,8 @@ import requestSearchProductCodeGet from '../../Axios/Product/requestSearchProduc
 import requestReleaseCreate from '../../Axios/Release/requestReleaseCreate';
 import requestReleasePackage from '../../Axios/Package/requestReleasePackage';
 import ReleaseLogGrid from './releaseLogGrid';
+import DynamicProgress from '../../App/components/DynamicProgress';
+import requestExcelPermissionCheck from '../../Axios/Excel/requestExcelPermissionCheck';
 
 const MemoedReleaseGrid = memo(ReleaseGrid);
 const MemoedProductSearchModal = memo(ProductSearchModal);
@@ -26,6 +28,21 @@ const ReleaseTable = () => {
     name: '',
     amount: 1,
   });
+
+  // ⭐ 엑셀 관련 state 추가
+  const [excelPermission, setExcelPermission] = useState(false);
+  const [downloadModalVisible, setDownloadModalVisible] = useState(false);
+
+  // ⭐ 엑셀 권한 체크
+  useEffect(() => {
+    requestExcelPermissionCheck().then((res) => {
+      setExcelPermission(res.can_export_release);
+    });
+  }, []);
+
+  const downloadModalProcessing = (isVisible) => {
+    setDownloadModalVisible(isVisible);
+  };
 
   const searchProduct = useCallback(() => {
     setSearchText(data.name);
@@ -170,6 +187,32 @@ const ReleaseTable = () => {
                       </div>
                     </Form.Group>
                   </Col>
+
+                  {/* ⭐ 엑셀 출력 버튼 추가 */}
+                  <Col md={6} xl={3}>
+                    <Form.Group>
+                      <Form.Label>엑셀 출력</Form.Label>
+                      <div>
+                        {excelPermission ? (
+                            <Button
+                                variant="success"
+                                onClick={() => downloadModalProcessing(true)}
+                                style={{ width: '100%' }}
+                            >
+                              📥 엑셀 출력
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="secondary"
+                                disabled
+                                style={{ width: '100%' }}
+                            >
+                              엑셀 출력 (권한 없음)
+                            </Button>
+                        )}
+                      </div>
+                    </Form.Group>
+                  </Col>
                 </Row>
               </Card.Body>
             </Card>
@@ -188,6 +231,13 @@ const ReleaseTable = () => {
             <MemoedReleaseLogGrid />
           </Col>
         </Row>
+
+        {/* ⭐ DynamicProgress 추가 */}
+        <DynamicProgress
+            visible={downloadModalVisible}
+            type={'release'}
+            downloadModalProcessing={downloadModalProcessing}
+        />
       </Aux>
   );
 };

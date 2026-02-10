@@ -7,31 +7,43 @@ import 'antd/dist/antd.css';
 import CategoryModal from '../../App/components/categoryModal';
 import Category from '../../App/components/category';
 import requestProductUpdate from '../../Axios/Product/requestProductUpdate';
-import requestProductDelete from '../../Axios/Product/requestProductDelete';
-import CheckModal from '../../App/components/Modal/checkModal';
+import requestProductDeactivate from '../../Axios/Product/requestProductDeactivate';
 
-const ProductTable = (props) => {
-  const isDesktop = useMediaQuery({ query: '(min-device-width: 768px)' }); // deviceWidth > 768
+const ProductUpdateModal = (props) => {
+  const isDesktop = useMediaQuery({ query: '(min-device-width: 768px)' });
 
-  const [visible, setVisible] = useState(false); //Modal visible
-  const [checkModalVisible, setCheckModalVisible] = useState(false);
-  const [rowData, setRowData] = useState({}); // DbClick 할 때 target rowData 저장할 변수
+  const [visible, setVisible] = useState(false);
+  const [rowData, setRowData] = useState({});
   const [flag, setFlag] = useState(false);
   const [modalWidth, setModalWidth] = useState('50%');
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 
   // Product Update
   const productUpdate = () => {
     requestProductUpdate(rowData).then(() => handleOk());
   };
 
-  // Product Delete
-  const productDelete = (id) => {
-    requestProductDelete(id)
-      .then(() => window.location.reload())
-      .catch(() => handleCancel());
+  const productDeactivate = (id) => {
+    Modal.confirm({
+      title: '제품 비활성화',
+      content: '이 제품을 비활성화하시겠습니까? 비활성화된 제품은 목록에서 숨겨지며, 거래 등록 시 검색되지 않습니다.',
+      okText: '비활성화',
+      okType: 'danger',
+      cancelText: '취소',
+      onOk: () => {
+        requestProductDeactivate(id)
+            .then(() => {
+              message.success('제품이 비활성화되었습니다.');
+              window.location.reload();
+            })
+            .catch(() => {
+              message.error('비활성화에 실패했습니다.');
+              handleCancel();
+            });
+      },
+    });
   };
 
-  // requestProductGet()이 처음에만 실행되도록
   useEffect(() => {
     setRowData(props.data);
   }, [props.data]);
@@ -41,222 +53,222 @@ const ProductTable = (props) => {
   }, [isDesktop]);
 
   useEffect(() => {
-    if (!flag) {
-      setFlag(true);
-      setVisible(props.visible);
-    } else {
-      setVisible(true);
-    }
+    setVisible(props.visible);
   }, [props.visible]);
 
-  // Modal Visible true -> false, Page Reload
-  const handleOk = (e) => {
+  const handleOk = () => {
     setVisible(false);
     window.location.reload();
   };
 
-  // Modal Visible true -> false
-  const handleCancel = (e) => {
+  const handleCancel = () => {
     setVisible(false);
+    window.location.reload();
   };
 
-  const handleDelete = () => {
-    setCheckModalVisible(!checkModalVisible);
+  const handleChange = (e) => {
+    setRowData({ ...rowData, [e.target.name]: e.target.value });
+  };
+
+  const handleCategoryChange = (value) => {
+    setRowData({ ...rowData, category: value });
   };
 
   return (
-    <>
-      <CheckModal visible={checkModalVisible} id={rowData.id} delete={(id) => productDelete(id)} />
-      <Modal title="제품 수정" visible={visible} onOk={() => productUpdate()} onCancel={() => handleCancel()} width={modalWidth} zIndex={1030}>
-        <Aux>
-          <Row>
-            <Col>
-              <Card>
-                <Card.Body>
-                  <Row>
-                    <Col md={6}>
-                      <Form>
-                        <Form.Group controlId="productInput1">
-                          <Form.Label>제품분류</Form.Label>
-                          <InputGroup className="mb-3">
-                            <Form.Control
-                              as="select"
-                              value={rowData.category}
-                              onChange={(e) => {
-                                setRowData({ ...rowData, category: e.target.value });
-                              }}
-                            >
-                              <option key={rowData.category}>{rowData.category}</option>
-                              <Category data={1} />
-                            </Form.Control>
-                            <InputGroup.Append>
-                              <CategoryModal data={1} />
-                            </InputGroup.Append>
-                          </InputGroup>
-                        </Form.Group>
+      <>
+        <Modal
+            title="제품 수정"
+            visible={visible}
+            onOk={productUpdate}
+            onCancel={handleCancel}
+            okText="수정"
+            cancelText="취소"
+            width={modalWidth}
+        >
+          <Form>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                제품명
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    type="text"
+                    name="name"
+                    value={rowData.name || ''}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
 
-                        <Form.Group controlId="productInput2">
-                          <Form.Label>제품명</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="Enter name"
-                            value={rowData.name}
-                            onChange={(e) => {
-                              setRowData({ ...rowData, name: e.target.value });
-                            }}
-                          />
-                          {/* <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text> */}
-                        </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                제품분류
+              </Form.Label>
+              <Col sm="9">
+                <InputGroup>
+                  <Form.Control
+                      type="text"
+                      name="category"
+                      value={rowData.category || ''}
+                      onChange={handleChange}
+                      readOnly
+                  />
+                  <Button
+                      variant="outline-secondary"
+                      onClick={() => setCategoryModalVisible(true)}
+                  >
+                    선택
+                  </Button>
+                </InputGroup>
+              </Col>
+            </Form.Group>
 
-                        <Form.Group controlId="productInput3">
-                          <Form.Label>제조사</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="제조사"
-                            value={rowData.supplier}
-                            onChange={(e) => {
-                              setRowData({ ...rowData, supplier: e.target.value });
-                            }}
-                          />
-                        </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                제조사
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    type="text"
+                    name="supplier"
+                    value={rowData.supplier || ''}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
 
-                        <Form.Group controlId="productInput4">
-                          <Form.Label>보관위치</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="보관위치"
-                            value={rowData.container}
-                            onChange={(e) => {
-                              setRowData({ ...rowData, container: e.target.value });
-                            }}
-                          />
-                        </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                보관장소
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    type="text"
+                    name="container"
+                    value={rowData.container || ''}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
 
-                        <Form.Group controlId="productInput5">
-                          <Form.Label>주매입처</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="주매입처"
-                            value={rowData.purchase}
-                            onChange={(e) => {
-                              setRowData({ ...rowData, purchase: e.target.value });
-                            }}
-                          />
-                        </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                주매입처
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    type="text"
+                    name="purchase"
+                    value={rowData.purchase || ''}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
 
-                        <Form.Group controlId="productInput6">
-                          <Form.Label>재고량</Form.Label>
-                          <Form.Control
-                            type="number"
-                            placeholder="재고량"
-                            value={rowData.stock}
-                            onChange={(e) => {
-                              const permission = window.sessionStorage.getItem('permission');
-                              if (!(permission === '2' || permission === '3')) {
-                                message.error('권한이 없습니다.');
-                              } else {
-                                setRowData({ ...rowData, stock: e.target.value });
-                              }
-                            }}
-                          />
-                        </Form.Group>
-                      </Form>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group controlId="productInput7">
-                        <Form.Label>Code</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Code 입력, 한/영 주의"
-                          value={rowData.code}
-                          onChange={(e) => {
-                            setRowData({ ...rowData, code: e.target.value });
-                          }}
-                        />
-                      </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                코드
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    type="text"
+                    name="code"
+                    value={rowData.code || ''}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
 
-                      <Form.Group controlId="productInput8">
-                        <Form.Label>매입금액</Form.Label>
-                        <Form.Control
-                          type="number"
-                          placeholder="매입금액"
-                          value={rowData.in_price}
-                          onChange={(e) => {
-                            setRowData({ ...rowData, in_price: e.target.value });
-                          }}
-                        />
-                      </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                재고량
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    type="number"
+                    name="stock"
+                    value={rowData.stock || 0}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
 
-                      <Form.Group controlId="productInput9">
-                        <Form.Label>매출금액</Form.Label>
-                        <Form.Control
-                          type="number"
-                          placeholder="매출금액"
-                          value={rowData.out_price}
-                          onChange={(e) => {
-                            setRowData({ ...rowData, out_price: e.target.value });
-                          }}
-                        />
-                      </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                매입금액
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    type="number"
+                    name="in_price"
+                    value={rowData.in_price || 0}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
 
-                      <Form.Group controlId="productInput10">
-                        <Form.Label>소비자금액</Form.Label>
-                        <Form.Control
-                          type="number"
-                          placeholder="소비자금액"
-                          value={rowData.sale_price}
-                          onChange={(e) => {
-                            setRowData({ ...rowData, sale_price: e.target.value });
-                          }}
-                        />
-                      </Form.Group>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                매출금액
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    type="number"
+                    name="out_price"
+                    value={rowData.out_price || 0}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
 
-                      <Form.Group controlId="productInput11">
-                        <Form.Label>메모</Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          rows="3"
-                          placeholder="Memo"
-                          value={rowData.memo}
-                          onChange={(e) => {
-                            setRowData({ ...rowData, memo: e.target.value });
-                          }}
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col style={{ textAlign: 'right' }}>
-                      {isDesktop ? (
-                        <Button
-                          variant="primary"
-                          onClick={(e) => {
-                            handleDelete();
-                          }}
-                        >
-                          삭제
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={(e) => {
-                            handleDelete();
-                          }}
-                        >
-                          삭제
-                        </Button>
-                      )}
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Aux>
-      </Modal>
-    </>
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                소비자금액
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    type="number"
+                    name="sale_price"
+                    value={rowData.sale_price || 0}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
+
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="3">
+                메모
+              </Form.Label>
+              <Col sm="9">
+                <Form.Control
+                    as="textarea"
+                    rows={3}
+                    name="memo"
+                    value={rowData.memo || ''}
+                    onChange={handleChange}
+                />
+              </Col>
+            </Form.Group>
+
+            <div style={{ textAlign: 'right', marginTop: '20px' }}>
+              <Button
+                  variant="warning"
+                  onClick={() => productDeactivate(rowData.id)}
+              >
+                비활성화
+              </Button>
+            </div>
+          </Form>
+        </Modal>
+
+        <CategoryModal
+            visible={categoryModalVisible}
+            setVisible={setCategoryModalVisible}
+            category={1}
+            onSelect={handleCategoryChange}
+        />
+      </>
   );
 };
 
-export default ProductTable;
+export default ProductUpdateModal;

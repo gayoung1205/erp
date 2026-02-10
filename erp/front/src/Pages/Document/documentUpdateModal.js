@@ -19,7 +19,6 @@ const DocumentUpdateModal = (props) => {
   const [flag, setFlag] = useState(false); // Modal Visible 조절 변수
   const [modalWidth, setModalWidth] = useState('50%');
 
-  // requestDocumentGet이 변경될 때마다 requestDocumentGet실행
   useEffect(() => {
     // props.id === undefined이면 axios X
     if (props.id !== undefined) {
@@ -27,7 +26,6 @@ const DocumentUpdateModal = (props) => {
     }
   }, [props.id]);
 
-  // props.visible이 변경될 때마다 실행
   useEffect(() => {
     if (!flag) {
       setFlag(true);
@@ -41,10 +39,8 @@ const DocumentUpdateModal = (props) => {
     isDesktop ? setModalWidth('50%') : setModalWidth('100%');
   }, [isDesktop]);
 
-  // Document Update
   const documentUpdate = useCallback(
     (type) => {
-      // 반려 버튼 클릭시에 반려 사유 값이 없을 경우에 메세지
       if (type === 'is_reject') {
         if (data.reject_content === '') {
           message.warning('반려사유를 입력해주세요.');
@@ -57,10 +53,9 @@ const DocumentUpdateModal = (props) => {
     [data, props.id]
   );
 
-  // Document Delete
   const requestDocumentDelete = useCallback(() => {
     axios({
-      url: `${config.backEndServerAddress}api/record/${props.id}`,
+      url: `${config.backEndServerAddress}api/record/${props.id}/`,
       method: 'DELETE',
       headers: { Authorization: `JWT ${token}` },
     })
@@ -326,27 +321,19 @@ const DocumentUpdateModal = (props) => {
                     <Row>
                       <Col style={{ textAlign: 'center' }}>
                         {data.status === 0 && (
-                          <>
-                            {permission === '2' || permission === '3' ? (
-                              <>
-                                <Button variant="danger" onClick={() => documentUpdate('is_reject')}>
-                                  반려
-                                </Button>
-                                <Button variant="primary" onClick={() => documentUpdate('is_approved')}>
-                                  승인
-                                </Button>
-                              </>
-                            ) : (
-                              <>
-                                <Button variant="primary" onClick={() => documentUpdate()}>
-                                  수정
-                                </Button>
-                                <Button variant="danger" onClick={() => requestDocumentDelete()}>
-                                  삭제
-                                </Button>
-                              </>
-                            )}
-                          </>
+                            <>
+                              {permission === '2' || permission === '3' ? (
+                                  <>
+                                    <Button variant="danger" onClick={() => documentUpdate('is_reject')}>반려</Button>
+                                    <Button variant="primary" onClick={() => documentUpdate('is_approved')}>승인</Button>
+                                  </>
+                              ) : data.username === sessionStorage.getItem('username') ? (
+                                  <>
+                                    <Button variant="primary" onClick={() => documentUpdate()}>수정</Button>
+                                    <Button variant="danger" onClick={() => requestDocumentDelete()}>삭제</Button>
+                                  </>
+                              ) : null}
+                            </>
                         )}
                       </Col>
                     </Row>

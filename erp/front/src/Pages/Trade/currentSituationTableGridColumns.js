@@ -38,5 +38,19 @@ export default [
   { name: 'completed_content', header: '완료내역', sortable: true, align: 'center', ellipsis: true },
   { name: 'memo', header: '메모', sortable: true, align: 'center', ellipsis: true },
   { name: 'register_id', header: '등록자ID', sortable: true, align: 'center' },
+  {
+    name: 'internal_process_display',
+    header: '내부처리',
+    sortable: true,
+    align: 'center',
+    ellipsis: true,
+    formatter({ row }) {
+      const count = row.internal_process_count || 0;
+      const engineers = row.internal_process_engineers || '';
+      if (count === 0) return '';
+      if (engineers) return `${count}건 (${engineers})`;
+      return `${count}건`;
+    },
+  },
   { name: 'id', header: 'trade_id', hidden: 'true' },
 ];

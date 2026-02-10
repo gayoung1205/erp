@@ -22,6 +22,12 @@ const CollectionPaymentRegistration = (props) => {
   }); // Trade Data
 
   React.useEffect(() => {
+    const permission = window.sessionStorage.getItem('permission');
+    if (permission === '4' || permission === '7') {
+      message.error('권한이 없습니다.');
+      history.goBack();
+      return;
+    }
     if (data.customer_id === null || data.customer_id === undefined || isNaN(data.customer_id) === true) {
       history.push('/Customer/customerTable/1');
     } else {

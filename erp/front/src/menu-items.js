@@ -53,6 +53,12 @@ export default {
               url: '/Product/registration',
             },
             {
+              id: 'badges04-2',
+              title: '비활성화 제품',
+              type: 'item',
+              url: '/Product/inactiveProductTable',
+            },
+            {
               id: 'badges04-1',
               title: '입고대기',
               type: 'item',

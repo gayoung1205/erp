@@ -28,11 +28,9 @@ const CurrentSituationTableCopy = (props) => {
   const [gridColumns, setGridColumns] = useState([]);
   const [contextMenuText, setContextMenuText] = useState('확대');
 
-  // Trade Data Get
   const requestTradeGet = () => {
     let url;
 
-    // type에 따라서 납품현황, AS현황, MYAS
     switch (type) {
       case 'delivery':
         url = `trades?category=7`;
@@ -53,21 +51,17 @@ const CurrentSituationTableCopy = (props) => {
       headers: { Authorization: `JWT ${token}` },
     })
       .then((res) => {
-        // trade data 복사
         let results;
 
         type === 'myas' ? (results = res.data.data) : (results = res.data.data.results);
 
-        // null 값 제거
         results = notNull(results);
 
-        // trade data 저장
         setData(results);
       })
       .catch((err) => CheckToken(err));
   };
 
-  // type이 변할 때마다 requestTradeGet()
   useEffect(() => {
     requestTradeGet();
   }, [type]);
@@ -155,11 +149,6 @@ const CurrentSituationTableCopy = (props) => {
                     }
                   }
                 }}
-                // pageOptions={{
-                //   useClient: true,
-                //   perPage: 30,
-                //   type: 'pagination',
-                // }}
               />
             </div>
           </ContextMenuTrigger>

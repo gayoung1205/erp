@@ -3,6 +3,8 @@ import { Card, Button, Row } from 'react-bootstrap';
 import { isEmptyObject } from 'jquery';
 import Grid from '@toast-ui/react-grid';
 import 'tui-grid/dist/tui-grid.css';
+import { message } from 'antd';
+import 'antd/dist/antd.css';
 import setComma from '../../../App/components/setComma';
 import calcTaxCategory from '../../../App/components/calcTaxCategory';
 import CustomButton from '../../../App/components/CustomButton';
@@ -26,14 +28,43 @@ const BuySaleCreateGrid = (props) => {
 
     let gridData = gridRef.current.getInstance().getData();
 
+    if (!gridData || gridData.length === 0) {
+      message.warning('등록할 제품이 없습니다.');
+      return;
+    }
+
     let historyData = { history: [], release: [] };
 
     for (const i in gridData) {
-      gridData[i].tax_category = handleTaxCategory('int', gridData[i].tax_category);
-      if (gridData[i].type === 'release') {
-        historyData.release.push(gridData[i]);
+      const item = gridData[i];
+
+      if (!item.name || item.name === '') {
+        message.warning('제품명이 누락된 항목이 있습니다.');
+        return;
+      }
+      if (!item.amount || item.amount <= 0) {
+        message.warning('수량이 올바르지 않은 항목이 있습니다.');
+        return;
+      }
+      if (item.price === undefined || item.price === null) {
+        message.warning('단가가 누락된 항목이 있습니다.');
+        return;
+      }
+      if (!item.product_id) {
+        message.warning('제품 정보가 누락된 항목이 있습니다. 제품을 다시 선택해주세요.');
+        return;
+      }
+
+      item.tax_category = handleTaxCategory('int', item.tax_category);
+
+      if (item.tax_category === undefined || item.tax_category === null) {
+        item.tax_category = 0;
+      }
+
+      if (item.type === 'release') {
+        historyData.release.push(item);
       } else {
-        historyData.history.push(gridData[i]);
+        historyData.history.push(item);
       }
     }
 
@@ -176,8 +207,13 @@ const BuySaleCreateGrid = (props) => {
 
           <Row style={{ float: 'right' }}>
             {props.category1 === 3 ? <ReleaseButton insertRelease={(data) => insertRelease(data)} /> : null}
-            <Button variant="primary" style={{ float: 'right' }} onClick={() => requestCreate()}>
-              완료
+            <Button
+                variant="primary"
+                style={{ float: 'right' }}
+                onClick={() => requestCreate()}
+                disabled={props.isSubmitting}
+            >
+              {props.isSubmitting ? '처리중...' : '완료'}
             </Button>
             <Button
               variant="primary"

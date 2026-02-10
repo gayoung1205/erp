@@ -61,7 +61,6 @@ const PendingStockSelectModal = ({ visible, onClose, onSelect }) => {
         }
     };
 
-    // visible이 true가 될 때 데이터 로드
     useEffect(() => {
         if (visible) {
             loadData();
@@ -77,24 +76,23 @@ const PendingStockSelectModal = ({ visible, onClose, onSelect }) => {
         setColumns(dummyColumns);
     }, []);
 
-    // 행 더블클릭 시 선택
     const handleDblClick = (e) => {
         if (e.rowKey !== undefined && data[e.rowKey]) {
             const selectedItem = data[e.rowKey];
             onSelect(selectedItem);
-            onClose();  // ★ 바로 onClose 호출
+            onClose();
         }
     };
 
     return (
         <Modal
             title="입고대기 제품 선택"
-            visible={visible}  // ★ 직접 visible prop 사용
-            onCancel={onClose}  // ★ 직접 onClose 호출
+            visible={visible}
+            onCancel={onClose}
             footer={null}
             width={900}
             centered
-            destroyOnClose={true}  // ★ 모달 닫힐 때 내용 초기화
+            destroyOnClose={true}
         >
             <p style={{ color: '#888', marginBottom: '15px' }}>
                 바로 판매할 입고대기 제품을 더블클릭하여 선택하세요.

@@ -16,11 +16,12 @@ import requestPendingStockDelete from '../../Axios/PendingStock/requestPendingSt
 const PendingStockTable = () => {
     const [data, setData] = useState([]);
     const [gridColumns, setGridColumns] = useState([]);
-    const [selectedRow, setSelectedRow] = useState(null);
-    const [statusFilter, setStatusFilter] = useState('0'); // 기본: 입고대기
+    const [selectedRows, setSelectedRows] = useState([]);  // ★ 단일 → 배열로 변경
+    const [statusFilter, setStatusFilter] = useState('0');
     const [sellModalVisible, setSellModalVisible] = useState(false);
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+    const [processing, setProcessing] = useState(false);  // ★ 일괄 처리 중 상태
 
     const gridRef = React.createRef();
 
@@ -38,6 +39,7 @@ const PendingStockTable = () => {
     };
 
     useEffect(() => {
+        setSelectedRows([]);  // 페이지/필터 변경 시 선택 초기화
         loadData();
     }, [page, statusFilter]);
 
@@ -50,43 +52,95 @@ const PendingStockTable = () => {
         setGridColumns(dummyColumns);
     }, []);
 
-    // 행 클릭 시 선택
-    const handleRowClick = (e) => {
-        if (e.rowKey !== undefined && data[e.rowKey]) {
-            setSelectedRow(data[e.rowKey]);
+    const handleCheck = (e) => {
+        if (e.rowKey === undefined) return;
+
+        const grid = gridRef.current ? gridRef.current.getInstance() : null;
+        if (!grid) return;
+
+        const rowData = grid.getRow(e.rowKey);
+        if (rowData) {
+            setSelectedRows((prev) => {
+                // 이미 있으면 추가 안 함
+                if (prev.find((r) => r.id === rowData.id)) return prev;
+                return [...prev, rowData];
+            });
         }
     };
 
-    // 입고 확정
+    const handleUncheck = (e) => {
+        if (e.rowKey === undefined) return;
+
+        const grid = gridRef.current ? gridRef.current.getInstance() : null;
+        if (!grid) return;
+
+        const rowData = grid.getRow(e.rowKey);
+        if (rowData) {
+            setSelectedRows((prev) => prev.filter((r) => r.id !== rowData.id));
+        }
+    };
+
+    const handleCheckAll = () => {
+        const grid = gridRef.current ? gridRef.current.getInstance() : null;
+        if (!grid) return;
+
+        const allRows = data.filter((row) => row.status === 0);  // 입고대기 상태만
+        setSelectedRows(allRows);
+    };
+
+    const handleUncheckAll = () => {
+        setSelectedRows([]);
+    };
+
     const handleConfirm = async () => {
-        if (!selectedRow) {
-            message.warning('입고 확정할 항목을 선택해주세요.');
+        const pendingItems = selectedRows.filter((row) => row.status === 0);
+
+        if (pendingItems.length === 0) {
+            message.warning('입고 확정할 항목을 선택해주세요. (입고대기 상태만 가능)');
             return;
         }
 
-        if (selectedRow.status !== 0) {
-            message.warning('입고대기 상태에서만 입고 확정이 가능합니다.');
-            return;
+        setProcessing(true);
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const item of pendingItems) {
+            try {
+                await requestPendingStockConfirm(item.id);
+                successCount++;
+            } catch (err) {
+                failCount++;
+                console.error(`입고 확정 실패: ${item.product_name}`, err);
+            }
         }
 
-        try {
-            const res = await requestPendingStockConfirm(selectedRow.id);
-            message.success(`${selectedRow.product_name} ${selectedRow.amount}개 입고 확정! (현재 재고: ${res.data.new_stock})`);
-            setSelectedRow(null);
-            loadData();
-        } catch (err) {
-            message.error('입고 확정 중 오류가 발생했습니다.');
+        setProcessing(false);
+
+        if (successCount > 0) {
+            message.success(`${successCount}건 입고 확정 완료!`);
         }
+        if (failCount > 0) {
+            message.error(`${failCount}건 입고 확정 실패`);
+        }
+
+        setSelectedRows([]);
+        loadData();
     };
 
-    // 바로판매 모달 열기
     const handleSellModal = () => {
-        if (!selectedRow) {
+        if (selectedRows.length === 0) {
             message.warning('바로판매할 항목을 선택해주세요.');
             return;
         }
 
-        if (selectedRow.status !== 0) {
+        if (selectedRows.length > 1) {
+            message.warning('바로판매는 한 번에 1개만 처리할 수 있습니다. 1개만 선택해주세요.');
+            return;
+        }
+
+        const selected = selectedRows[0];
+        if (selected.status !== 0) {
             message.warning('입고대기 상태에서만 바로판매가 가능합니다.');
             return;
         }
@@ -94,42 +148,60 @@ const PendingStockTable = () => {
         setSellModalVisible(true);
     };
 
-    // 삭제 (취소)
     const handleDelete = async () => {
-        if (!selectedRow) {
-            message.warning('삭제할 항목을 선택해주세요.');
+        const pendingItems = selectedRows.filter((row) => row.status === 0);
+
+        if (pendingItems.length === 0) {
+            message.warning('삭제할 항목을 선택해주세요. (입고대기 상태만 가능)');
             return;
         }
 
-        if (selectedRow.status !== 0) {
-            message.warning('입고대기 상태에서만 삭제가 가능합니다.');
-            return;
+        setProcessing(true);
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const item of pendingItems) {
+            try {
+                await requestPendingStockDelete(item.id);
+                successCount++;
+            } catch (err) {
+                failCount++;
+                console.error(`삭제 실패: ${item.product_name}`, err);
+            }
         }
 
-        try {
-            await requestPendingStockDelete(selectedRow.id);
-            message.success('삭제되었습니다.');
-            setSelectedRow(null);
-            loadData();
-        } catch (err) {
-            message.error('삭제 중 오류가 발생했습니다.');
+        setProcessing(false);
+
+        if (successCount > 0) {
+            message.success(`${successCount}건 삭제 완료!`);
         }
+        if (failCount > 0) {
+            message.error(`${failCount}건 삭제 실패`);
+        }
+
+        setSelectedRows([]);
+        loadData();
     };
 
-    // 페이지 이동
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
             setPage(newPage);
         }
     };
 
+    const pendingSelectedCount = selectedRows.filter((r) => r.status === 0).length;
+
     return (
         <Aux>
             <PendingStockSellModal
                 visible={sellModalVisible}
                 onClose={() => setSellModalVisible(false)}
-                pendingData={selectedRow}
-                onSuccess={loadData}
+                pendingData={selectedRows.length === 1 ? selectedRows[0] : null}
+                onSuccess={() => {
+                    setSelectedRows([]);
+                    loadData();
+                }}
             />
 
             <Row>
@@ -168,37 +240,39 @@ const PendingStockTable = () => {
                                         variant="success"
                                         className="mr-2"
                                         onClick={handleConfirm}
-                                        disabled={!selectedRow || selectedRow.status !== 0}
+                                        disabled={pendingSelectedCount === 0 || processing}
                                     >
-                                        <i className="feather icon-check" /> 입고 확정
+                                        <i className="feather icon-check" />{' '}
+                                        {processing ? '처리 중...' : `입고 확정 ${pendingSelectedCount > 0 ? `(${pendingSelectedCount}건)` : ''}`}
                                     </Button>
                                     <Button
                                         variant="primary"
                                         className="mr-2"
                                         onClick={handleSellModal}
-                                        disabled={!selectedRow || selectedRow.status !== 0}
+                                        disabled={selectedRows.length !== 1 || selectedRows[0]?.status !== 0 || processing}
+                                        title={selectedRows.length > 1 ? '바로판매는 1개만 선택해주세요' : ''}
                                     >
                                         <i className="feather icon-shopping-cart" /> 바로판매
                                     </Button>
                                     <Popconfirm
-                                        title="정말 삭제하시겠습니까?"
+                                        title={`${pendingSelectedCount}건을 삭제하시겠습니까?`}
                                         onConfirm={handleDelete}
                                         okText="삭제"
                                         cancelText="취소"
-                                        disabled={!selectedRow || selectedRow.status !== 0}
+                                        disabled={pendingSelectedCount === 0 || processing}
                                     >
                                         <Button
                                             variant="danger"
-                                            disabled={!selectedRow || selectedRow.status !== 0}
+                                            disabled={pendingSelectedCount === 0 || processing}
                                         >
-                                            <i className="feather icon-trash-2" /> 삭제
+                                            <i className="feather icon-trash-2" />{' '}
+                                            삭제 {pendingSelectedCount > 0 ? `(${pendingSelectedCount}건)` : ''}
                                         </Button>
                                     </Popconfirm>
                                 </Col>
                             </Row>
 
-                            {/* 선택된 항목 정보 */}
-                            {selectedRow && (
+                            {selectedRows.length > 0 && (
                                 <Row className="mb-3">
                                     <Col>
                                         <div
@@ -209,27 +283,42 @@ const PendingStockTable = () => {
                                                 border: '1px solid #dee2e6',
                                             }}
                                         >
-                                            <strong>선택:</strong> {selectedRow.product_name} |
-                                            <strong> 수량:</strong> {selectedRow.amount}개 |
-                                            <strong> 구입처:</strong> {selectedRow.supplier_name || '-'} |
-                                            <strong> 상태:</strong> {selectedRow.status_display}
+                                            <strong>선택: {selectedRows.length}건</strong>
+                                            {selectedRows.length <= 3 ? (
+                                                selectedRows.map((row, idx) => (
+                                                    <span key={row.id}>
+                                                        {idx > 0 && ' /'} {row.product_name} ({row.amount}개)
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <span>
+                                                    {' '}{selectedRows[0].product_name} 외 {selectedRows.length - 1}건
+                                                </span>
+                                            )}
+                                            {selectedRows.length > 1 && (
+                                                <span style={{ color: '#888', marginLeft: '15px', fontSize: '12px' }}>
+                                                    (바로판매는 1개만 선택 시 가능)
+                                                </span>
+                                            )}
                                         </div>
                                     </Col>
                                 </Row>
                             )}
 
-                            {/* 그리드 */}
                             <Grid
                                 ref={gridRef}
                                 data={data}
                                 columns={gridColumns}
                                 rowHeight={35}
                                 bodyHeight={400}
-                                rowHeaders={['rowNum']}
-                                onClick={handleRowClick}
+                                rowHeaders={['checkbox', 'rowNum']}
+                                columnOptions={{ resizable: true }}
+                                onCheck={handleCheck}
+                                onUncheck={handleUncheck}
+                                onCheckAll={handleCheckAll}
+                                onUncheckAll={handleUncheckAll}
                             />
 
-                            {/* 페이지네이션 */}
                             <Row className="mt-3">
                                 <Col className="d-flex justify-content-center align-items-center">
                                     <Button
@@ -241,8 +330,8 @@ const PendingStockTable = () => {
                                         &lt; 이전
                                     </Button>
                                     <span className="mx-3">
-                    {page} / {maxPage} 페이지
-                  </span>
+                                        {page} / {maxPage} 페이지
+                                    </span>
                                     <Button
                                         variant="outline-secondary"
                                         size="sm"

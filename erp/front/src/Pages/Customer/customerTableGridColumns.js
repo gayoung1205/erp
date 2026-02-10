@@ -31,13 +31,11 @@ export default [
     name: 'memo',
     header: '메모',
     sortable: true,
-    align: 'left',  // ⭐ 왼쪽 정렬 (읽기 편하게)
-    width: 250,     // ⭐ 너비 증가
+    align: 'left',
+    width: 250,
     ellipsis: true,
-    // ⭐ 툴팁으로 전체 메모 표시
     formatter({ value }) {
       if (!value) return '';
-      // HTML title 속성으로 툴팁 표시
       return `<span title="${value.replace(/"/g, '&quot;').replace(/\n/g, '&#10;')}">${value}</span>`;
     },
   },

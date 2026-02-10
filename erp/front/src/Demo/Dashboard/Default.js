@@ -19,6 +19,8 @@ const Dashboard = () => {
       if (sessionStorage.getItem('username') === null || sessionStorage.getItem('permission') === null) {
         sessionStorage.setItem('username', res.username);
         sessionStorage.setItem('permission', res.permission);
+        sessionStorage.setItem('is_staff', res.is_staff);
+        sessionStorage.setItem('is_superuser', res.is_superuser);
         window.location.reload();
       } else {
         if (sessionStorage.getItem('dashboardModalCheck') === null) {

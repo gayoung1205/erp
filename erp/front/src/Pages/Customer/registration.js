@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Row, Col, Card, Form, Button, InputGroup, FormControl } from 'react-bootstrap';
 import Aux from '../../hoc/_Aux';
@@ -13,6 +13,14 @@ const CustomerRegistration = () => {
   const history = useHistory(); // location 객체 접근
   const [data, setData] = useState({ price_grade: '매출단가 적용' }); //Customer Data
   const [addrSearchModalVisible, setAddrSearchModalVisible] = useState(false);
+
+  useEffect(() => {
+    const permission = window.sessionStorage.getItem('permission');
+    if (permission === '4' || permission === '6') {
+      message.error('권한이 없습니다.');
+      history.goBack();
+    }
+  }, []);
 
   // Customer Create
   const customerCreate = () => {

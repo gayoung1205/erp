@@ -2,19 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Card } from 'react-bootstrap';
 import Grid from '@toast-ui/react-grid';
 import 'tui-grid/dist/tui-grid.css';
-import requestReleaseLogGet from '../../Axios/Release/requestReleaseLogGet';
+import requestReleaseLogRecentGet from '../../Axios/Release/requestReleaseLogRecentGet';
 
 const ReleaseLogGrid = (props) => {
   const [data, setData] = useState([]);
-  const gridRef = React.createRef(); // Grid Function 쓰기 위해서
+  const gridRef = React.createRef();
 
   useEffect(() => {
-    requestReleaseLogGet().then((res) => {
-      setData(res);
+    requestReleaseLogRecentGet().then((res) => {
+      if (res) {
+        setData(res);
+      }
     });
   }, []);
 
-  //내역테이블 columns
   const historyColumns = [
     {
       name: 'release_created_date',
@@ -63,23 +64,23 @@ const ReleaseLogGrid = (props) => {
   ];
 
   return (
-    <Card>
-      <Card.Header>
-        <Card.Title as="h5">최근 출고판매내역</Card.Title>
-      </Card.Header>
-      <Card.Body>
-        <Grid
-          ref={gridRef}
-          data={data}
-          scrollX={true}
-          columns={historyColumns}
-          rowHeight={25}
-          bodyHeight={400} //height 길이
-          columnOptions={{ resizable: true }} //column width 조절 가능
-          selectionUnit="row" //grid select unit, 그리드 선택단위, ('row', 'cell')
-        />
-      </Card.Body>
-    </Card>
+      <Card>
+        <Card.Header>
+          <Card.Title as="h5">최근 출고판매내역</Card.Title>
+        </Card.Header>
+        <Card.Body>
+          <Grid
+              ref={gridRef}
+              data={data}
+              scrollX={true}
+              columns={historyColumns}
+              rowHeight={25}
+              bodyHeight={400}
+              columnOptions={{ resizable: true }}
+              selectionUnit="row"
+          />
+        </Card.Body>
+      </Card>
   );
 };
 

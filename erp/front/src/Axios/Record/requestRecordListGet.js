@@ -2,8 +2,8 @@ import axios from 'axios';
 import config from '../../config.js';
 import CheckToken from '../../App/components/checkToken';
 
-const requestRecordListGet = async (category, accept, page) => {
-  let token = sessionStorage.getItem('token'); // Login Token
+const requestRecordListGet = async (category, accept, page, dateRange) => {
+  let token = sessionStorage.getItem('token');
   let returnData, url;
 
   switch (accept) {
@@ -18,17 +18,22 @@ const requestRecordListGet = async (category, accept, page) => {
       break;
   }
 
+  if (dateRange) {
+    if (dateRange.startDate) url += `&start_date=${dateRange.startDate}`;
+    if (dateRange.endDate) url += `&end_date=${dateRange.endDate}`;
+  }
+
   await axios({
     url: url,
     method: 'GET',
     headers: { Authorization: `JWT ${token}` },
   })
-    .then((res) => {
-      returnData = res.data;
-    })
-    .catch((err) => {
-      CheckToken(err);
-    });
+      .then((res) => {
+        returnData = res.data;
+      })
+      .catch((err) => {
+        CheckToken(err);
+      });
 
   return returnData;
 };

@@ -1,0 +1,15 @@
+.overdue-row {
+    background-color: #ffebee !important;
+}
+
+.overdue-row td {
+    background-color: #ffebee !important;
+}
+
+.overdue-row-severe {
+    background-color: #ffcdd2 !important;
+}
+
+.overdue-row-severe td {
+    background-color: #ffcdd2 !important;
+}

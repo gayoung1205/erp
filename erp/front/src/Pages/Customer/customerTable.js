@@ -18,6 +18,7 @@ import { parseInt } from 'lodash';
 import DynamicProgress from '../../App/components/DynamicProgress';
 import { Modal } from 'antd';
 import { Tooltip } from 'antd';
+import requestExcelPermissionCheck from '../../Axios/Excel/requestExcelPermissionCheck';
 
 const CustomerTable = ({ match }) => {
   const isDesktop = useMediaQuery({ query: '(min-device-width: 768px)' });
@@ -39,6 +40,8 @@ const CustomerTable = ({ match }) => {
     setMemoModal({ visible: true, content: memo, title: name });
   };
 
+  const [excelPermission, setExcelPermission] = useState(false);
+
   useEffect(() => {
     requestAllCustomerGet(page).then((res) => {
       let { results } = res;
@@ -46,7 +49,7 @@ const CustomerTable = ({ match }) => {
       results = notNull(results);
       setData(results);
     });
-  }, [page]);  // ⭐ page 의존성 추가
+  }, [page]);
 
   useEffect(() => {
     let dummyColumns = cloneDeep(customerTableGridColumns);
@@ -57,6 +60,12 @@ const CustomerTable = ({ match }) => {
     }
 
     setGridColumns(dummyColumns);
+  }, []);
+
+  useEffect(() => {
+    requestExcelPermissionCheck().then((res) => {
+      setExcelPermission(res.can_export_customer);
+    });
   }, []);
 
   const updateModal = (rowKey) => {
@@ -94,7 +103,6 @@ const CustomerTable = ({ match }) => {
     setDownloadModalVisible(isVisible);
   };
 
-  // ⭐ 메모 셀 클릭 시 팝업 표시
   const handleCellClick = (e) => {
     if (e.columnName === 'memo' && e.rowKey !== undefined) {
       const memo = data[e.rowKey]?.memo;
@@ -111,7 +119,6 @@ const CustomerTable = ({ match }) => {
 
   return (
       <>
-        {/* ⭐ 메모 팝업 */}
         {memoPopup.visible && (
             <div
                 style={{
@@ -127,7 +134,7 @@ const CustomerTable = ({ match }) => {
                   overflow: 'auto',
                   zIndex: 9999,
                   boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                  whiteSpace: 'pre-wrap',  // 줄바꿈 유지
+                  whiteSpace: 'pre-wrap',
                   fontSize: '14px',
                 }}
                 onClick={() => setMemoPopup({ ...memoPopup, visible: false })}
@@ -158,6 +165,12 @@ const CustomerTable = ({ match }) => {
 
         {isDesktop && (
             <>
+              <div style={{ marginBottom: '10px', textAlign: 'right' }}>
+                <Button variant="success" size="sm" onClick={() => downloadModalProcessing(true)}>
+                  📥 엑셀 출력
+                </Button>
+              </div>
+
               <ContextMenuTrigger id="customerTableContextMenu">
                 <div className="customerTableContextMenuDiv">
                   <Grid
@@ -165,6 +178,7 @@ const CustomerTable = ({ match }) => {
                       scrollX={true}
                       scrollY={false}
                       columns={gridColumns}
+                      contextMenu={null}
                       rowHeight={25}
                       bodyHeight="auto"
                       columnOptions={{ resizable: true }}
@@ -173,7 +187,6 @@ const CustomerTable = ({ match }) => {
                         if (e.targetType !== 'etc') updateModal(e.rowKey);
                       }}
                       onClick={(e) => {
-                        // ⭐ 메모 클릭 처리 추가
                         handleCellClick(e);
 
                         if (e.targetType === 'columnHeader' && e.nativeEvent.target.className.indexOf('tui-grid-cell-header') !== -1) {
@@ -196,7 +209,11 @@ const CustomerTable = ({ match }) => {
               </ContextMenuTrigger>
               <ContextMenu id="customerTableContextMenu">
                 <MenuItem onClick={() => handleContextMenu()}>전체 열 {contextMenuText}</MenuItem>
-                <MenuItem onClick={() => downloadModalProcessing(true)}>엑셀 출력</MenuItem>
+                {excelPermission ? (
+                    <MenuItem onClick={() => downloadModalProcessing(true)}>엑셀 출력</MenuItem>
+                ) : (
+                    <MenuItem disabled>엑셀 출력 (권한 없음)</MenuItem>
+                )}
               </ContextMenu>
               <DynamicProgress visible={downloadModalVisible} type={'customer'} downloadModalProcessing={downloadModalProcessing} />
               <PaginationComponent page={page} maxPage={maxPage} url={'/Customer/customerTable/'} />
@@ -218,7 +235,6 @@ const CustomerTable = ({ match }) => {
                               {el.phone !== '' && <Card.Text>Phone : {el.phone}</Card.Text>}
                               {el.address !== '' && <Card.Text>주소 : {el.address}</Card.Text>}
                             </div>
-                            {/* ✅ 메모 영역 개선 - 더 크고 읽기 쉽게 */}
                             {el.memo !== '' && (
                                 <div
                                     style={{

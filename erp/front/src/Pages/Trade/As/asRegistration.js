@@ -22,8 +22,13 @@ const AsRegistration = () => {
     register_date: moment().format().slice(0, 16),
   }); // Trade Data
 
-  // customer_name setData, sessionStorage에 Customer Id가 없을 경우 고객목록 page로 이동
   React.useEffect(() => {
+    const permission = window.sessionStorage.getItem('permission');
+    if (permission === '4' || permission === '7') {
+      message.error('권한이 없습니다.');
+      history.goBack();
+      return;
+    }
     if (cmId === null || cmId === undefined || isNaN(cmId) === true) {
       history.push('/Customer/customerTable/1');
     } else {
@@ -111,6 +116,8 @@ const AsRegistration = () => {
                       >
                         <option value={0}>출장</option>
                         <option value={1}>내방</option>
+                        <option value={2}>공사</option>
+                        <option value={3}>내부처리</option>
                       </Form.Control>
                     </Form.Group>
                   </Form>

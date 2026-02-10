@@ -21,8 +21,13 @@ const DeliveryRegistration = () => {
     register_date: moment().format().slice(0, 16),
   }); // Trade Data
 
-  // 처음에 customer_name setData, sessionStorage에 Customer Id가 없을 경우 고객목록 page로 이동
   React.useEffect(() => {
+    const permission = window.sessionStorage.getItem('permission');
+    if (permission === '4' || permission === '7') {
+      message.error('권한이 없습니다.');
+      history.goBack();
+      return;
+    }
     if (cmId === null || cmId === undefined || isNaN(cmId) === true) {
       history.push('/Customer/customerTable/1');
     } else {

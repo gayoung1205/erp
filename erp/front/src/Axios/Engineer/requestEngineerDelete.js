@@ -1,5 +1,5 @@
 import axios from 'axios'
-import confing from '../../config.js'
+import config from '../../config.js'
 import CheckToken from "../../App/components/checkToken";
 
 const requestEngineerDelete = async (id) => {

@@ -32,6 +32,7 @@ const CustomerRegistration = React.lazy(() => import('./Pages/Customer/registrat
 
 const ProductTable = React.lazy(() => import('./Pages/Product/productTable.js'));
 const ProductRegistration = React.lazy(() => import('./Pages/Product/registration.js'));
+const InactiveProductTable = React.lazy(() => import('./Pages/Product/inactiveProductTable.js'));
 
 const PendingStockTable = React.lazy(() => import('./Pages/PendingStock/pendingStockTable.js'));
 
@@ -109,6 +110,7 @@ const routes = [
 
   { path: '/Product/registration', exact: true, name: 'Product Registration', component: ProductRegistration },
   { path: '/Product/productTable/:page', exact: true, name: 'Product Table', component: ProductTable },
+  { path: '/Product/inactiveProductTable', exact: true, name: 'Inactive Product Table', component: InactiveProductTable },
 
   { path: '/Product/pendingStockTable', exact: true, name: 'PendingStock Table', component: PendingStockTable },
 

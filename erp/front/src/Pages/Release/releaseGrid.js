@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from 'react-bootstrap';
+import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
+import '../../assets/css/react-contextmenu.css';
 import Grid from '@toast-ui/react-grid';
 import 'tui-grid/dist/tui-grid.css';
 import { Modal, message } from 'antd';
@@ -11,10 +13,14 @@ import CustomNumberEditor from '../../App/components/CustomNumberEditor';
 import CustomTextEditor from '../../App/components/CustomTextEditor';
 import CustomButton from '../../App/components/CustomButton';
 import { isEmptyObject } from 'jquery';
+import DynamicProgress from '../../App/components/DynamicProgress';
+import requestExcelPermissionCheck from '../../Axios/Excel/requestExcelPermissionCheck';
 
 const ReleaseGrid = (props) => {
   const [data, setData] = useState([]);
-  const gridRef = React.createRef(); // Grid Function 쓰기 위해서
+  const gridRef = React.createRef();
+  const [excelPermission, setExcelPermission] = useState(false);
+  const [downloadModalVisible, setDownloadModalVisible] = useState(false);
 
   useEffect(() => {
     requestReleaseGet().then((res) => {
@@ -36,6 +42,16 @@ const ReleaseGrid = (props) => {
     }
   }, [props.appendMultipleRows]);
 
+  useEffect(() => {
+    requestExcelPermissionCheck().then((res) => {
+      setExcelPermission(res.can_export_release);
+    });
+  }, []);
+
+  const downloadModalProcessing = (isVisible) => {
+    setDownloadModalVisible(isVisible);
+  };
+
   const handleClick = useCallback(
       (e) => {
         if (e.columnName === 'action' && e.targetType !== 'columnHeader') {
@@ -52,15 +68,13 @@ const ReleaseGrid = (props) => {
               requestReleaseDelete(rowData.id);
               message.success('삭제되었습니다.');
             },
-            onCancel() {
-            },
+            onCancel() {},
           });
         }
       },
       [gridRef]
   );
 
-  //내역테이블 columns
   const historyColumns = [
     {
       name: 'created_date',
@@ -133,26 +147,43 @@ const ReleaseGrid = (props) => {
   ];
 
   return (
-    <Card>
-      <Card.Header>
-        <Card.Title as="h5">출고내역</Card.Title>
-      </Card.Header>
-      <Card.Body>
-        <Grid
-          ref={gridRef}
-          data={data}
-          scrollX={true}
-          bodyHeight={400}
-          columns={historyColumns}
-          rowHeight={25}
-          columnOptions={{ resizable: true }} //column width 조절 가능
-          selectionUnit="row" //grid select unit, 그리드 선택단위, ('row', 'cell')
-          onClick={(e) => {
-            handleClick(e);
-          }}
-        />
-      </Card.Body>
-    </Card>
+      <Card>
+        <Card.Header>
+          <Card.Title as="h5">출고내역</Card.Title>
+        </Card.Header>
+        <Card.Body>
+          <ContextMenuTrigger id="releaseGridContextMenu">
+            <div>
+              <Grid
+                  ref={gridRef}
+                  data={data}
+                  scrollX={true}
+                  bodyHeight={400}
+                  columns={historyColumns}
+                  rowHeight={25}
+                  columnOptions={{ resizable: true }}
+                  selectionUnit="row"
+                  contextMenu={null}
+                  onClick={(e) => {
+                    handleClick(e);
+                  }}
+              />
+            </div>
+          </ContextMenuTrigger>
+          <ContextMenu id="releaseGridContextMenu">
+            {excelPermission ? (
+                <MenuItem onClick={() => downloadModalProcessing(true)}>엑셀 출력</MenuItem>
+            ) : (
+                <MenuItem disabled>엑셀 출력 (권한 없음)</MenuItem>
+            )}
+          </ContextMenu>
+          <DynamicProgress
+              visible={downloadModalVisible}
+              type={'release'}
+              downloadModalProcessing={downloadModalProcessing}
+          />
+        </Card.Body>
+      </Card>
   );
 };
 

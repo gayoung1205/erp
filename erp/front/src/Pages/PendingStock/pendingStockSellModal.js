@@ -1,53 +1,120 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
-import { message } from 'antd';
+import { message, Select, Spin } from 'antd';
 import 'antd/dist/antd.css';
+import moment from 'moment';
 import requestPendingStockSell from '../../Axios/PendingStock/requestPendingStockSell';
-import requestCustomerGet from '../../Axios/Customer/requestCustomerGet';
+import requestTradeCreate from '../../Axios/Trade/requestTradeCreate';
+import requestSearchTableGet from '../../Axios/Search/requestSearchTableGet';
+
+const { Option } = Select;
 
 const PendingStockSellModal = ({ visible, onClose, pendingData, onSuccess }) => {
     const [data, setData] = useState({
-        trade_id: '',
         price: 0,
         tax_category: 0,
+        sell_amount: 0,
     });
-    const [customerName, setCustomerName] = useState('');
+    const [customerList, setCustomerList] = useState([]);       // 검색된 고객 목록
+    const [selectedCustomer, setSelectedCustomer] = useState(null); // 선택된 고객 { id, name }
+    const [customerSearching, setCustomerSearching] = useState(false); // 검색 중 로딩
+    const [processing, setProcessing] = useState(false);        // 바로판매 처리 중
 
     useEffect(() => {
         if (pendingData) {
             setData({
-                ...data,
                 price: pendingData.price || 0,
+                tax_category: 0,
+                sell_amount: pendingData.amount || 0,
             });
+            setSelectedCustomer(null);
+            setCustomerList([]);
         }
     }, [pendingData]);
 
-    useEffect(() => {
-        // 현재 선택된 고객 정보 가져오기
-        const customerId = sessionStorage.getItem('customerId');
-        if (customerId) {
-            requestCustomerGet().then((res) => {
-                if (res && res[0]) {
-                    setCustomerName(res[0].name);
-                }
-            });
-        }
-    }, [visible]);
-
-    const handleSell = async () => {
-        if (!data.trade_id) {
-            message.warning('거래 ID를 입력해주세요.');
+    const handleCustomerSearch = async (searchText) => {
+        if (!searchText || searchText.length < 1) {
+            setCustomerList([]);
             return;
         }
 
+        setCustomerSearching(true);
         try {
-            await requestPendingStockSell(pendingData.id, data);
-            message.success('바로판매 처리되었습니다.');
+            const res = await requestSearchTableGet({
+                tables: '고객',
+                tags: `통합검색:${searchText}`,
+            });
+            if (res && res.length > 0) {
+                setCustomerList(res);
+            } else {
+                setCustomerList([]);
+            }
+        } catch (err) {
+            console.error('고객 검색 오류:', err);
+            setCustomerList([]);
+        }
+        setCustomerSearching(false);
+    };
+
+    const handleCustomerSelect = (value) => {
+        const customer = customerList.find((c) => c.id === value);
+        if (customer) {
+            setSelectedCustomer({ id: customer.id, name: customer.name });
+        }
+    };
+
+    const handleCustomerClear = () => {
+        setSelectedCustomer(null);
+    };
+
+    const handleSell = async () => {
+        // 유효성 검사
+        if (!selectedCustomer) {
+            message.warning('판매할 고객(거래처)을 선택해주세요.');
+            return;
+        }
+
+        if (!data.sell_amount || data.sell_amount <= 0) {
+            message.warning('판매 수량을 입력해주세요.');
+            return;
+        }
+
+        if (data.sell_amount > pendingData.amount) {
+            message.warning(`입고대기 수량(${pendingData.amount}개)보다 많이 판매할 수 없습니다.`);
+            return;
+        }
+
+        setProcessing(true);
+
+        try {
+            const tradeData = {
+                customer_id: selectedCustomer.id,
+                customer_name: selectedCustomer.name,
+                category_1: 3,
+                register_date: moment().format().slice(0, 16),
+            };
+
+            const tradeRes = await requestTradeCreate(tradeData);
+            const tradeId = tradeRes.data.data;
+
+            await requestPendingStockSell(pendingData.id, {
+                trade_id: tradeId,
+                price: data.price,
+                tax_category: data.tax_category,
+                sell_amount: data.sell_amount,
+            });
+
+            message.success(
+                `[${pendingData.product_name}] ${data.sell_amount}개를 [${selectedCustomer.name}]에게 바로판매 처리했습니다.`
+            );
             onSuccess();
             onClose();
         } catch (err) {
+            console.error('바로판매 처리 오류:', err);
             message.error('바로판매 처리 중 오류가 발생했습니다.');
         }
+
+        setProcessing(false);
     };
 
     if (!pendingData) return null;
@@ -70,22 +137,49 @@ const PendingStockSellModal = ({ visible, onClose, pendingData, onSuccess }) => 
                     </Form.Group>
 
                     <Form.Group>
-                        <Form.Label>수량</Form.Label>
-                        <Form.Control type="number" value={pendingData.amount} disabled />
+                        <Form.Label>
+                            판매 수량
+                            <span style={{ color: '#888', fontSize: '12px', marginLeft: '8px' }}>
+                                (입고대기: {pendingData.amount}개)
+                            </span>
+                        </Form.Label>
+                        <Form.Control
+                            type="number"
+                            value={data.sell_amount}
+                            min={1}
+                            max={pendingData.amount}
+                            onChange={(e) => setData({ ...data, sell_amount: parseInt(e.target.value) || 0 })}
+                        />
                     </Form.Group>
 
                     <Form.Group>
                         <Form.Label>
-                            <span style={{ color: 'red' }}>*</span> 거래 ID
+                            <span style={{ color: 'red' }}>*</span> 고객(거래처) 선택
                         </Form.Label>
-                        <Form.Control
-                            type="number"
-                            placeholder="판매 거래 ID 입력"
-                            value={data.trade_id}
-                            onChange={(e) => setData({ ...data, trade_id: e.target.value })}
-                        />
+                        <Select
+                            showSearch
+                            allowClear
+                            placeholder="고객명을 검색하세요"
+                            style={{ width: '100%' }}
+                            filterOption={false}
+                            defaultActiveFirstOption={false}
+                            getPopupContainer={(trigger) => trigger.parentNode}
+                            onSearch={handleCustomerSearch}
+                            onSelect={handleCustomerSelect}
+                            onClear={handleCustomerClear}
+                            notFoundContent={customerSearching ? <Spin size="small" /> : '검색 결과 없음'}
+                            value={selectedCustomer ? selectedCustomer.id : undefined}
+                        >
+                            {customerList.map((customer) => (
+                                <Option key={customer.id} value={customer.id}>
+                                    {customer.name}
+                                    {customer.phone ? ` | ${customer.phone}` : ''}
+                                    {customer.address_1 ? ` | ${customer.address_1}` : ''}
+                                </Option>
+                            ))}
+                        </Select>
                         <Form.Text className="text-muted">
-                            제품판매 거래를 먼저 생성한 후 거래 ID를 입력하세요.
+                            고객명을 입력하면 자동으로 검색됩니다. 선택 시 판매 거래가 자동 생성됩니다.
                         </Form.Text>
                     </Form.Group>
 
@@ -113,11 +207,11 @@ const PendingStockSellModal = ({ visible, onClose, pendingData, onSuccess }) => 
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
+                <Button variant="secondary" onClick={onClose} disabled={processing}>
                     취소
                 </Button>
-                <Button variant="primary" onClick={handleSell}>
-                    바로판매 처리
+                <Button variant="primary" onClick={handleSell} disabled={processing}>
+                    {processing ? '처리 중...' : '바로판매 처리'}
                 </Button>
             </Modal.Footer>
         </Modal>

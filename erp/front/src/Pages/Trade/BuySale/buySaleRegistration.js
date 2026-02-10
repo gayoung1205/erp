@@ -42,7 +42,15 @@ const BuySaleRegistration = (typeParams) => {
     tax_category: '부가세 없음',
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
+    const permission = window.sessionStorage.getItem('permission');
+    if (permission === '4' || permission === '7') {
+      message.error('권한이 없습니다.');
+      history.goBack();
+      return;
+    }
     cmId === null || cmId === undefined || isNaN(cmId) === true
         ? history.push('/Customer/customerTable/1')
         : requestCustomerGet().then((res) => {
@@ -126,18 +134,16 @@ const BuySaleRegistration = (typeParams) => {
     message.success(`새 제품 [${newProduct.name}]이 등록되었습니다.`);
   };
 
-  // ★ 입고대기 제품 선택 시 - 수량 수정 가능하도록 productData에 설정
   const handlePendingStockSelect = (pendingItem) => {
-    // productData에 설정하면 사용자가 수량 수정 가능
     setProductData({
       id: pendingItem.product,
       name: pendingItem.product_name,
       category: pendingItem.product_category,
       price: pendingItem.price,
-      stock: pendingItem.amount,  // 기본값은 입고대기 수량
+      stock: pendingItem.amount,
       tax_category: '부가세 없음',
-      pending_stock_id: pendingItem.id,  // ★ 입고대기 ID 저장
-      pending_stock_amount: pendingItem.amount,  // ★ 원래 입고대기 수량 저장
+      pending_stock_id: pendingItem.id,
+      pending_stock_amount: pendingItem.amount,
     });
     message.info(`입고대기 [${pendingItem.product_name}]이 선택되었습니다. 수량을 확인 후 등록 버튼을 눌러주세요.`);
   };
@@ -145,40 +151,19 @@ const BuySaleRegistration = (typeParams) => {
   const enterCode = () => {
     if (window.event.keyCode === 13) {
       if (productData.name === '') {
-        message.warning('코드를 입력해주세요.');
+        message.warning('제품명/코드를 입력해주세요.');
         return null;
       }
-      requestSearchProductCodeGet(productData.name).then((res) => {
-        if (res !== null && res !== undefined) {
-          let priceGrade = handlePriceGrade(data.price_grade);
-          let taxSet = calcTaxCategory(productData.tax_category, res[priceGrade], productData.stock);
-          setAppendRowData({
-            name: res.name,
-            product_category: res.category,
-            amount: 1,
-            price: res[priceGrade],
-            tax_category: productData.tax_category,
-            supply: taxSet.supply,
-            surtax: taxSet.surtax,
-            total_price: taxSet.total_price,
-            product_id: res.id,
-            trade_id: ' ',
-            trade_category: data.category_1,
-          });
-          resetProductData();
-        }
-      });
+      searchProduct();
     }
   };
 
-  // ★ 수정: insertHistory에서 입고대기 정보도 함께 처리
   const insertHistoryWithPending = () => {
     if (productData.name === '') {
       message.warning('제품명을 입력해주세요.');
       return null;
     }
 
-    // 입고대기 물품인 경우 수량 체크
     if (productData.pending_stock_id && productData.stock > productData.pending_stock_amount) {
       message.warning(`입고대기 수량(${productData.pending_stock_amount}개)보다 많이 판매할 수 없습니다.`);
       return null;
@@ -198,17 +183,24 @@ const BuySaleRegistration = (typeParams) => {
       product_id: productData.id,
       trade_id: ' ',
       trade_category: data.category_1,
-      // ★ 입고대기 정보 추가
       pending_stock_id: productData.pending_stock_id || null,
       pending_stock_amount: productData.pending_stock_amount || null,
     });
     resetProductData();
   };
 
-  // ★ 제품구매/판매 처리
   const buySaleCreate = async (historyData) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     try {
       const tradeRes = await requestTradeCreate(data);
+
+      if (!tradeRes || !tradeRes.data || !tradeRes.data.data) {
+        message.error('거래 등록에 실패했습니다. 다시 시도해주세요.');
+        return;
+      }
+
       const tradeId = tradeRes.data.data;
 
       if (!isEmptyObject(historyData.release)) {
@@ -221,28 +213,41 @@ const BuySaleRegistration = (typeParams) => {
 
       if (!isEmptyObject(historyData.history)) {
         if (type === 'buy') {
-          // ★ 제품구매: History도 생성 + 입고대기 등록
           for (const item of historyData.history) {
             item.trade_id = tradeId;
           }
-          // History 먼저 생성 (거래 금액 표시용)
+
           await requestHistoryCreate(historyData.history);
 
-          // 입고대기 등록
+          const failedItems = [];
+
           for (const item of historyData.history) {
-            await requestPendingStockCreate({
-              product_id: item.product_id,
-              amount: item.amount,
-              price: item.price,
-              supplier_name: data.customer_name,
-              trade_id: tradeId,
-              memo: data.memo || '',
-            });
+            try {
+              await requestPendingStockCreate({
+                product_id: item.product_id,
+                amount: item.amount,
+                price: item.price,
+                supplier_name: data.customer_name,
+                trade_id: tradeId,
+                memo: data.memo || '',
+              });
+            } catch (err) {
+              failedItems.push(item.name);
+              console.error(`입고대기 생성 실패: ${item.name}`, err);
+            }
           }
-          message.success('제품구매가 등록되었습니다. 입고대기 탭에서 입고 확정해주세요.');
+
+          if (failedItems.length > 0) {
+            message.warning(
+                `구매 등록 완료. 단, 일부 입고대기 등록 실패: ${failedItems.join(', ')}. 입고대기 탭에서 확인해주세요.`
+            );
+          } else {
+            message.success('제품구매가 등록되었습니다. 입고대기 탭에서 입고 확정해주세요.');
+          }
+
           history.push(`/Product/pendingStockTable`);
+
         } else {
-          // 제품판매: 일반/입고대기 분리 처리
           const normalItems = [];
           const pendingItems = [];
 
@@ -255,19 +260,17 @@ const BuySaleRegistration = (typeParams) => {
             }
           }
 
-          // 일반 제품: 기존 History 생성
           if (normalItems.length > 0) {
             await requestHistoryCreate(normalItems);
           }
 
-          // 입고대기 제품: 바로판매 API 호출
           for (const item of pendingItems) {
             await requestPendingStockSell(item.pending_stock_id, {
               trade_id: tradeId,
               price: item.price,
               tax_category: item.tax_category === '부가세 없음' ? 0 :
                   item.tax_category === '부가세 적용' ? 1 : 2,
-              sell_amount: item.amount,  // ★ 판매할 수량 전달
+              sell_amount: item.amount,
             });
           }
 
@@ -282,6 +285,8 @@ const BuySaleRegistration = (typeParams) => {
     } catch (err) {
       message.error('등록 중 오류가 발생했습니다.');
       console.error(err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -424,7 +429,7 @@ const BuySaleRegistration = (typeParams) => {
         </Row>
         <Row>
           <Col>
-            <BuySaleCreateGrid appendRowData={appendRowData} buySaleCreate={(historyData) => buySaleCreate(historyData)} category1={data.category_1} />
+            <BuySaleCreateGrid appendRowData={appendRowData} buySaleCreate={(historyData) => buySaleCreate(historyData)} category1={data.category_1} isSubmitting={isSubmitting} />
           </Col>
         </Row>
       </Aux>

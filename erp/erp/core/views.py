@@ -859,16 +859,19 @@ class Trade(APIView):
                 tra = Tra.objects.filter(customer_id=customer_id).order_by(
                     "register_date"
                 )
-            # AS현황, 납품현황, page
             elif category is not None:
                 tra = (
                     Tra.objects.filter(category_1=category)
                     .prefetch_related("customer", "internal_processes")
-                    .order_by("-register_date","-category_2")
                 )
+                status_filter = req.GET.get("status", None)
+                if status_filter is not None and status_filter != "all":
+                    tra = tra.filter(category_2=int(status_filter))
+                tra = tra.order_by("-register_date", "-category_2")
                 result = custom_paginator(req, tra, None)
                 result["results"] = TradeSerializer(result["results"], many=True).data
                 return ReturnData(data=result)
+
             else:
                 division = req.GET.get("division")
                 tra = Tra.objects.all()
@@ -1903,9 +1906,12 @@ class ReceivableView(APIView):
 class MyasView(APIView):
     def get(self, req):
         try:
+            engineer = Eng.objects.get(user=req.user)
+
             my_as = (
                 Tra.objects.filter(category_1=0)
                 .filter(category_2__in=[0, 2])
+                .filter(engineer=engineer)
                 .prefetch_related("internal_processes")
                 .order_by("-register_date")
             )

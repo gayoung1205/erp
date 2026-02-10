@@ -22,7 +22,7 @@ import requestAllTradeGet from '../../Axios/Trade/requestAllTradeGet';
 import { parseInt } from 'lodash';
 import PaginationComponent from '../../App/components/PaginationComponent';
 import DynamicProgress from '../../App/components/DynamicProgress';
-// import ExportTradeData from '../../App/components/exportTradeData';
+import requestExcelPermissionCheck from '../../Axios/Excel/requestExcelPermissionCheck';
 
 const TradeTable = ({ match }) => {
   const isDesktop = useMediaQuery({ query: '(min-device-width: 768px)' }); // deviceWidth > 768
@@ -42,7 +42,8 @@ const TradeTable = ({ match }) => {
   const page = parseInt(match.params.page);
   const [maxPage, setMaxPage] = useState();
   const [downloadModalVisible, setDownloadModalVisible] = useState(false);
-  const cmId = window.sessionStorage.getItem('customerId'); // Customer Id
+  const cmId = window.sessionStorage.getItem('customerId');
+  const [excelPermission, setExcelPermission] = useState(false);
 
   useEffect(() => {
     let dummyColumns = cloneDeep(tradeTableColumns);
@@ -53,6 +54,12 @@ const TradeTable = ({ match }) => {
     }
 
     setGridColumns(dummyColumns);
+  }, []);
+
+  useEffect(() => {
+    requestExcelPermissionCheck().then((res) => {
+      setExcelPermission(res.can_export_trade);
+    });
   }, []);
 
   // requestAllTradeGet()이 처음에만 실행되도록
@@ -187,21 +194,24 @@ const TradeTable = ({ match }) => {
         <SimpleCustomerInformation />
         <Row>
           {isDesktop && (
-            <Col>
-              <Card>
-                <Card.Header>
-                  <Card.Title as="h5">내역</Card.Title>
-                </Card.Header>
-                <Card.Body>
-                  {/* <ExportTradeData data={data} /> */}
-                  <ContextMenuTrigger id="tradeTableContextMenu">
-                    <div className="tradeTableContextMenuDiv">
-                      <Grid
+              <Col md={12} xl={12} className="m-b-30">
+                <Card>
+                  <Card.Body>
+                    <div style={{ marginBottom: '10px', textAlign: 'right' }}>
+                      <Button variant="success" size="sm" onClick={() => downloadModalProcessing(true)}>
+                        📥 엑셀 출력
+                      </Button>
+                    </div>
+
+                    <ContextMenuTrigger id="tradeTableContextMenu">
+                      <div className="tradeTableContextMenuDiv">
+                        <Grid
                         ref={gridRef}
                         data={data}
                         scrollX={true}
                         scrollY={true}
                         columns={gridColumns}
+                        contextMenu={null}
                         rowHeight={25} // row 높이
                         bodyHeight="auto" // height 높이
                         columnOptions={{ resizable: true }} // column width 조절 가능
@@ -255,7 +265,11 @@ const TradeTable = ({ match }) => {
                   </ContextMenuTrigger>
                   <ContextMenu id="tradeTableContextMenu">
                     <MenuItem onClick={() => handleContextMenu()}>전체 열 {contextMenuText}</MenuItem>
-                    <MenuItem onClick={() => downloadModalProcessing(true)}>엑셀 출력</MenuItem>
+                    {excelPermission ? (
+                        <MenuItem onClick={() => downloadModalProcessing(true)}>엑셀 출력</MenuItem>
+                    ) : (
+                        <MenuItem disabled>엑셀 출력 (권한 없음)</MenuItem>
+                    )}
                     {exportVisible && <MenuItem onClick={() => requestExcelGet(excelData)}>거래명세서 출력</MenuItem>}
                   </ContextMenu>
                 </Card.Body>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
+import { Row, Col, Card, Form, Button, InputGroup, Table } from 'react-bootstrap';
 import { isEmptyObject } from 'jquery';
 import Aux from '../../../hoc/_Aux';
-import { message } from 'antd';
+import { message, Popconfirm } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import CustomerInformation from '../../../App/components/customerInformation';
@@ -18,6 +18,9 @@ import requestTradeDelete from '../../../Axios/Trade/requestTradeDelete';
 import requestTradeUpdate from '../../../Axios/Trade/requestTradeUpdate';
 import requestSearchProductCodeGet from '../../../Axios/Product/requestSearchProductCodeGet';
 import requestReleaseAllUpdate from '../../../Axios/Release/requestReleaseAllUpdate';
+import requestAsInternalProcessGet from '../../../Axios/AsInternalProcess/requestAsInternalProcessGet';
+import requestAsInternalProcessCreate from '../../../Axios/AsInternalProcess/requestAsInternalProcessCreate';
+import requestAsInternalProcessDelete from '../../../Axios/AsInternalProcess/requestAsInternalProcessDelete';
 import DeleteButton from '../../../App/components/Button/deleteButton';
 import UpdateButton from '../../../App/components/Button/updateButton';
 import notNull from '../../../App/components/notNull';
@@ -38,6 +41,16 @@ const AsUpdate = (props) => {
     stock: 1,
     tax_category: '부가세 없음',
   }); // Product Data
+
+  // ========== 내부처리 관련 State ==========
+  const [showInternalForm, setShowInternalForm] = useState(false); // 내부처리 폼 표시 여부
+  const [internalProcesses, setInternalProcesses] = useState([]); // 내부처리 이력 목록
+  const [internalData, setInternalData] = useState({
+    process_date: moment().format().slice(0, 16),
+    engineer_id: '',
+    content: '',
+    memo: '',
+  }); // 내부처리 폼 데이터
 
   // 처음 실행될 때 Trade Data Get
   useEffect(() => {
@@ -68,7 +81,9 @@ const AsUpdate = (props) => {
       }
 
       // As category_name2 Text
-      tra.category_2 === 0 || tra.category_2 === 2 ? setText(`${tra.category_name2} 중인 AS입니다.`) : setText(`${tra.category_name2}된 AS입니다.`);
+      tra.category_2 === 0 || tra.category_2 === 2
+          ? setText(`${tra.category_name2} 중인 AS입니다.`)
+          : setText(`${tra.category_name2}된 AS입니다.`);
 
       // customer price_grade get
       requestCustomerGet().then((cmRes) => {
@@ -78,7 +93,19 @@ const AsUpdate = (props) => {
         setData(tra);
       });
     });
+
+    // 내부처리 이력 조회
+    loadInternalProcesses();
   }, [props.match.params.trade_id, token]);
+
+  // 내부처리 이력 조회
+  const loadInternalProcesses = () => {
+    requestAsInternalProcessGet(props.match.params.trade_id).then((res) => {
+      if (res) {
+        setInternalProcesses(res);
+      }
+    });
+  };
 
   // AS 수정
   const asUpdate = (historyData) => {
@@ -221,6 +248,75 @@ const AsUpdate = (props) => {
     }
   };
 
+  // ========== 내부처리 관련 함수 ==========
+
+  // 내부처리 폼 토글
+  const toggleInternalForm = () => {
+    if (!showInternalForm) {
+      // 폼 열 때 초기화
+      setInternalData({
+        process_date: moment().format().slice(0, 16),
+        engineer_id: '',
+        content: '',
+        memo: '',
+      });
+    }
+    setShowInternalForm(!showInternalForm);
+  };
+
+  // 내부처리 등록
+  const createInternalProcess = () => {
+    // 필수값 체크
+    if (!internalData.engineer_id || internalData.engineer_id === '담당자 선택') {
+      message.warning('담당자를 선택해주세요.');
+      return null;
+    }
+    if (!internalData.content) {
+      message.warning('처리 내용을 입력해주세요.');
+      return null;
+    }
+
+    const reqData = {
+      trade_id: parseInt(props.match.params.trade_id),
+      engineer_id: parseInt(internalData.engineer_id),
+      process_date: internalData.process_date,
+      content: internalData.content,
+      memo: internalData.memo,
+    };
+
+    requestAsInternalProcessCreate(reqData).then((res) => {
+      if (res) {
+        message.success('내부처리가 등록되었습니다.');
+        // 폼 초기화 및 닫기
+        setInternalData({
+          process_date: moment().format().slice(0, 16),
+          engineer_id: '',
+          content: '',
+          memo: '',
+        });
+        setShowInternalForm(false);
+        // 목록 새로고침
+        loadInternalProcesses();
+      } else {
+        message.error('내부처리 등록에 실패했습니다.');
+      }
+    });
+  };
+
+  // 내부처리 삭제
+  const deleteInternalProcess = (processId) => {
+    requestAsInternalProcessDelete(processId).then((res) => {
+      if (res) {
+        message.success('내부처리가 삭제되었습니다.');
+        loadInternalProcesses();
+      } else {
+        message.error('내부처리 삭제에 실패했습니다.');
+      }
+    });
+  };
+
+  // ========== 컴포넌트 ==========
+
   // data rendering전에 data 값이 undefined일 경우 Warning 있어서
   if (data === undefined) {
     return null;
@@ -229,71 +325,86 @@ const AsUpdate = (props) => {
   // AS접수일 경우 진행 Button
   const AsProgressButton = () => {
     return (
-      <>
-        <Button variant="primary" onClick={() => changeCategory(2)}>
-          진행
-        </Button>
-      </>
+        <>
+          <Button variant="primary" onClick={() => changeCategory(2)}>
+            진행
+          </Button>
+        </>
     );
   };
 
-  // AS진행일 경우 진행 Button
+  // AS진행일 경우 완료 Button
   const AsCompleteButton = () => {
     return (
-      <>
-        <Button variant="primary" onClick={() => changeCategory(1)}>
-          완료
-        </Button>
-      </>
+        <>
+          <Button variant="primary" onClick={() => changeCategory(1)}>
+            완료
+          </Button>
+        </>
+    );
+  };
+
+  // 내부처리 Button
+  const AsInternalButton = () => {
+    return (
+        <>
+          <Button
+              variant={showInternalForm ? 'secondary' : 'info'}
+              onClick={toggleInternalForm}
+              style={{ marginRight: '5px' }}
+          >
+            {showInternalForm ? '내부처리 닫기' : '내부처리'}
+          </Button>
+        </>
     );
   };
 
   // AS접수, AS진행, AS완료일 경우 Cancel Button
   const AsCancelButton = () => {
     return (
-      <>
-        <Button variant="primary" onClick={() => changeCategory(3)}>
-          취소
-        </Button>
-      </>
+        <>
+          <Button variant="primary" onClick={() => changeCategory(3)}>
+            취소
+          </Button>
+        </>
     );
   };
 
   // AS완료, AS진행일 경우 visit_date
   const AsVisitDate = () => {
     return (
-      <>
-        <Form.Group controlId="asInput4">
-          <Form.Label>방문일</Form.Label>
-          <Form.Control
-            type="datetime-local"
-            value={data.visit_date ? data.visit_date : moment().format().slice(0, 16)}
-            onChange={(e) => {
-              setData({ ...data, visit_date: e.target.value });
-            }}
-            required
-          />
-        </Form.Group>
-      </>
+        <>
+          <Form.Group controlId="asInput4">
+            <Form.Label>방문일</Form.Label>
+            <Form.Control
+                type="datetime-local"
+                value={data.visit_date ? data.visit_date : moment().format().slice(0, 16)}
+                onChange={(e) => {
+                  setData({ ...data, visit_date: e.target.value });
+                }}
+                required
+            />
+          </Form.Group>
+        </>
     );
   };
 
   // AS완료, AS진행일 경우 complete_date
   const AsCompleteDate = () => {
     return (
-      <>
-        <Form.Group controlId="asInput5">
-          <Form.Label>완료일</Form.Label>
-          <Form.Control
-            type="datetime-local"
-            value={data.complete_date ? data.complete_date : moment().format().slice(0, 16)}
-            onChange={(e) => {
-              setData({ ...data, complete_date: e.target.value });
-            }}
-            required
-          />
-        </Form.Group>
-      </>
+        <>
+          <Form.Group controlId="asInput5">
+            <Form.Label>완료일</Form.Label>
+            <Form.Control
+                type="datetime-local"
+                value={data.complete_date ? data.complete_date : moment().format().slice(0, 16)}
+                onChange={(e) => {
+                  setData({ ...data, complete_date: e.target.value });
+                }}
+                required
+            />
+          </Form.Group>
+        </>
     );
   };
 
@@ -307,249 +418,411 @@ const AsUpdate = (props) => {
   };
 
   return (
-    <Aux>
-      <CustomerInformation />
-      <Row>
-        <Col>
-          <Card>
-            <Card.Header>
-              <Card.Title as="h5">AS수정</Card.Title>
-            </Card.Header>
-            <Card.Body>
-              <h6 style={{ color: 'red' }}>{text}</h6>
-              <hr />
-              <Row>
-                <Col md={6}>
-                  <Form>
-                    <Form.Group controlId="asInput1">
-                      <Form.Label>접수일</Form.Label>
-                      <Form.Control
-                        type="datetime-local"
-                        placeholder="Enter name"
-                        value={data.register_date}
-                        onChange={(e) => {
-                          setData({ ...data, register_date: e.target.value });
-                        }}
-                        required
-                      />
-                    </Form.Group>
-
-                    <Form.Group controlId="asInput2">
-                      <Form.Label>담당자</Form.Label>
-                      <Form.Control
-                        as="select"
-                        value={data.engineer_id}
-                        onChange={(e) => {
-                          setData({ ...data, engineer_id: Number(e.target.value) });
-                        }}
-                        required
-                      >
-                        <EngineerSelect />
-                      </Form.Control>
-                    </Form.Group>
-
-                    <Form.Group controlId="asInput3">
-                      <Form.Label>출장/내방</Form.Label>
-                      <Form.Control
-                        as="select"
-                        value={data.category_3}
-                        onChange={(e) => {
-                          setData({ ...data, category_3: parseInt(e.target.value) });
-                        }}
-                        required
-                      >
-                        <option>{data.category_name3}</option>
-                        <option value="0">출장</option>
-                        <option value="1">내방</option>
-                      </Form.Control>
-                    </Form.Group>
-
-                    {data.category_2 === 1 || data.category_2 === 2 ? <AsVisitDate /> : null}
-                    {data.category_2 === 1 ? <AsCompleteDate /> : null}
-                  </Form>
-                </Col>
-                <Col md={6}>
-                  <Form.Group controlId="asInput6">
-                    <Form.Label>접수 내용</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows="3"
-                      placeholder="Memo"
-                      value={data.content}
-                      onChange={(e) => {
-                        setData({ ...data, content: e.target.value });
-                      }}
-                      required
-                    />
-                  </Form.Group>
-
-                  <Form.Group controlId="asInput7">
-                    <Form.Label>참고사항</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows="3"
-                      placeholder="Memo"
-                      value={data.memo ? data.memo : ''}
-                      onChange={(e) => {
-                        setData({ ...data, memo: e.target.value });
-                      }}
-                    />
-                  </Form.Group>
-
-                  {data.category_2 === 1 || data.category_2 === 2 ? (
-                    <Form.Group controlId="asInput8">
-                      <Form.Label>고장증상</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows="3"
-                        placeholder="고장증상"
-                        value={data.symptom ? data.symptom : ''}
-                        onChange={(e) => {
-                          setData({ ...data, symptom: e.target.value });
-                        }}
-                      />
-                    </Form.Group>
-                  ) : null}
-                  {data.category_2 === 1 ? (
-                    <Form.Group controlId="asInput9">
-                      <Form.Label>완료내역</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows="3"
-                        placeholder="완료내역"
-                        value={data.completed_content ? data.completed_content : ''}
-                        onChange={(e) => {
-                          setData({ ...data, completed_content: e.target.value });
-                        }}
-                      />
-                    </Form.Group>
-                  ) : null}
-                </Col>
-              </Row>
-              <Row>
-                <Col style={{ textAlign: 'right' }}>
-                  {data.category_2 !== 3 && data.category_2 !== 1 ? <AsCancelButton /> : null}
-                  {data.category_2 !== 1 ? <DeleteButton tradeId={data.id} delete={() => asDelete()} /> : null}
-                  {data.category_2 === 0 ? <AsProgressButton /> : null}
-                  {data.category_2 === 2 ? <AsCompleteButton /> : null}
-                  {data.category_2 !== 1 ? <UpdateButton update={() => asUpdate()} /> : null}
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-      {data.category_2 === 1 ? <ProductSearchModal visible={searchModalVisible} searchText={searchText} productStorage={insertProduct} /> : null}
-      {data.category_2 === 1 ? (
+      <Aux>
+        <CustomerInformation />
         <Row>
           <Col>
             <Card>
               <Card.Header>
-                <Card.Title as="h5">제품{data.category_name1}</Card.Title>
+                <Card.Title as="h5">AS수정</Card.Title>
               </Card.Header>
               <Card.Body>
+                <h6 style={{ color: 'red' }}>{text}</h6>
+                <hr />
                 <Row>
-                  <Col md={3}>
-                    <Form onSubmit={(e) => e.preventDefault()}>
-                      <Form.Group controlId="asHistoryInput1">
-                        <Form.Label>제품명/코드</Form.Label>
-                        <InputGroup className="mb-3">
-                          <Form.Control
-                            type="text"
-                            placeholder="제품명/코드"
-                            value={productData.name}
+                  <Col md={6}>
+                    <Form>
+                      <Form.Group controlId="asInput1">
+                        <Form.Label>접수일</Form.Label>
+                        <Form.Control
+                            type="datetime-local"
+                            placeholder="Enter name"
+                            value={data.register_date}
                             onChange={(e) => {
-                              setProductData({ ...productData, name: e.target.value });
+                              setData({ ...data, register_date: e.target.value });
                             }}
-                            onKeyUp={() => enterCode()}
-                          />
-                          <InputGroup.Append>
-                            <Button variant="primary" style={{ marginLeft: '2px' }} onClick={(e) => searchProduct()}>
-                              검색
-                            </Button>
-                          </InputGroup.Append>
-                        </InputGroup>
-                      </Form.Group>
-                    </Form>
-                  </Col>
-                  <Col md={2}>
-                    <Form>
-                      <Form.Group controlId="asHistoryInput2">
-                        <Form.Label>단가</Form.Label>
-                        <Form.Control type="number" value={productData.price} name="price" onChange={(e) => handleEmpty(e)} />
-                      </Form.Group>
-                    </Form>
-                  </Col>
-                  <Col md={2}>
-                    <Form.Group controlId="asHistoryInput3">
-                      <Form.Label>수량</Form.Label>
-                      <Form.Control type="number" value={productData.stock} name="stock" onChange={(e) => handleEmpty(e)} />
-                    </Form.Group>
-                  </Col>
-                  <Col md={3}>
-                    <Form.Group controlId="asHistoryInput4">
-                      <Form.Label>부가세 Type</Form.Label>
-                      <InputGroup className="mb-3">
-                        <Form.Control
-                          as="select"
-                          value={productData.tax_category}
-                          onChange={(e) => {
-                            setProductData({ ...productData, tax_category: e.target.value });
-                          }}
-                        >
-                          <option>부가세 없음</option>
-                          <option>부가세 적용</option>
-                          <option>상품에 포함</option>
-                        </Form.Control>
-                        <InputGroup.Append>
-                          <Button
-                            variant="primary"
-                            style={{ marginLeft: '2px' }}
-                            onClick={(e) => {
-                              insertHistory();
-                            }}
-                          >
-                            등록
-                          </Button>
-                        </InputGroup.Append>
-                      </InputGroup>
-                    </Form.Group>
-                  </Col>
-                  <Col md={2}>
-                    <Form>
-                      <Form.Group controlId="asHistoryInput5">
-                        <Form.Label>{data.category_name1}날짜</Form.Label>
-                        <Form.Control
-                          type="datetime-local"
-                          value={data.register_date}
-                          onChange={(e) => {
-                            setProductData({ ...data, register_date: e.target.value });
-                          }}
+                            required
                         />
                       </Form.Group>
+
+                      <Form.Group controlId="asInput2">
+                        <Form.Label>담당자</Form.Label>
+                        <Form.Control
+                            as="select"
+                            value={data.engineer_id}
+                            onChange={(e) => {
+                              setData({ ...data, engineer_id: Number(e.target.value) });
+                            }}
+                            required
+                        >
+                          <EngineerSelect />
+                        </Form.Control>
+                      </Form.Group>
+
+                      <Form.Group controlId="asInput3">
+                        <Form.Label>출장/내방</Form.Label>
+                        <Form.Control
+                            as="select"
+                            value={data.category_3}
+                            onChange={(e) => {
+                              setData({ ...data, category_3: parseInt(e.target.value) });
+                            }}
+                            required
+                        >
+                          <option>{data.category_name3}</option>
+                          <option value="0">출장</option>
+                          <option value="1">내방</option>
+                          <option value="2">공사</option>
+                          <option value="3">내부처리</option>
+                        </Form.Control>
+                      </Form.Group>
+
+                      {data.category_2 === 1 || data.category_2 === 2 ? <AsVisitDate /> : null}
+                      {data.category_2 === 1 ? <AsCompleteDate /> : null}
                     </Form>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group controlId="asInput6">
+                      <Form.Label>접수 내용</Form.Label>
+                      <Form.Control
+                          as="textarea"
+                          rows="3"
+                          placeholder="Memo"
+                          value={data.content}
+                          onChange={(e) => {
+                            setData({ ...data, content: e.target.value });
+                          }}
+                          required
+                      />
+                    </Form.Group>
+
+                    <Form.Group controlId="asInput7">
+                      <Form.Label>참고사항</Form.Label>
+                      <Form.Control
+                          as="textarea"
+                          rows="3"
+                          placeholder="Memo"
+                          value={data.memo ? data.memo : ''}
+                          onChange={(e) => {
+                            setData({ ...data, memo: e.target.value });
+                          }}
+                      />
+                    </Form.Group>
+
+                    {data.category_2 === 1 || data.category_2 === 2 ? (
+                        <Form.Group controlId="asInput8">
+                          <Form.Label>고장증상</Form.Label>
+                          <Form.Control
+                              as="textarea"
+                              rows="3"
+                              placeholder="고장증상"
+                              value={data.symptom ? data.symptom : ''}
+                              onChange={(e) => {
+                                setData({ ...data, symptom: e.target.value });
+                              }}
+                          />
+                        </Form.Group>
+                    ) : null}
+                    {data.category_2 === 1 ? (
+                        <Form.Group controlId="asInput9">
+                          <Form.Label>완료내역</Form.Label>
+                          <Form.Control
+                              as="textarea"
+                              rows="3"
+                              placeholder="완료내역"
+                              value={data.completed_content ? data.completed_content : ''}
+                              onChange={(e) => {
+                                setData({ ...data, completed_content: e.target.value });
+                              }}
+                          />
+                        </Form.Group>
+                    ) : null}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col style={{ textAlign: 'right' }}>
+                    {data.category_2 !== 3 && data.category_2 !== 1 ? <AsCancelButton /> : null}
+                    {data.category_2 !== 1 ? <DeleteButton tradeId={data.id} delete={() => asDelete()} /> : null}
+                    {data.category_2 === 0 ? <AsProgressButton /> : null}
+                    {data.category_2 === 2 ? <AsInternalButton /> : null}
+                    {data.category_2 === 2 ? <AsCompleteButton /> : null}
+                    {data.category_2 !== 1 ? <UpdateButton update={() => asUpdate()} /> : null}
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
           </Col>
         </Row>
-      ) : null}
-      {data.category_2 === 1 ? (
-        <Row>
-          <Col>
-            <AsUpdateGrid
-              appendRowData={appendRowData}
-              tradeId={props.match.params.trade_id}
-              asDelete={() => asDelete()}
-              asUpdate={(historyData) => asUpdate(historyData)}
-              priceGrade={data.price_grade}
-              category1={data.category_1}
-            />
-          </Col>
-        </Row>
-      ) : null}
-    </Aux>
+
+        {/* ========== 내부처리 등록 폼 ========== */}
+        {showInternalForm && data.category_2 === 2 ? (
+            <Row>
+              <Col>
+                <Card>
+                  <Card.Header>
+                    <Card.Title as="h5">내부처리 등록</Card.Title>
+                    <span className="d-block m-t-5" style={{ color: '#888' }}>
+                  다른 담당자가 AS를 처리한 경우 기록을 남길 수 있습니다.
+                </span>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group controlId="internalInput1">
+                          <Form.Label>
+                            <span style={{ color: 'red' }}>*</span>처리일
+                          </Form.Label>
+                          <Form.Control
+                              type="datetime-local"
+                              value={internalData.process_date}
+                              onChange={(e) => {
+                                setInternalData({ ...internalData, process_date: e.target.value });
+                              }}
+                              required
+                          />
+                        </Form.Group>
+
+                        <Form.Group controlId="internalInput2">
+                          <Form.Label>
+                            <span style={{ color: 'red' }}>*</span>담당자
+                          </Form.Label>
+                          <Form.Control
+                              as="select"
+                              value={internalData.engineer_id}
+                              onChange={(e) => {
+                                setInternalData({ ...internalData, engineer_id: e.target.value });
+                              }}
+                              required
+                          >
+                            <option>담당자 선택</option>
+                            <EngineerSelect />
+                          </Form.Control>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group controlId="internalInput3">
+                          <Form.Label>
+                            <span style={{ color: 'red' }}>*</span>처리 내용
+                          </Form.Label>
+                          <Form.Control
+                              as="textarea"
+                              rows="3"
+                              placeholder="처리 내용을 입력하세요"
+                              value={internalData.content}
+                              onChange={(e) => {
+                                setInternalData({ ...internalData, content: e.target.value });
+                              }}
+                              required
+                          />
+                        </Form.Group>
+
+                        <Form.Group controlId="internalInput4">
+                          <Form.Label>참고사항</Form.Label>
+                          <Form.Control
+                              as="textarea"
+                              rows="2"
+                              placeholder="Memo"
+                              value={internalData.memo}
+                              onChange={(e) => {
+                                setInternalData({ ...internalData, memo: e.target.value });
+                              }}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col style={{ textAlign: 'right' }}>
+                        <Button variant="primary" onClick={createInternalProcess}>
+                          내부처리 등록
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+        ) : null}
+
+        {/* ========== 내부처리 이력 목록 ========== */}
+        {internalProcesses.length > 0 ? (
+            <Row>
+              <Col>
+                <Card>
+                  <Card.Header>
+                    <Card.Title as="h5">내부처리 이력</Card.Title>
+                    <span className="d-block m-t-5" style={{ color: '#888' }}>
+            총 {internalProcesses.length}건의 내부처리 기록이 있습니다.
+          </span>
+                  </Card.Header>
+                  <Card.Body>
+                    <Table striped hover responsive>
+                      <thead>
+                      <tr>
+                        <th style={{ textAlign: 'center', width: '50px' }}>#</th>
+                        <th style={{ textAlign: 'center', width: '80px' }}>담당자</th>
+                        <th style={{ textAlign: 'center', width: '140px' }}>처리일</th>
+                        <th style={{ textAlign: 'center', width: '30%' }}>처리 내용</th>
+                        <th style={{ textAlign: 'center', width: '20%' }}>참고사항</th>
+                        <th style={{ textAlign: 'center', width: '80px' }}>등록자</th>
+                        <th style={{ textAlign: 'center', width: '70px' }}>삭제</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {internalProcesses.map((item, index) => (
+                          <tr key={item.id}>
+                            <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{index + 1}</td>
+                            <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{item.engineer_name}</td>
+                            <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                              {item.process_date ? item.process_date.slice(0, 16).replace('T', ' ') : '-'}
+                            </td>
+                            <td style={{ textAlign: 'left', verticalAlign: 'middle' }}>{item.content}</td>
+                            <td style={{ textAlign: 'left', verticalAlign: 'middle' }}>{item.memo || '-'}</td>
+                            <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{item.register_name}</td>
+                            <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                              <Popconfirm
+                                  title="정말 삭제하시겠습니까?"
+                                  onConfirm={() => deleteInternalProcess(item.id)}
+                                  okText="삭제"
+                                  cancelText="취소"
+                              >
+                                <Button variant="danger" size="sm">
+                                  삭제
+                                </Button>
+                              </Popconfirm>
+                            </td>
+                          </tr>
+                      ))}
+                      </tbody>
+                    </Table>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+        ) : null}
+
+        {data.category_2 === 1 ? (
+            <ProductSearchModal visible={searchModalVisible} searchText={searchText} productStorage={insertProduct} />
+        ) : null}
+        {data.category_2 === 1 ? (
+            <Row>
+              <Col>
+                <Card>
+                  <Card.Header>
+                    <Card.Title as="h5">제품{data.category_name1}</Card.Title>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row>
+                      <Col md={3}>
+                        <Form onSubmit={(e) => e.preventDefault()}>
+                          <Form.Group controlId="asHistoryInput1">
+                            <Form.Label>제품명/코드</Form.Label>
+                            <InputGroup className="mb-3">
+                              <Form.Control
+                                  type="text"
+                                  placeholder="제품명/코드"
+                                  value={productData.name}
+                                  onChange={(e) => {
+                                    setProductData({ ...productData, name: e.target.value });
+                                  }}
+                                  onKeyUp={() => enterCode()}
+                              />
+                              <InputGroup.Append>
+                                <Button variant="primary" style={{ marginLeft: '2px' }} onClick={(e) => searchProduct()}>
+                                  검색
+                                </Button>
+                              </InputGroup.Append>
+                            </InputGroup>
+                          </Form.Group>
+                        </Form>
+                      </Col>
+                      <Col md={2}>
+                        <Form>
+                          <Form.Group controlId="asHistoryInput2">
+                            <Form.Label>단가</Form.Label>
+                            <Form.Control
+                                type="number"
+                                value={productData.price}
+                                name="price"
+                                onChange={(e) => handleEmpty(e)}
+                            />
+                          </Form.Group>
+                        </Form>
+                      </Col>
+                      <Col md={2}>
+                        <Form.Group controlId="asHistoryInput3">
+                          <Form.Label>수량</Form.Label>
+                          <Form.Control
+                              type="number"
+                              value={productData.stock}
+                              name="stock"
+                              onChange={(e) => handleEmpty(e)}
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={3}>
+                        <Form.Group controlId="asHistoryInput4">
+                          <Form.Label>부가세 Type</Form.Label>
+                          <InputGroup className="mb-3">
+                            <Form.Control
+                                as="select"
+                                value={productData.tax_category}
+                                onChange={(e) => {
+                                  setProductData({ ...productData, tax_category: e.target.value });
+                                }}
+                            >
+                              <option>부가세 없음</option>
+                              <option>부가세 적용</option>
+                              <option>상품에 포함</option>
+                            </Form.Control>
+                            <InputGroup.Append>
+                              <Button
+                                  variant="primary"
+                                  style={{ marginLeft: '2px' }}
+                                  onClick={(e) => {
+                                    insertHistory();
+                                  }}
+                              >
+                                등록
+                              </Button>
+                            </InputGroup.Append>
+                          </InputGroup>
+                        </Form.Group>
+                      </Col>
+                      <Col md={2}>
+                        <Form>
+                          <Form.Group controlId="asHistoryInput5">
+                            <Form.Label>{data.category_name1}날짜</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                value={data.register_date}
+                                onChange={(e) => {
+                                  setProductData({ ...data, register_date: e.target.value });
+                                }}
+                            />
+                          </Form.Group>
+                        </Form>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+        ) : null}
+        {data.category_2 === 1 ? (
+            <Row>
+              <Col>
+                <AsUpdateGrid
+                    appendRowData={appendRowData}
+                    tradeId={props.match.params.trade_id}
+                    asDelete={() => asDelete()}
+                    asUpdate={(historyData) => asUpdate(historyData)}
+                    priceGrade={data.price_grade}
+                    category1={data.category_1}
+                />
+              </Col>
+            </Row>
+        ) : null}
+      </Aux>
   );
 };
 

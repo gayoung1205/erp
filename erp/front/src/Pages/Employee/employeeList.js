@@ -12,7 +12,7 @@ const EmployeeList = () => {
 
   useEffect(() => {
     const permission = window.sessionStorage.getItem('permission');
-    if (!(permission === '2' || permission === '3')) {
+    if (!(permission === '0' || permission === '2' || permission === '3')) {
       message.error('권한이 없습니다.');
       history.goBack();
     }
