@@ -350,6 +350,8 @@ class Calendar(models.Model):
         blank=True,
         null=True,
     )
+    google_event_id = models.CharField(max_length=255, null=True, blank=True)
+    bg_color = models.CharField(max_length=20, null=True, blank=True, default='#00a9ff')
     updated_date = models.DateTimeField(auto_now=True)
     created_date = models.DateTimeField(auto_now_add=True)
 

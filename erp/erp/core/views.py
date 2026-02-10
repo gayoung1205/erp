@@ -1384,9 +1384,11 @@ class HistoryDetail(APIView):
         return ReturnAccept("해당 데이터 삭제를 완료했습니다.")
 
 
+from .google_calendar import create_google_event, update_google_event, delete_google_event, sync_google_events_to_db
+
 class Calendar(APIView):
     """
-        일정 관리에 관련된 API
+        일정 관리에 관련된 API (Google Calendar 동기화)
     """
 
     def get(self, req):
@@ -1395,7 +1397,6 @@ class Calendar(APIView):
         """
         try:
             cal = Cal.objects.all().order_by("-id")
-
             serializer = CalendarSerializer(cal, many=True)
             if len(serializer.data) == 0:
                 return ReturnNoContent()
@@ -1406,7 +1407,7 @@ class Calendar(APIView):
 
     def post(self, req):
         """
-            새로운 일정을 생성
+            새로운 일정을 생성 + Google Calendar 동기화
         """
         try:
             with transaction.atomic():
@@ -1414,6 +1415,18 @@ class Calendar(APIView):
                 for i in req.data:
                     setattr(cal, i, req.data[i])
                 cal.save()
+
+                # Google Calendar에 동기화
+                google_event_id = create_google_event(
+                    title=cal.title,
+                    start=cal.start,
+                    end=cal.end,
+                    is_all_day=cal.isAllDay or False,
+                )
+                if google_event_id:
+                    cal.google_event_id = google_event_id
+                    cal.save()
+
             logger.info(f"{return_username(req.user).name} 이 {cal.id} 일정을 생성하였습니다.")
             return ReturnData(data=cal.id)
         except Exception as e:
@@ -1423,7 +1436,7 @@ class Calendar(APIView):
 
 class CalendarDetail(APIView):
     """
-        특정일정에 대한 자세한 정보를 표시
+        특정일정에 대한 자세한 정보를 표시 (Google Calendar 동기화)
     """
 
     def get(self, req, calendar_id):
@@ -1435,16 +1448,14 @@ class CalendarDetail(APIView):
                 cal = Cal.objects.get(id=calendar_id)
             except:
                 return ReturnNoContent()
-
             serializer = CalendarSerializer(cal)
-
             return ReturnData(data=serializer.data)
         except:
             return ReturnError()
 
     def put(self, req, calendar_id):
         """
-            특정 일정을 수정
+            특정 일정을 수정 + Google Calendar 동기화
         """
         try:
             cal = Cal.objects.get(id=calendar_id)
@@ -1455,8 +1466,17 @@ class CalendarDetail(APIView):
                 for i in req.data:
                     setattr(cal, i, req.data[i])
                 cal.save()
-            logger.info(f"{req.user.username} 이 {cal.id} 일정을 수정하였습니다.")
 
+                if cal.google_event_id:
+                    update_google_event(
+                        google_event_id=cal.google_event_id,
+                        title=cal.title,
+                        start=cal.start,
+                        end=cal.end,
+                        is_all_day=cal.isAllDay or False,
+                    )
+
+            logger.info(f"{req.user.username} 이 {cal.id} 일정을 수정하였습니다.")
             return ReturnAccept()
         except Exception as e:
             print(e)
@@ -1464,21 +1484,25 @@ class CalendarDetail(APIView):
 
     def delete(self, req, calendar_id):
         """
-            특정 일정을 삭제
+            특정 일정을 삭제 + Google Calendar 동기화
         """
         try:
             cal = Cal.objects.get(id=calendar_id)
             delete_cal_id = copy.deepcopy(cal.id)
+            google_event_id = cal.google_event_id  # 삭제 전 저장
         except Exception as e:
             print(e)
             return ReturnNoContent()
         try:
             cal.delete()
+
+            if google_event_id:
+                delete_google_event(google_event_id)
+
         except:
             return ReturnError()
         logger.info(f"{return_username(req.user).name} 이 {delete_cal_id} 일정을 삭제하였습니다.")
-
-        return ReturnAccept()
+        return ReturnAccept("해당 데이터 삭제를 완료했습니다.")
 
 
 class Category(APIView):
