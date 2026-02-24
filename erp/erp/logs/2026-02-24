@@ -194,3 +194,33 @@
 [24/Feb/2026 11:55:40] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
 [24/Feb/2026 11:58:55] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
 [24/Feb/2026 11:58:56] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 14:39:25] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:39:48] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:39:49] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:39:56] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:39:57] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:39:58] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:39:59] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:40:00] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:40:40] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:40:56] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 14:46:08] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 14:52:24] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 15:00:09] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 15:42:10] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:11:50] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:12:01] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:12:49] INFO [core.views:3461] admin님이 업무일지 엑셀 다운로드 (직원: 전체, 기간: 전체기간, 건수: 10)
+[24/Feb/2026 16:14:07] INFO [core.views:3461] admin님이 업무일지 엑셀 다운로드 (직원: 콩콩이, 기간: 전체기간, 건수: 2)
+[24/Feb/2026 16:14:37] INFO [core.views:3461] admin님이 업무일지 엑셀 다운로드 (직원: test1, 기간: 전체기간, 건수: 4)
+[24/Feb/2026 16:18:01] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:24:52] INFO [core.views:3461] admin님이 업무일지 엑셀 다운로드 (직원: 전체, 기간: 전체기간, 건수: 10)
+[24/Feb/2026 16:46:02] INFO [core.views:3463] admin님이 업무일지 엑셀 다운로드 (직원: 전체, 기간: 전체기간, 건수: 1)
+[24/Feb/2026 16:49:32] INFO [core.views:3463] admin님이 업무일지 엑셀 다운로드 (직원: 전체, 기간: 전체기간, 건수: 1)
+[24/Feb/2026 16:49:38] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:49:41] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:49:42] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:56:19] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:56:33] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:56:51] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 16:57:28] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.

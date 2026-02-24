@@ -2633,7 +2633,7 @@ class RecordView(APIView):
         is_accept = req.GET.get("accept", None)
         is_all = req.GET.get("all", None)
         view_type = req.GET.get("view_type", None)
-        filter_user_id = req.GET.get("user_id", None)  # ★ 드롭다운에서 선택한 직원의 user_id
+        filter_user_id = req.GET.get("user_id", None)
 
         if req.user.is_superuser:
             record = Record.objects.select_related('user').filter(
@@ -2650,7 +2650,7 @@ class RecordView(APIView):
         else:
             record = Record.objects.select_related('user').filter(user=req.user)
 
-        record = record.order_by("-created_date")
+        record = record.order_by("-date")
 
         start_date = req.GET.get("start_date", None)
         end_date = req.GET.get("end_date", None)
@@ -2674,7 +2674,7 @@ class RecordView(APIView):
         if is_all is None:
             if is_accept:
                 record = record.filter(Q(is_approved=True) | Q(is_reject=True))
-                result = custom_paginator(req, record, "-created_date")
+                result = custom_paginator(req, record, "-date")
                 engineers = self._build_engineers_dict(result["results"])
                 result["results"] = RecordListSerializer(
                     result["results"], many=True, context={'engineers': engineers}
@@ -2687,7 +2687,7 @@ class RecordView(APIView):
                 if req.user.is_superuser or engineer.is_staff:
                     has_team_docs = record.exclude(user=req.user).exists()
 
-                result = custom_paginator(req, record, "-created_date")
+                result = custom_paginator(req, record, "-date")
                 engineers = self._build_engineers_dict(result["results"])
                 result["results"] = RecordListSerializer(
                     result["results"], many=True, context={'engineers': engineers}
@@ -3279,7 +3279,7 @@ class ExportDataToExcelView(APIView):
             col_names = ["name", "phone", "tel", "address", "receivable"]
 
         # ━━━ 업무일지 ━━━
-        elif export_type == "record":
+        elif export_type in ["record", "record_accepted"]:
             try:
                 if req.user.is_superuser:
                     queryset = Record.objects.select_related('user').filter(is_submit=True)
@@ -3293,6 +3293,8 @@ class ExportDataToExcelView(APIView):
                 else:
                     queryset = Record.objects.select_related('user').filter(user=req.user)
 
+                if export_type == "record_accepted":
+                    queryset = queryset.exclude(is_approved=False, is_reject=False)
                 if start_date:
                     queryset = queryset.filter(date__gte=start_date)
                 if end_date:

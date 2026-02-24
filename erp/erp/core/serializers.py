@@ -338,42 +338,7 @@ class RecordSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     department = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Record
-        fields = "__all__"
-
-    def get_title(self, obj):
-        engineer = Engineer.objects.get(user=obj.user)
-        return f"{obj.date} - {engineer.name} {obj.category}입니다."
-
-    def get_username(self, obj):
-        engineer = Engineer.objects.get(user=obj.user)
-        return engineer.name
-
-    def get_status(self, obj):
-        # 제출O, 승인X, 반려X
-        if obj.is_submit and not obj.is_approved and not obj.is_reject:
-            return 0
-        # 제출O, 승인O, 반려X
-        elif obj.is_submit and obj.is_approved and not obj.is_reject:
-            return 1
-        # 제출O, 승인X, 반려O
-        elif obj.is_submit and obj.is_reject:
-            return 2
-        else:
-            return -1
-
-    def get_department(self, obj):
-        category = ["경영관리", "기술지원", "대표이사", "서버관리자", "연구개발", "전략기획", "생산품질관리", "영업홍보"]
-        return category[Engineer.objects.get(user=obj.user).category]
-
-class RecordListSerializer(serializers.ModelSerializer):
-
-    title = serializers.SerializerMethodField()
-    username = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
-    department = serializers.SerializerMethodField()
+    content_preview = serializers.SerializerMethodField()
 
     class Meta:
         model = Record
@@ -409,6 +374,61 @@ class RecordListSerializer(serializers.ModelSerializer):
         if engineer:
             return category_list[engineer.category]
         return '알수없음'
+
+    def get_content_preview(self, obj):
+        if obj.content:
+            first_line = obj.content.split('\n')[0].strip()
+            return first_line[:50] + ('...' if len(first_line) > 50 else '')
+        return ''
+
+class RecordListSerializer(serializers.ModelSerializer):
+
+    title = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    department = serializers.SerializerMethodField()
+    content_preview = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Record
+        exclude = ['content', 'remark', 'plan', 'reject_content']
+
+    def _get_engineer(self, obj):
+
+        engineers = self.context.get('engineers', {})
+        return engineers.get(obj.user_id)
+
+    def get_title(self, obj):
+        engineer = self._get_engineer(obj)
+        name = engineer.name if engineer else '알수없음'
+        return f"{obj.date} - {name} {obj.category}입니다."
+
+    def get_username(self, obj):
+        engineer = self._get_engineer(obj)
+        return engineer.name if engineer else '알수없음'
+
+    def get_status(self, obj):
+        if obj.is_submit and not obj.is_approved and not obj.is_reject:
+            return 0
+        elif obj.is_submit and obj.is_approved and not obj.is_reject:
+            return 1
+        elif obj.is_submit and obj.is_reject:
+            return 2
+        else:
+            return -1
+
+    def get_department(self, obj):
+        category_list = ["경영관리", "기술지원", "대표이사", "서버관리자", "연구개발", "전략기획", "생산품질관리", "영업홍보"]
+        engineer = self._get_engineer(obj)
+        if engineer:
+            return category_list[engineer.category]
+        return '알수없음'
+
+    def get_content_preview(self, obj):
+        if obj.content:
+            first_line = obj.content.split('\n')[0].strip()
+            return first_line[:50] + ('...' if len(first_line) > 50 else '')
+        return ''
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
