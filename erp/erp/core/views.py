@@ -73,10 +73,12 @@ from urllib.parse import quote
 from model.models import AsInternalProcess
 from .serializers import AsInternalProcessSerializer
 
-# Create your views here.
-"""
-ERP 관련 API 
-"""
+from .google_calendar import (
+    create_google_event, update_google_event, delete_google_event,
+    sync_google_events_to_db,
+    get_engineer_color, get_trade_calendar_title
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -985,6 +987,52 @@ class Trade(APIView):
                     if req.data["credit"] > 0:
                         tra.content += "카드결제/"
                 tra.save()
+
+                # ★ AS(0) 또는 납품(7) 접수 시 캘린더 자동 생성
+                if tra.category_1 in [0, 7]:
+                    try:
+                        from model.models import Calendar as CalModel
+                        import datetime as dt
+
+                        engineer_name = tra.engineer.name if tra.engineer else ''
+                        customer_name = tra.customer_name or ''
+                        cal_title = get_trade_calendar_title(
+                            tra.category_1, tra.category_2 or 0, customer_name, engineer_name
+                        )
+
+                        # 방문일 기준, 없으면 접수일
+                        cal_date = tra.visit_date or tra.register_date
+                        if cal_date:
+                            if isinstance(cal_date, str):
+                                cal_date = dt.datetime.strptime(cal_date[:16], "%Y-%m-%dT%H:%M")
+
+                            cal_end = cal_date + dt.timedelta(hours=1)
+                            bg_color = get_engineer_color(engineer_name)
+
+                            # Google Calendar에 생성
+                            google_event_id = create_google_event(
+                                title=cal_title,
+                                start=cal_date,
+                                end=cal_end,
+                                is_all_day=True,
+                            )
+
+                            # ERP Calendar DB에 생성
+                            CalModel.objects.create(
+                                title=cal_title,
+                                start=cal_date,
+                                end=cal_end,
+                                isAllDay=True,
+                                category='allday',
+                                engineer=tra.engineer,
+                                bg_color=bg_color,
+                                google_event_id=google_event_id or '',
+                                trade=tra,
+                            )
+                            logger.info(f"Trade #{tra.id} 캘린더 자동 생성 완료")
+                    except Exception as cal_err:
+                        logger.error(f"Trade #{tra.id} 캘린더 생성 실패: {cal_err}")
+
             logger.info(
                 f"{req.user.username}이 {tra.id} : [{tra.customer_name}]의 [{tra.get_category()}] 내역을 생성하였습니다."
             )
@@ -1089,6 +1137,71 @@ class TradeDetail(APIView):
                     if req.data["trade"]["credit"] > 0:
                         tra.content += "카드결제/"
                 tra.save()
+
+                if tra.category_1 in [0, 7]:
+                    try:
+                        from model.models import Calendar as CalModel
+                        import datetime as dt
+
+                        engineer_name = tra.engineer.name if tra.engineer else ''
+                        customer_name = tra.customer_name or ''
+                        new_title = get_trade_calendar_title(
+                            tra.category_1, tra.category_2, customer_name, engineer_name
+                        )
+
+                        cal_event = CalModel.objects.filter(trade=tra).first()
+
+                        if cal_event:
+                            if tra.category_2 == 3:
+                                if cal_event.google_event_id:
+                                    delete_google_event(cal_event.google_event_id)
+                                cal_event.delete()
+                                logger.info(f"Trade #{tra.id} 캘린더 삭제 (취소)")
+                            else:
+                                cal_event.title = new_title
+
+                                if tra.visit_date:
+                                    cal_date = tra.visit_date
+                                    if isinstance(cal_date, str):
+                                        cal_date = dt.datetime.strptime(cal_date[:16], "%Y-%m-%dT%H:%M")
+                                    cal_event.start = cal_date
+                                    cal_event.end = cal_date + dt.timedelta(hours=1)
+
+                                bg_color = get_engineer_color(engineer_name)
+                                cal_event.bg_color = bg_color
+                                cal_event.engineer = tra.engineer
+                                cal_event.save()
+
+                                if cal_event.google_event_id:
+                                    update_google_event(
+                                        google_event_id=cal_event.google_event_id,
+                                        title=new_title,
+                                        start=cal_event.start,
+                                        end=cal_event.end,
+                                        is_all_day=True,
+                                    )
+                                logger.info(f"Trade #{tra.id} 캘린더 업데이트: {new_title}")
+                        else:
+                            cal_date = tra.visit_date or tra.register_date
+                            if cal_date and tra.category_2 != 3:
+                                if isinstance(cal_date, str):
+                                    cal_date = dt.datetime.strptime(cal_date[:16], "%Y-%m-%dT%H:%M")
+                                cal_end = cal_date + dt.timedelta(hours=1)
+                                bg_color = get_engineer_color(engineer_name)
+
+                                google_event_id = create_google_event(
+                                    title=new_title, start=cal_date, end=cal_end, is_all_day=True,
+                                )
+                                CalModel.objects.create(
+                                    title=new_title, start=cal_date, end=cal_end,
+                                    isAllDay=True, category='allday',
+                                    engineer=tra.engineer, bg_color=bg_color,
+                                    google_event_id=google_event_id or '', trade=tra,
+                                )
+                                logger.info(f"Trade #{tra.id} 캘린더 신규 생성: {new_title}")
+                    except Exception as cal_err:
+                        logger.error(f"Trade #{tra.id} 캘린더 업데이트 실패: {cal_err}")
+
                 try:
                     for history in data["history"]:
                         try:
@@ -1097,44 +1210,22 @@ class TradeDetail(APIView):
                                 his.product_id = history["product_id"]
                                 pro = Pro.objects.get(id=history["product_id"])
                                 if tra.category_1 in [0, 3, 7]:
-                                    # AS, SELL, DELIVER 수정 시
                                     pro.add_stock(his.amount)
-                                    pro.minus_stock(amount=history["amount"])
-                                elif tra.category_1 == 4:
-                                    # ✅ PURCHASE 수정 시 - 입고대기 사용으로 재고 변동 없음
-                                    pass
-                                else:
-                                    pro.minus_stock(his.amount)
-                                    pro.add_stock(amount=history["amount"])
-                            for key in history:
-                                setattr(his, key, history[key])
-
+                                    pro.minus_stock(history["amount"])
+                            for i in history:
+                                setattr(his, i, history[i])
                             his.save()
-                        except Exception as e:
-                            his = His.objects.create(
-                                name=history["name"],
-                                amount=history["amount"],
-                                price=history["price"],
-                                tax_category=history["tax_category"],
-                            )
-                            # for key in history:
-                            #     setattr(his, key, history[key])
+                        except His.DoesNotExist:
+                            his = His.objects.create()
+                            for i in history:
+                                setattr(his, i, history[i])
                             if history.get("product_id"):
-                                his.product_id = history["product_id"]
                                 pro = Pro.objects.get(id=history["product_id"])
                                 if tra.category_1 in [0, 3, 7]:
-                                    pro.minus_stock(amount=history["amount"])
-                                else:
-                                    pro.add_stock(amount=history["amount"])
-                            if history.get("trade_id"):
-                                his.trade_id = history["trade_id"]
+                                    pro.minus_stock(history["amount"])
                             his.save()
-                except Exception as e:
-                    print(e)
-                    return ReturnError()
-            logger.info(
-                f"{req.user.username}이 [{tra.id}] : [{tra.customer.name}]의 [{tra.get_category()}] 내역을 수정하였습니다."
-            )
+                except:
+                    pass
 
             return ReturnAccept()
         except Exception as e:
@@ -1382,9 +1473,6 @@ class HistoryDetail(APIView):
         except:
             return ReturnNoContent()
         return ReturnAccept("해당 데이터 삭제를 완료했습니다.")
-
-
-from .google_calendar import create_google_event, update_google_event, delete_google_event, sync_google_events_to_db
 
 class Calendar(APIView):
     def get(self, req):

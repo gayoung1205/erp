@@ -31,3 +31,164 @@
 [24/Feb/2026 10:52:16] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
 [24/Feb/2026 10:56:07] INFO [core.views:1661] admin 이 전체 직원을 조회하였습니다.
 [24/Feb/2026 10:56:08] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:39:42] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:39:43] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:39:43] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:39:44] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:39:46] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:39:46] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:39:49] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:39:54] INFO [core.views:285] admin 이 전체고객을 검색하였습니다.
+[24/Feb/2026 11:40:04] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:40:04] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:40:06] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:40:06] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:40:07] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:40:12] INFO [core.views:285] admin 이 전체고객을 검색하였습니다.
+[24/Feb/2026 11:40:18] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:40:18] INFO [core.views:356] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[24/Feb/2026 11:40:20] INFO [core.views:356] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[24/Feb/2026 11:40:20] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:40:20] INFO [core.views:356] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[24/Feb/2026 11:40:31] INFO [core.views:356] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[24/Feb/2026 11:40:31] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:40:36] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:40:37] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:40:59] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:41:02] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:41:02] INFO [core.views:356] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[24/Feb/2026 11:41:02] INFO [core.views:356] admin123 이 [7] : [미르테크] 고객을 조회하였습니다.
+[24/Feb/2026 11:41:05] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:41:06] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:41:16] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:41:19] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:41:31] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:41:31] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:41:31] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:41:33] INFO [core:69] Google Calendar 일정 생성 성공: pjgsf67f51r232mq87scqshk0k
+[24/Feb/2026 11:41:33] INFO [core.views:1197] Trade #51 캘린더 신규 생성: [AS진행] 테스트거래처 - 테스트2
+[24/Feb/2026 11:41:34] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:41:34] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:41:34] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:41:47] INFO [core:105] Google Calendar 일정 수정 성공: pjgsf67f51r232mq87scqshk0k
+[24/Feb/2026 11:41:47] INFO [core.views:1179] Trade #51 캘린더 업데이트: [AS완료] 테스트거래처 - 테스트2
+[24/Feb/2026 11:41:48] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:41:48] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:41:48] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:41:50] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:41:51] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[24/Feb/2026 11:41:59] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:41:59] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:41:59] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:42:14] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:42:14] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:42:18] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:42:18] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:42:28] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:42:30] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:42:34] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:42:34] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:42:34] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:42:37] INFO [core:69] Google Calendar 일정 생성 성공: ii2fmaq6e93tv8gnjvp9ctebd4
+[24/Feb/2026 11:42:37] INFO [core.views:1197] Trade #45 캘린더 신규 생성: [AS진행] 테스트거래처 - 테스트2
+[24/Feb/2026 11:42:37] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:42:37] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:42:37] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:42:40] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:42:41] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[24/Feb/2026 11:43:49] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:43:49] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:43:50] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:43:50] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:43:50] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:43:57] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:43:57] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:44:00] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:44:01] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:44:48] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:44:58] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:44:58] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:44:58] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:45:01] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:45:11] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:45:36] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:45:36] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:45:40] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:45:40] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:45:40] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:45:46] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:45:54] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:45:59] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:46:54] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:47:25] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:47:25] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:47:25] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:47:31] INFO [core.views:285] admin 이 전체고객을 검색하였습니다.
+[24/Feb/2026 11:47:34] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:47:34] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:47:36] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:47:36] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:47:36] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:47:50] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:47:50] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:47:55] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:47:55] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:47:55] INFO [core.views:1745] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:47:58] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:48:03] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:48:12] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:48:16] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:48:34] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:48:36] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:51:06] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:51:19] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:51:46] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:51:46] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:51:46] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:51:53] INFO [core:69] Google Calendar 일정 생성 성공: pquqjr9ofat1crua133k36nne0
+[24/Feb/2026 11:51:53] INFO [core.views:1032] Trade #75 캘린더 자동 생성 완료
+[24/Feb/2026 11:51:53] INFO [core.views:1036] admin123이 75 : [동부그린]의 [AS] 내역을 생성하였습니다.
+[24/Feb/2026 11:51:53] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:51:53] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:51:56] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:52:01] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:52:02] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[24/Feb/2026 11:52:27] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:52:32] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:52:33] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:52:47] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:52:48] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 1
+[24/Feb/2026 11:52:58] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:53:07] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:53:08] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:53:26] INFO [core:120] Google Calendar 일정 삭제 성공: pjgsf67f51r232mq87scqshk0k
+[24/Feb/2026 11:53:26] INFO [core.views:1589] admin 이 16 일정을 삭제하였습니다.
+[24/Feb/2026 11:53:27] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:53:27] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:53:28] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:53:28] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:53:28] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:53:32] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:53:32] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[24/Feb/2026 11:53:44] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:54:20] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:55:07] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:55:07] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:55:07] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:55:10] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:55:10] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:55:10] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:55:11] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:55:12] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:55:18] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:55:21] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:55:21] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:55:21] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:55:24] INFO [core:120] Google Calendar 일정 삭제 성공: ii2fmaq6e93tv8gnjvp9ctebd4
+[24/Feb/2026 11:55:24] INFO [core.views:1159] Trade #45 캘린더 삭제 (취소)
+[24/Feb/2026 11:55:25] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:55:25] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:55:25] INFO [core.views:356] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[24/Feb/2026 11:55:27] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:55:28] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[24/Feb/2026 11:55:40] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.

@@ -354,7 +354,13 @@ class Calendar(models.Model):
     bg_color = models.CharField(max_length=20, null=True, blank=True, default='#00a9ff')
     updated_date = models.DateTimeField(auto_now=True)
     created_date = models.DateTimeField(auto_now_add=True)
-
+    trade = models.ForeignKey(
+        Trade,
+        on_delete=models.CASCADE,
+        related_name="calendar_events",
+        null=True,
+        blank=True,
+    )
 
 class Record(models.Model):
     DAILY_WORK = "업무일지"

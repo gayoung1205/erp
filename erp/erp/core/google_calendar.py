@@ -220,3 +220,30 @@ def sync_google_events_to_db():
   except Exception as e:
     logger.error(f"Google Calendar 동기화 실패: {e}")
     return {"created": 0, "updated": 0, "deleted": 0, "error": str(e)}
+
+ENGINEER_COLORS = {
+  '류승영': '#FF5583',
+  '김영기': '#FFBB3B',
+  '서우종': '#03BD9E',
+  '고영훈': '#4169E1',
+  '김태우': '#FF4500',
+  '임환규': '#bdb76b',
+  '김상중': '#9e5fff',
+  '조윤아': '#00a9ff',
+  '김현수': '#607d8b',
+  '문가영': '#e91e63',
+  '김현숙': '#2196f3',
+}
+DEFAULT_COLOR = '#888888'
+
+
+def get_engineer_color(engineer_name):
+  return ENGINEER_COLORS.get(engineer_name, DEFAULT_COLOR)
+
+def get_trade_calendar_title(category_1, category_2, customer_name, engineer_name):
+
+  type_name = "AS" if category_1 == 0 else "납품"
+  status_names = {0: "접수", 1: "완료", 2: "진행", 3: "취소"}
+  status_name = status_names.get(category_2, "접수")
+
+  return f"[{type_name}{status_name}] {customer_name or '(미정)'} - {engineer_name or '(미배정)'}"
