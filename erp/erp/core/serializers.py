@@ -125,10 +125,10 @@ class CustomerSerializer(serializers.ModelSerializer):
         return address_sum
 
     def get_last_receivable_date(self, obj):
-        # 미수금 발생 거래: AS(0), 판매(3), 납품(7)
+        # 미수금 발생 거래: AS(0), 판매(3), 납품(7), 수금(1), 지불(2), 구매(4)
         last_trade = Trade.objects.filter(
             customer_id=obj.id,
-            category_1__in=[0, 3, 7]
+            category_1__in=[0, 1, 2, 3, 4, 7]
         ).order_by('-register_date').first()
 
         if last_trade and last_trade.register_date:

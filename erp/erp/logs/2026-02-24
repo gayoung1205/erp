@@ -192,3 +192,5 @@
 [24/Feb/2026 11:55:27] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
 [24/Feb/2026 11:55:28] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
 [24/Feb/2026 11:55:40] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[24/Feb/2026 11:58:55] INFO [core.views:1749] admin 이 전체 직원을 조회하였습니다.
+[24/Feb/2026 11:58:56] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
