@@ -1387,15 +1387,12 @@ class HistoryDetail(APIView):
 from .google_calendar import create_google_event, update_google_event, delete_google_event, sync_google_events_to_db
 
 class Calendar(APIView):
-    """
-        일정 관리에 관련된 API (Google Calendar 동기화)
-    """
-
     def get(self, req):
-        """
-            전체 일정을 조회
-        """
         try:
+            do_sync = req.GET.get("sync", None)
+            if do_sync:
+                sync_google_events_to_db()
+
             cal = Cal.objects.all().order_by("-id")
             serializer = CalendarSerializer(cal, many=True)
             if len(serializer.data) == 0:

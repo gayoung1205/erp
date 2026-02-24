@@ -14,9 +14,6 @@ CALENDAR_ID = "aisol.gjlab@gmail.com"
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 def _to_datetime(value):
-  """
-  문자열이든 datetime 객체든 상관없이 datetime으로 변환
-  """
   if isinstance(value, dt.datetime):
     return value
   if isinstance(value, str):
@@ -28,9 +25,6 @@ def _to_datetime(value):
   return None
 
 def get_calendar_service():
-  """
-  Google Calendar API 서비스 객체를 생성하여 반환
-  """
   try:
     credentials = service_account.Credentials.from_service_account_file(
         CREDENTIALS_PATH, scopes=SCOPES
@@ -117,9 +111,6 @@ def update_google_event(google_event_id, title, start, end, is_all_day=False):
 
 
 def delete_google_event(google_event_id):
-  """
-  구글 캘린더에서 일정 삭제
-  """
   service = get_calendar_service()
   if not service or not google_event_id:
     return False
@@ -135,24 +126,97 @@ def delete_google_event(google_event_id):
 
 
 def sync_google_events_to_db():
-  """
-  구글 캘린더의 일정을 ERP DB로 가져오기 (초기 동기화용)
-  """
+  from model.models import Calendar as Cal
+
   service = get_calendar_service()
   if not service:
-    return []
+    return {"created": 0, "updated": 0, "deleted": 0}
 
   try:
     events_result = service.events().list(
         calendarId=CALENDAR_ID,
-        maxResults=250,
+        maxResults=500,
         singleEvents=True,
         orderBy="startTime",
     ).execute()
 
-    events = events_result.get("items", [])
-    return events
+    google_events = events_result.get("items", [])
+
+    db_events = {
+      cal.google_event_id: cal
+      for cal in Cal.objects.filter(google_event_id__isnull=False).exclude(google_event_id='')
+    }
+
+    created_count = 0
+    updated_count = 0
+
+    for g_event in google_events:
+      g_id = g_event.get("id")
+      title = g_event.get("summary", "(제목없음)")
+
+      start_raw = g_event.get("start", {})
+      end_raw = g_event.get("end", {})
+
+      is_all_day = "date" in start_raw and "dateTime" not in start_raw
+
+      if is_all_day:
+        start_str = start_raw.get("date")
+        end_str = end_raw.get("date")
+        start_dt = dt.datetime.strptime(start_str, "%Y-%m-%d")
+        end_dt = dt.datetime.strptime(end_str, "%Y-%m-%d")
+      else:
+        start_str = start_raw.get("dateTime", "")
+        end_str = end_raw.get("dateTime", "")
+        start_str = start_str[:19]
+        end_str = end_str[:19]
+        try:
+          start_dt = dt.datetime.strptime(start_str, "%Y-%m-%dT%H:%M:%S")
+          end_dt = dt.datetime.strptime(end_str, "%Y-%m-%dT%H:%M:%S")
+        except:
+          continue
+
+      if g_id in db_events:
+        cal = db_events[g_id]
+        changed = False
+
+        if cal.title != title:
+          cal.title = title
+          changed = True
+        if cal.start != start_dt:
+          cal.start = start_dt
+          changed = True
+        if cal.end != end_dt:
+          cal.end = end_dt
+          changed = True
+        if cal.isAllDay != is_all_day:
+          cal.isAllDay = is_all_day
+          changed = True
+
+        if changed:
+          cal.save()
+          updated_count += 1
+
+        del db_events[g_id]
+      else:
+        Cal.objects.create(
+            title=title,
+            start=start_dt,
+            end=end_dt,
+            isAllDay=is_all_day,
+            category="allday" if is_all_day else "time",
+            google_event_id=g_id,
+            bg_color="#00a9ff",
+        )
+        created_count += 1
+
+    deleted_count = 0
+    for g_id, cal in db_events.items():
+      cal.delete()
+      deleted_count += 1
+
+    logger.info(f"Google Calendar 동기화 완료: 생성 {created_count}, 수정 {updated_count}, 삭제 {deleted_count}")
+    return {"created": created_count, "updated": updated_count, "deleted": deleted_count}
 
   except Exception as e:
     logger.error(f"Google Calendar 동기화 실패: {e}")
-    return []
+    return {"created": 0, "updated": 0, "deleted": 0, "error": str(e)}
