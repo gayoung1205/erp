@@ -283,6 +283,7 @@ class Customer(APIView):
 
         # serializer = CustomerSerializer(cus, many=True)
         logger.info(f"{return_username(req.user).name} 이 전체고객을 검색하였습니다.")
+        cus = cus.prefetch_related('trades__histories')
         result = custom_paginator(req, cus, "-created_date")
         result["results"] = CustomerSerializer(result["results"], many=True).data
         return ReturnData(data=result)
@@ -863,16 +864,11 @@ class Trade(APIView):
                     "register_date"
                 )
             elif category is not None:
-                print(f"[DEBUG] category={category}, type={type(category)}")
-
-                # ★ DB에 실제로 존재하는 category_1 값 전체 출력
-                print(f"[DEBUG] 존재하는 category_1 목록: {list(Tra.objects.values_list('category_1', flat=True).distinct())}")
-
                 tra = (
                     Tra.objects.filter(category_1=category)
-                    .prefetch_related("customer", "internal_processes")
+                    .prefetch_related("customer", "internal_processes", "histories")
+                    .select_related("engineer")
                 )
-                print(f"[DEBUG] tra count={tra.count()}")
 
                 status_values = req.GET.getlist("status")
                 if status_values and "all" not in status_values:
@@ -2010,7 +2006,8 @@ class MyasView(APIView):
             if engineer.category == 2:
                 my_as = (
                     Tra.objects.filter(category_1=0)
-                    .prefetch_related("internal_processes")
+                    .prefetch_related("internal_processes", "histories")
+                    .select_related("engineer", "customer")
                     .order_by("-register_date")
                 )
             else:

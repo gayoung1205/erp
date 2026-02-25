@@ -214,3 +214,73 @@
 [25/Feb/2026 15:50:55] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
 [25/Feb/2026 15:50:57] INFO [core.views:1764] admin 이 전체 직원을 조회하였습니다.
 [25/Feb/2026 15:50:58] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[25/Feb/2026 16:13:56] INFO [core.views:1758] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 16:13:57] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 3
+[25/Feb/2026 16:14:01] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:05] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:05] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:06] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:06] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:08] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:08] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:09] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:09] INFO [core.views:1758] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 16:14:09] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:12] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:12] INFO [core.views:1758] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 16:14:12] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:12] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:13] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:14] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:14] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:15] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:18] INFO [core.views:1758] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 16:14:19] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[25/Feb/2026 16:14:20] INFO [core.views:1758] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 16:14:22] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:23] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:24] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:30] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:14:30] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:30] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:30] INFO [core.views:1758] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 16:14:31] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:31] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:31] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:32] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:32] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:33] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:14:35] INFO [core.views:2917] admin 이 출근부를 조회하였습니다.
+[25/Feb/2026 16:15:17] INFO [core.views:2917] admin 이 출근부를 조회하였습니다.
+[25/Feb/2026 16:25:19] INFO [core.views:2917] admin 이 출근부를 조회하였습니다.
+[25/Feb/2026 16:25:20] INFO [core.views:285] admin 이 전체고객을 검색하였습니다.
+[25/Feb/2026 16:26:12] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:26:12] INFO [core.views:356] admin123 이 [8] : [복콩이회사] 고객을 조회하였습니다.
+[25/Feb/2026 16:26:19] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:26:20] INFO [core.views:733] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:26:26] INFO [core.views:1758] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 16:26:26] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[25/Feb/2026 16:26:27] INFO [core.views:356] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[25/Feb/2026 16:58:13] INFO [core.views:357] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[25/Feb/2026 16:58:13] INFO [core.views:1759] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 16:58:13] INFO [core.views:357] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[25/Feb/2026 16:58:13] INFO [core.views:285] admin 이 전체고객을 검색하였습니다.
+[25/Feb/2026 16:58:16] INFO [core.views:285] admin 이 전체고객을 검색하였습니다.
+[25/Feb/2026 16:58:17] INFO [core.views:357] admin123 이 [6] : [동부그린] 고객을 조회하였습니다.
+[25/Feb/2026 16:58:17] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:58:20] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:58:20] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:58:21] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:58:21] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 16:58:26] INFO [core.views:1759] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 17:08:51] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 17:08:51] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 17:08:55] INFO [core.views:1760] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 17:08:55] INFO [core.views:357] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[25/Feb/2026 17:08:55] INFO [core.views:357] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[25/Feb/2026 17:08:58] INFO [core:69] Google Calendar 일정 생성 성공: 01ilkh63t48k3fts22f5dh3isg
+[25/Feb/2026 17:08:58] INFO [core.views:1212] Trade #55 캘린더 신규 생성: [AS진행] (미정) - admin
+[25/Feb/2026 17:08:59] INFO [core.views:1760] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 17:08:59] INFO [core.views:357] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[25/Feb/2026 17:08:59] INFO [core.views:357] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
+[25/Feb/2026 17:09:01] INFO [core.views:1760] admin 이 전체 직원을 조회하였습니다.

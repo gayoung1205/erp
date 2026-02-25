@@ -113,7 +113,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_receivable(self, obj):
-        tra = Trade.objects.filter(customer_id=obj.id)
+        tra = Trade.objects.filter(customer_id=obj.id).prefetch_related('histories')
         return create_receivable(tra)
 
     def get_address(self, obj):
@@ -189,9 +189,11 @@ class TradeSerializer(serializers.ModelSerializer):
 
     def get_address(self, obj):
         try:
-            return obj.customer.address_1 + obj.customer.address_2
+            addr1 = obj.customer.address_1 or ''
+            addr2 = obj.customer.address_2 or ''
+            return addr1 + addr2
         except:
-            return
+            return ''
 
     def get_total_price(self, obj):
         return total_price(obj)
@@ -257,8 +259,9 @@ class AllTradeSerializer(serializers.ModelSerializer):
         return total_price(obj)
 
     def get_total_receivable(self, obj):
-        tra = Trade.objects.all()
-
+        tra = Trade.objects.filter(customer_id=obj.customer_id).filter(
+            created_date__lte=obj.created_date
+        )
         return create_receivable(tra)
 
 
