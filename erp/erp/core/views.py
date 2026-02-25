@@ -863,13 +863,28 @@ class Trade(APIView):
                     "register_date"
                 )
             elif category is not None:
+                print(f"[DEBUG] category={category}, type={type(category)}")
+
+                # ★ DB에 실제로 존재하는 category_1 값 전체 출력
+                print(f"[DEBUG] 존재하는 category_1 목록: {list(Tra.objects.values_list('category_1', flat=True).distinct())}")
+
                 tra = (
                     Tra.objects.filter(category_1=category)
                     .prefetch_related("customer", "internal_processes")
                 )
-                status_filter = req.GET.get("status", None)
-                if status_filter is not None and status_filter != "all":
-                    tra = tra.filter(category_2=int(status_filter))
+                print(f"[DEBUG] tra count={tra.count()}")
+
+                status_values = req.GET.getlist("status")
+                if status_values and "all" not in status_values:
+                    tra = tra.filter(category_2__in=[int(s) for s in status_values])
+
+                start_date = req.GET.get("start_date", None)
+                end_date   = req.GET.get("end_date", None)
+                if start_date:
+                    tra = tra.filter(register_date__date__gte=start_date)
+                if end_date:
+                    tra = tra.filter(register_date__date__lte=end_date)
+
                 tra = tra.order_by("-register_date", "-category_2")
                 result = custom_paginator(req, tra, None)
                 result["results"] = TradeSerializer(result["results"], many=True).data
@@ -1992,19 +2007,40 @@ class MyasView(APIView):
         try:
             engineer = Eng.objects.get(user=req.user)
 
-            my_as = (
-                Tra.objects.filter(category_1=0)
-                .filter(category_2__in=[0, 2])
-                .filter(engineer=engineer)
-                .prefetch_related("internal_processes")
-                .order_by("-register_date")
-            )
+            if engineer.category == 2:
+                my_as = (
+                    Tra.objects.filter(category_1=0)
+                    .prefetch_related("internal_processes")
+                    .order_by("-register_date")
+                )
+            else:
+                my_as = (
+                    Tra.objects.filter(category_1=0)
+                    .filter(engineer=engineer)
+                    .prefetch_related("internal_processes")
+                    .order_by("-register_date")
+                )
+
+            status_values = req.GET.getlist("status")
+            if status_values and "all" not in status_values:
+                my_as = my_as.filter(category_2__in=[int(s) for s in status_values])
+            else:
+                my_as = my_as.filter(category_2__in=[0, 2])
+
+            start_date = req.GET.get("start_date", None)
+            end_date   = req.GET.get("end_date", None)
+            if start_date:
+                my_as = my_as.filter(register_date__date__gte=start_date)
+            if end_date:
+                my_as = my_as.filter(register_date__date__lte=end_date)
+
         except Exception as e:
             print(e)
             return CustomResponse(
                 message="데이터를 불러오는 중 오류가 발생하였습니다.",
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
         result = custom_paginator(req, my_as, None)
         result["results"] = TradeSerializer(result["results"], many=True).data
         return ReturnData(data=result)
