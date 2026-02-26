@@ -73,7 +73,7 @@ from model.models import ReleaseLog, ReleaseLogPermission
 from urllib.parse import quote
 from model.models import AsInternalProcess
 from .serializers import AsInternalProcessSerializer
-from django.db.models import F
+from django.db.models import F, Case, When, Value, IntegerField
 
 from .google_calendar import (
     create_google_event, update_google_event, delete_google_event,
@@ -885,7 +885,21 @@ class Trade(APIView):
                 sort_order = req.GET.get("sort_order", "desc")
                 ALLOWED_SORT = ['register_date', 'visit_date', 'complete_date']
 
-                if sort_field and sort_field in ALLOWED_SORT:
+                if sort_field == 'status':
+                    status_order = Case(
+                        When(category_2=0, then=Value(0)),
+                        When(category_2=2, then=Value(1)),
+                        When(category_2=1, then=Value(2)),
+                        When(category_2=3, then=Value(3)),
+                        default=Value(4),
+                        output_field=IntegerField()
+                    )
+                    tra = tra.annotate(status_order=status_order)
+                    if sort_order == 'asc':
+                        tra = tra.order_by('status_order', '-register_date')
+                    else:
+                        tra = tra.order_by('-status_order', '-register_date')
+                elif sort_field and sort_field in ALLOWED_SORT:
                     if sort_order == "asc":
                         tra = tra.order_by(F(sort_field).asc(nulls_last=True))
                     else:
@@ -2028,11 +2042,11 @@ class MyasView(APIView):
                     .prefetch_related("internal_processes")
                 )
 
-            status_values = req.GET.getlist("status")
-            if status_values and "all" not in status_values:
-                my_as = my_as.filter(category_2__in=[int(s) for s in status_values])
-            else:
-                my_as = my_as.filter(category_2__in=[0, 2])
+                status_values = req.GET.getlist("status")
+                if status_values and "all" not in status_values:
+                    my_as = my_as.filter(category_2__in=[int(s) for s in status_values])
+                elif not status_values:
+                    my_as = my_as.filter(category_2__in=[0, 2])
 
             start_date = req.GET.get("start_date", None)
             end_date   = req.GET.get("end_date", None)
@@ -2052,7 +2066,21 @@ class MyasView(APIView):
         sort_order = req.GET.get("sort_order", "desc")
         ALLOWED_SORT = ['register_date', 'visit_date', 'complete_date']
 
-        if sort_field and sort_field in ALLOWED_SORT:
+        if sort_field == 'status':
+            status_order = Case(
+                When(category_2=0, then=Value(0)),
+                When(category_2=2, then=Value(1)),
+                When(category_2=1, then=Value(2)),
+                When(category_2=3, then=Value(3)),
+                default=Value(4),
+                output_field=IntegerField()
+            )
+            my_as = my_as.annotate(status_order=status_order)
+            if sort_order == 'asc':
+                my_as = my_as.order_by('status_order', '-register_date')
+            else:
+                my_as = my_as.order_by('-status_order', '-register_date')
+        elif sort_field and sort_field in ALLOWED_SORT:
             if sort_order == "asc":
                 my_as = my_as.order_by(F(sort_field).asc(nulls_last=True))
             else:
