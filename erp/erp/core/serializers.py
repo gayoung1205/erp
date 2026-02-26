@@ -113,7 +113,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_receivable(self, obj):
-        tra = Trade.objects.filter(customer_id=obj.id).prefetch_related('histories')
+        tra = Trade.objects.filter(customer_id=obj.id)
         return create_receivable(tra)
 
     def get_address(self, obj):
@@ -638,3 +638,82 @@ class AsInternalProcessSerializer(serializers.ModelSerializer):
 
     def get_engineer_name(self, obj):
         return obj.engineer.name if obj.engineer else ""
+
+class CurrentSituationSerializer(serializers.ModelSerializer):
+    """AS현황/납품현황 전용 - total_price, total_receivable 계산 제외"""
+    category_name2 = serializers.SerializerMethodField()
+    engineer_name = serializers.SerializerMethodField()
+    customer_name = serializers.SerializerMethodField()
+    phone = serializers.SerializerMethodField()
+    tel = serializers.SerializerMethodField()
+    address = serializers.SerializerMethodField()
+    customer_id = serializers.SerializerMethodField()
+    internal_process_count = serializers.SerializerMethodField()
+    internal_process_engineers = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Trade
+        fields = [
+            'id', 'customer_name', 'customer_id', 'tel', 'phone', 'address',
+            'category_2', 'category_name2', 'engineer_name', 'content',
+            'register_date', 'visit_date', 'complete_date', 'completed_content',
+            'memo', 'register_id', 'symptom', 'internal_process_count',
+            'internal_process_engineers',
+        ]
+
+    def get_customer_name(self, obj):
+        try:
+            return obj.customer.name
+        except:
+            return ''
+
+    def get_customer_id(self, obj):
+        return obj.customer_id
+
+    def get_engineer_name(self, obj):
+        try:
+            return obj.engineer.name
+        except:
+            return ''
+
+    def get_phone(self, obj):
+        try:
+            return obj.customer.phone
+        except:
+            return ''
+
+    def get_tel(self, obj):
+        try:
+            return obj.customer.tel
+        except:
+            return ''
+
+    def get_address(self, obj):
+        try:
+            addr1 = obj.customer.address_1 or ''
+            addr2 = obj.customer.address_2 or ''
+            return addr1 + addr2
+        except:
+            return ''
+
+    def get_category_name2(self, obj):
+        if obj.category_2 is None:
+            return ' '
+        category = ['접수', '완료', '진행', '취소']
+        return category[obj.category_2]
+
+    def get_internal_process_count(self, obj):
+        try:
+            return obj.internal_processes.count()
+        except:
+            return 0
+
+    def get_internal_process_engineers(self, obj):
+        try:
+            names = []
+            for ip in obj.internal_processes.all():
+                if ip.engineer and ip.engineer.name not in names:
+                    names.append(ip.engineer.name)
+            return ', '.join(names)
+        except:
+            return ''

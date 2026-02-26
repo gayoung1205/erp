@@ -19,6 +19,7 @@ from model.models import ReleaseLog
 from model.models import ProductPackage, ProductPackageItem
 from model.models import PendingStock
 from .serializers import PendingStockSerializer
+from .serializers import CurrentSituationSerializer
 
 from rest_framework import status
 from .serializers import (
@@ -283,7 +284,6 @@ class Customer(APIView):
 
         # serializer = CustomerSerializer(cus, many=True)
         logger.info(f"{return_username(req.user).name} 이 전체고객을 검색하였습니다.")
-        cus = cus.prefetch_related('trades__histories')
         result = custom_paginator(req, cus, "-created_date")
         result["results"] = CustomerSerializer(result["results"], many=True).data
         return ReturnData(data=result)
@@ -866,8 +866,7 @@ class Trade(APIView):
             elif category is not None:
                 tra = (
                     Tra.objects.filter(category_1=category)
-                    .prefetch_related("customer", "internal_processes", "histories")
-                    .select_related("engineer")
+                    .prefetch_related("customer", "internal_processes")
                 )
 
                 status_values = req.GET.getlist("status")
@@ -883,7 +882,7 @@ class Trade(APIView):
 
                 tra = tra.order_by("-register_date", "-category_2")
                 result = custom_paginator(req, tra, None)
-                result["results"] = TradeSerializer(result["results"], many=True).data
+                result["results"] = CurrentSituationSerializer(result["results"], many=True).data
                 return ReturnData(data=result)
 
             else:
@@ -1036,6 +1035,7 @@ class Trade(APIView):
                                 isAllDay=True,
                                 category='allday',
                                 engineer=tra.engineer,
+                                calendarId=str(tra.engineer.id) if tra.engineer else '',
                                 bg_color=bg_color,
                                 google_event_id=google_event_id or '',
                                 trade=tra,
@@ -1181,6 +1181,7 @@ class TradeDetail(APIView):
                                 bg_color = get_engineer_color(engineer_name)
                                 cal_event.bg_color = bg_color
                                 cal_event.engineer = tra.engineer
+                                cal_event.calendarId = str(tra.engineer.id) if tra.engineer else ''
                                 cal_event.save()
 
                                 if cal_event.google_event_id:
@@ -1206,7 +1207,7 @@ class TradeDetail(APIView):
                                 CalModel.objects.create(
                                     title=new_title, start=cal_date, end=cal_end,
                                     isAllDay=True, category='allday',
-                                    engineer=tra.engineer, bg_color=bg_color,
+                                    engineer=tra.engineer,calendarId=str(tra.engineer.id) if tra.engineer else '',  bg_color=bg_color,
                                     google_event_id=google_event_id or '', trade=tra,
                                 )
                                 logger.info(f"Trade #{tra.id} 캘린더 신규 생성: {new_title}")
@@ -1758,7 +1759,7 @@ class Engineer(APIView):
             engineer = Eng.objects.all()
 
         logger.info(f"{return_username(req.user).name} 이 전체 직원을 조회하였습니다.")
-        result = custom_paginator(req, engineer, "-created_date")
+        result = custom_paginator(req, engineer, "name")
         result["results"] = EngineerSerializer(result["results"], many=True).data
         return ReturnData(data=result)
 
@@ -2006,8 +2007,7 @@ class MyasView(APIView):
             if engineer.category == 2:
                 my_as = (
                     Tra.objects.filter(category_1=0)
-                    .prefetch_related("internal_processes", "histories")
-                    .select_related("engineer", "customer")
+                    .prefetch_related("internal_processes")
                     .order_by("-register_date")
                 )
             else:
@@ -3267,12 +3267,12 @@ class ExportDataToExcelView(APIView):
         # ━━━ 회계 ━━━
         elif export_type == "accounting":
             try:
-                queryset = Tra.objects.filter(category_1__in=[5, 6])  # 수입, 지출
+                queryset = Tra.objects.exclude(category_1=8)
                 if start_date:
                     queryset = queryset.filter(register_date__gte=start_date)
                 if end_date:
                     queryset = queryset.filter(register_date__lte=end_date + " 23:59:59")
-                queryset = queryset.order_by("-register_date")
+                queryset = queryset.select_related("customer", "engineer").order_by("-register_date")
             except Exception as e:
                 print(e)
                 return ReturnNoContent()
@@ -3280,18 +3280,20 @@ class ExportDataToExcelView(APIView):
             type_datas = TradeSerializer(queryset, many=True).data
             file_name = f"accounting_{start_date or 'all'}_{end_date or 'all'}.xlsx" if start_date or end_date else "accounting.xlsx"
             sheet_name = "accounting"
-            col_headers = ["등록일", "구분", "내용", "공급가액", "부가세", "현금", "카드", "은행", "메모", "등록자"]
-            col_names = ["register_date", "category_name1", "content", "supply_price", "tax_price", "cash", "credit", "bank", "memo", "register_id"]
+            col_headers = ["등록일", "구분", "고객명", "거래내역/접수내용", "공급가액", "부가세", "현금결제", "카드결제", "은행입금", "메모", "등록자"]
+            col_names = ["register_date", "category_name1", "customer_name", "content", "supply_price", "tax_price", "cash", "credit", "bank", "memo", "register_id"]
 
         # ━━━ 미수금현황 ━━━
         elif export_type == "receivable":
             try:
-                queryset = Cus.objects.filter(receivable__gt=0).order_by("-receivable")
+                cus = Cus.objects.filter(receivable__gt=0).order_by("-receivable")
+                serialized = CustomerSerializer(cus, many=True).data
+                type_datas = [i for i in serialized if i.get("receivable", 0) > 0]
+                type_datas.sort(key=lambda x: x.get("receivable", 0), reverse=True)
             except Exception as e:
                 print(e)
                 return ReturnNoContent()
 
-            type_datas = CustomerSerializer(queryset, many=True).data
             file_name = "receivable_plus.xlsx"
             sheet_name = "receivable"
             col_headers = ["고객명", "Phone", "Tel", "주소", "미수금"]
@@ -3300,12 +3302,14 @@ class ExportDataToExcelView(APIView):
         # ━━━ 지불금현황 ━━━
         elif export_type == "receivable_minus":
             try:
-                queryset = Cus.objects.filter(receivable__lt=0).order_by("receivable")
+                cus = Cus.objects.filter(receivable__lt=0).order_by("receivable")
+                serialized = CustomerSerializer(cus, many=True).data
+                type_datas = [i for i in serialized if i.get("receivable", 0) < 0]
+                type_datas.sort(key=lambda x: x.get("receivable", 0))
             except Exception as e:
                 print(e)
                 return ReturnNoContent()
 
-            type_datas = CustomerSerializer(queryset, many=True).data
             file_name = "receivable_minus.xlsx"
             sheet_name = "receivable"
             col_headers = ["고객명", "Phone", "Tel", "주소", "지불금"]

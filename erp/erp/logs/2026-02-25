@@ -284,3 +284,17 @@
 [25/Feb/2026 17:08:59] INFO [core.views:357] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
 [25/Feb/2026 17:08:59] INFO [core.views:357] admin123 이 [1] : [테스트거래처] 고객을 조회하였습니다.
 [25/Feb/2026 17:09:01] INFO [core.views:1760] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 17:41:42] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 17:41:42] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 17:41:46] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 17:41:46] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 17:41:48] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 17:41:48] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 17:41:50] INFO [core.views:1760] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 17:41:51] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[25/Feb/2026 17:41:55] INFO [core:120] Google Calendar 일정 삭제 성공: 01ilkh63t48k3fts22f5dh3isg
+[25/Feb/2026 17:41:55] INFO [core.views:1600] admin 이 22 일정을 삭제하였습니다.
+[25/Feb/2026 17:41:56] INFO [core.views:1760] admin 이 전체 직원을 조회하였습니다.
+[25/Feb/2026 17:41:57] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[25/Feb/2026 17:41:59] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
+[25/Feb/2026 17:41:59] INFO [core.views:734] admin123 이 전체거래내역을 조회하였습니다.
