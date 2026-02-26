@@ -73,6 +73,7 @@ from model.models import ReleaseLog, ReleaseLogPermission
 from urllib.parse import quote
 from model.models import AsInternalProcess
 from .serializers import AsInternalProcessSerializer
+from django.db.models import F
 
 from .google_calendar import (
     create_google_event, update_google_event, delete_google_event,
@@ -880,7 +881,18 @@ class Trade(APIView):
                 if end_date:
                     tra = tra.filter(register_date__date__lte=end_date)
 
-                tra = tra.order_by("-register_date", "-category_2")
+                sort_field = req.GET.get("sort", None)
+                sort_order = req.GET.get("sort_order", "desc")
+                ALLOWED_SORT = ['register_date', 'visit_date', 'complete_date']
+
+                if sort_field and sort_field in ALLOWED_SORT:
+                    if sort_order == "asc":
+                        tra = tra.order_by(F(sort_field).asc(nulls_last=True))
+                    else:
+                        tra = tra.order_by(F(sort_field).desc(nulls_last=True))
+                else:
+                    tra = tra.order_by("-register_date", "-category_2")
+
                 result = custom_paginator(req, tra, None)
                 result["results"] = CurrentSituationSerializer(result["results"], many=True).data
                 return ReturnData(data=result)
@@ -2008,14 +2020,12 @@ class MyasView(APIView):
                 my_as = (
                     Tra.objects.filter(category_1=0)
                     .prefetch_related("internal_processes")
-                    .order_by("-register_date")
                 )
             else:
                 my_as = (
                     Tra.objects.filter(category_1=0)
                     .filter(engineer=engineer)
                     .prefetch_related("internal_processes")
-                    .order_by("-register_date")
                 )
 
             status_values = req.GET.getlist("status")
@@ -2037,6 +2047,18 @@ class MyasView(APIView):
                 message="데이터를 불러오는 중 오류가 발생하였습니다.",
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+        sort_field = req.GET.get("sort", None)
+        sort_order = req.GET.get("sort_order", "desc")
+        ALLOWED_SORT = ['register_date', 'visit_date', 'complete_date']
+
+        if sort_field and sort_field in ALLOWED_SORT:
+            if sort_order == "asc":
+                my_as = my_as.order_by(F(sort_field).asc(nulls_last=True))
+            else:
+                my_as = my_as.order_by(F(sort_field).desc(nulls_last=True))
+        else:
+            my_as = my_as.order_by("-register_date")
 
         result = custom_paginator(req, my_as, None)
         result["results"] = TradeSerializer(result["results"], many=True).data
