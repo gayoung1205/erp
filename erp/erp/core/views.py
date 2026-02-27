@@ -73,6 +73,7 @@ from model.models import ReleaseLog, ReleaseLogPermission
 from urllib.parse import quote
 from model.models import AsInternalProcess
 from .serializers import AsInternalProcessSerializer
+from django.db.models import F
 
 from .google_calendar import (
     create_google_event, update_google_event, delete_google_event,
@@ -880,7 +881,21 @@ class Trade(APIView):
                 if end_date:
                     tra = tra.filter(register_date__date__lte=end_date)
 
-                tra = tra.order_by("-register_date", "-category_2")
+                ordering = req.GET.get("ordering", None)
+                allowed_orderings = {
+                    "register_date", "-register_date",
+                    "visit_date", "-visit_date",
+                    "complete_date", "-complete_date",
+                }
+                if ordering and ordering in allowed_orderings:
+                    if ordering.startswith("-"):
+                        field = ordering[1:]
+                        tra = tra.order_by(F(field).desc(nulls_last=True), "-category_2")
+                    else:
+                        tra = tra.order_by(F(ordering).asc(nulls_last=True), "-category_2")
+                else:
+                    tra = tra.order_by("-register_date", "-category_2")
+
                 result = custom_paginator(req, tra, None)
                 result["results"] = CurrentSituationSerializer(result["results"], many=True).data
                 return ReturnData(data=result)
@@ -2030,6 +2045,19 @@ class MyasView(APIView):
                 my_as = my_as.filter(register_date__date__gte=start_date)
             if end_date:
                 my_as = my_as.filter(register_date__date__lte=end_date)
+
+            ordering = req.GET.get("ordering", None)
+            allowed_orderings = {
+                "register_date", "-register_date",
+                "visit_date", "-visit_date",
+                "complete_date", "-complete_date",
+            }
+            if ordering and ordering in allowed_orderings:
+                if ordering.startswith("-"):
+                    field = ordering[1:]
+                    my_as = my_as.order_by(F(field).desc(nulls_last=True))
+                else:
+                    my_as = my_as.order_by(F(ordering).asc(nulls_last=True))
 
         except Exception as e:
             print(e)
