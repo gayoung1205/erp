@@ -73,7 +73,7 @@ from model.models import ReleaseLog, ReleaseLogPermission
 from urllib.parse import quote
 from model.models import AsInternalProcess
 from .serializers import AsInternalProcessSerializer
-from django.db.models import F
+from django.db.models import F,Case, When, Value, IntegerField
 
 from .google_calendar import (
     create_google_event, update_google_event, delete_google_event,
@@ -886,9 +886,19 @@ class Trade(APIView):
                     "register_date", "-register_date",
                     "visit_date", "-visit_date",
                     "complete_date", "-complete_date",
+                    "category_2_0", "category_2_1", "category_2_2", "category_2_3",
                 }
                 if ordering and ordering in allowed_orderings:
-                    if ordering.startswith("-"):
+                    if ordering.startswith("category_2_"):
+                        target_status = int(ordering.split("_")[-1])
+                        tra = tra.annotate(
+                            status_order=Case(
+                                When(category_2=target_status, then=Value(0)),
+                                default=Value(1),
+                                output_field=IntegerField(),
+                            )
+                        ).order_by("status_order", "-register_date")
+                    elif ordering.startswith("-"):
                         field = ordering[1:]
                         tra = tra.order_by(F(field).desc(nulls_last=True), "-category_2")
                     else:
@@ -2051,9 +2061,19 @@ class MyasView(APIView):
                 "register_date", "-register_date",
                 "visit_date", "-visit_date",
                 "complete_date", "-complete_date",
+                "category_2", "-category_2",
             }
             if ordering and ordering in allowed_orderings:
-                if ordering.startswith("-"):
+                if ordering.startswith("category_2_"):
+                    target_status = int(ordering.split("_")[-1])
+                    my_as = my_as.annotate(
+                        status_order=Case(
+                            When(category_2=target_status, then=Value(0)),
+                            default=Value(1),
+                            output_field=IntegerField(),
+                        )
+                    ).order_by("status_order", "-register_date")
+                elif ordering.startswith("-"):
                     field = ordering[1:]
                     my_as = my_as.order_by(F(field).desc(nulls_last=True))
                 else:
@@ -3258,7 +3278,6 @@ class ExportDataToExcelView(APIView):
         # ━━━ 출고내역 ━━━
         elif export_type == "release":
             try:
-                from django.db.models import Q
                 queryset = His.objects.filter(Q(trade=None) & Q(is_released=True))
                 if start_date:
                     queryset = queryset.filter(created_date__gte=start_date)
