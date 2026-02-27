@@ -650,6 +650,7 @@ class CurrentSituationSerializer(serializers.ModelSerializer):
     customer_id = serializers.SerializerMethodField()
     internal_process_count = serializers.SerializerMethodField()
     internal_process_engineers = serializers.SerializerMethodField()
+    internal_process_contents = serializers.SerializerMethodField()
 
     class Meta:
         model = Trade
@@ -658,7 +659,7 @@ class CurrentSituationSerializer(serializers.ModelSerializer):
             'category_2', 'category_name2', 'engineer_name', 'content',
             'register_date', 'visit_date', 'complete_date', 'completed_content',
             'memo', 'register_id', 'symptom', 'internal_process_count',
-            'internal_process_engineers',
+            'internal_process_engineers', 'internal_process_contents',
         ]
 
     def get_customer_name(self, obj):
@@ -715,5 +716,19 @@ class CurrentSituationSerializer(serializers.ModelSerializer):
                 if ip.engineer and ip.engineer.name not in names:
                     names.append(ip.engineer.name)
             return ', '.join(names)
+        except:
+            return ''
+
+    def get_internal_process_contents(self, obj):
+        try:
+            contents = []
+            for ip in obj.internal_processes.all():
+                name = ip.engineer.name if ip.engineer else ''
+                content = ip.content or ''
+                if name and content:
+                    contents.append(f"{name}: {content}")
+                elif content:
+                    contents.append(content)
+            return ' / '.join(contents)
         except:
             return ''

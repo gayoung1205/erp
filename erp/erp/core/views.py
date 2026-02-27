@@ -2043,11 +2043,13 @@ class MyasView(APIView):
                     .order_by("-register_date")
                 )
 
+            allowed_status = [0, 2]
             status_values = req.GET.getlist("status")
             if status_values and "all" not in status_values:
-                my_as = my_as.filter(category_2__in=[int(s) for s in status_values])
+                requested = [int(s) for s in status_values]
+                my_as = my_as.filter(category_2__in=[s for s in requested if s in allowed_status])
             else:
-                my_as = my_as.filter(category_2__in=[0, 2])
+                my_as = my_as.filter(category_2__in=allowed_status)
 
             start_date = req.GET.get("start_date", None)
             end_date   = req.GET.get("end_date", None)
@@ -2087,7 +2089,7 @@ class MyasView(APIView):
             )
 
         result = custom_paginator(req, my_as, None)
-        result["results"] = TradeSerializer(result["results"], many=True).data
+        result["results"] = CurrentSituationSerializer(result["results"], many=True).data
         return ReturnData(data=result)
 
 
