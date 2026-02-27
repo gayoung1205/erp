@@ -24,7 +24,7 @@ from django.forms.models import model_to_dict
 def create_receivable(tra):
     result = 0
     tra = tra.filter(is_active=True)
-    
+
     for i in tra:
         flags = 1
         if i.category_1 in [1, 4]:
@@ -39,10 +39,10 @@ def create_receivable(tra):
 
 def total_price(his):
     result = 0
-    
+
     try:
         if his.category_1 in [1, 2, 5, 6]:
-            
+
             return abs(his.cash + his.bank + his.credit)
         else:
             his = History.objects.filter(trade_id=his.id)
@@ -199,7 +199,7 @@ class TradeSerializer(serializers.ModelSerializer):
         return total_price(obj)
 
     def get_total_receivable(self, obj):
-        
+
         tra = Trade.objects.filter(customer_id=obj.customer_id).filter(
             created_date__lte=obj.created_date
         )
@@ -345,7 +345,7 @@ class RecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Record
-        exclude = ['content', 'remark', 'plan', 'reject_content']
+        fields = '__all__'
 
     def _get_engineer(self, obj):
 

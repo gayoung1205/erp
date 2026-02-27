@@ -73,7 +73,6 @@ from model.models import ReleaseLog, ReleaseLogPermission
 from urllib.parse import quote
 from model.models import AsInternalProcess
 from .serializers import AsInternalProcessSerializer
-from django.db.models import F, Case, When, Value, IntegerField
 
 from .google_calendar import (
     create_google_event, update_google_event, delete_google_event,
@@ -206,7 +205,7 @@ class Customer(APIView):
     def get(self, req):
         """
             GET METHOD로 호출 시 전체 고객 데이터 반환
-           
+
         """
         search = req.GET.get("search", None)
         sort = req.GET.get("sort", None)
@@ -881,32 +880,7 @@ class Trade(APIView):
                 if end_date:
                     tra = tra.filter(register_date__date__lte=end_date)
 
-                sort_field = req.GET.get("sort", None)
-                sort_order = req.GET.get("sort_order", "desc")
-                ALLOWED_SORT = ['register_date', 'visit_date', 'complete_date']
-
-                if sort_field == 'status':
-                    status_order = Case(
-                        When(category_2=0, then=Value(0)),
-                        When(category_2=2, then=Value(1)),
-                        When(category_2=1, then=Value(2)),
-                        When(category_2=3, then=Value(3)),
-                        default=Value(4),
-                        output_field=IntegerField()
-                    )
-                    tra = tra.annotate(status_order=status_order)
-                    if sort_order == 'asc':
-                        tra = tra.order_by('status_order', '-register_date')
-                    else:
-                        tra = tra.order_by('-status_order', '-register_date')
-                elif sort_field and sort_field in ALLOWED_SORT:
-                    if sort_order == "asc":
-                        tra = tra.order_by(F(sort_field).asc(nulls_last=True))
-                    else:
-                        tra = tra.order_by(F(sort_field).desc(nulls_last=True))
-                else:
-                    tra = tra.order_by("-register_date", "-category_2")
-
+                tra = tra.order_by("-register_date", "-category_2")
                 result = custom_paginator(req, tra, None)
                 result["results"] = CurrentSituationSerializer(result["results"], many=True).data
                 return ReturnData(data=result)
@@ -1431,7 +1405,7 @@ class HistoryDetail(APIView):
 
     def get(self, req, history_id):
         """
-            특정 거래 번호에 따른 거래내역을 반환 
+            특정 거래 번호에 따른 거래내역을 반환
         """
         try:
             his = His.objects.get(id=history_id)
@@ -1479,7 +1453,7 @@ class HistoryDetail(APIView):
     def delete(self, req, history_id):
         """
             특정 거래내역을 삭제
-            
+
         """
         try:
             his = His.objects.get(id=history_id)
@@ -1775,7 +1749,7 @@ class Engineer(APIView):
             직원 전체 조회
             ---
             # 내용
-                - is_visible : 계정 활성화/비활성화 감추기 여부 는 비활성화 감추기 
+                - is_visible : 계정 활성화/비활성화 감추기 여부 는 비활성화 감추기
         """
         is_visible = req.GET.get("isVisible", None)
 
@@ -1803,7 +1777,7 @@ class Engineer(APIView):
                 - category : 부서구분
                 - is_active : 활성여부
                 - is_staff : 관리사이트 로그인 가능 여부
-                
+
         """
         require_data = ["user_id", "password", "name", "category"]
 
@@ -2034,19 +2008,21 @@ class MyasView(APIView):
                 my_as = (
                     Tra.objects.filter(category_1=0)
                     .prefetch_related("internal_processes")
+                    .order_by("-register_date")
                 )
             else:
                 my_as = (
                     Tra.objects.filter(category_1=0)
                     .filter(engineer=engineer)
                     .prefetch_related("internal_processes")
+                    .order_by("-register_date")
                 )
 
-                status_values = req.GET.getlist("status")
-                if status_values and "all" not in status_values:
-                    my_as = my_as.filter(category_2__in=[int(s) for s in status_values])
-                elif not status_values:
-                    my_as = my_as.filter(category_2__in=[0, 2])
+            status_values = req.GET.getlist("status")
+            if status_values and "all" not in status_values:
+                my_as = my_as.filter(category_2__in=[int(s) for s in status_values])
+            else:
+                my_as = my_as.filter(category_2__in=[0, 2])
 
             start_date = req.GET.get("start_date", None)
             end_date   = req.GET.get("end_date", None)
@@ -2061,32 +2037,6 @@ class MyasView(APIView):
                 message="데이터를 불러오는 중 오류가 발생하였습니다.",
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-        sort_field = req.GET.get("sort", None)
-        sort_order = req.GET.get("sort_order", "desc")
-        ALLOWED_SORT = ['register_date', 'visit_date', 'complete_date']
-
-        if sort_field == 'status':
-            status_order = Case(
-                When(category_2=0, then=Value(0)),
-                When(category_2=2, then=Value(1)),
-                When(category_2=1, then=Value(2)),
-                When(category_2=3, then=Value(3)),
-                default=Value(4),
-                output_field=IntegerField()
-            )
-            my_as = my_as.annotate(status_order=status_order)
-            if sort_order == 'asc':
-                my_as = my_as.order_by('status_order', '-register_date')
-            else:
-                my_as = my_as.order_by('-status_order', '-register_date')
-        elif sort_field and sort_field in ALLOWED_SORT:
-            if sort_order == "asc":
-                my_as = my_as.order_by(F(sort_field).asc(nulls_last=True))
-            else:
-                my_as = my_as.order_by(F(sort_field).desc(nulls_last=True))
-        else:
-            my_as = my_as.order_by("-register_date")
 
         result = custom_paginator(req, my_as, None)
         result["results"] = TradeSerializer(result["results"], many=True).data
@@ -2866,7 +2816,9 @@ class RecordDetailView(APIView):
                 return CustomResponse(
                     message="권한이 없습니다.", status=status.HTTP_403_FORBIDDEN
                 )
-        record_data = RecordSerializer(record).data
+        eng = Eng.objects.filter(user_id=record.user_id).first()
+        engineers = {record.user_id: eng} if eng else {}
+        record_data = RecordSerializer(record, context={'engineers': engineers}).data
         logger.info(
             f"{return_username(req.user).name} 이 [{record.id}] : [{record.category}] 전자문서를 조회하였습니다."
         )
