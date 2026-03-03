@@ -19,6 +19,8 @@ class Customer(models.Model):
     price_grade = models.CharField(max_length=50, null=True)
     memo = models.TextField(null=True, blank=True)
     register_id = models.CharField(max_length=50, null=True, blank=True)
+    receivable = models.IntegerField(default=0, null=True, blank=True)
+    last_receivable_date = models.DateTimeField(null=True, blank=True)
 
     def get_total_receivable(self):
         result = 0

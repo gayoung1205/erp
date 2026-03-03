@@ -20,6 +20,7 @@ from model.models import ProductPackage, ProductPackageItem
 from model.models import PendingStock
 from .serializers import PendingStockSerializer
 from .serializers import CurrentSituationSerializer
+from core.receivable_utils import recalculate_customer_receivable
 
 from rest_framework import status
 from .serializers import (
@@ -1069,6 +1070,12 @@ class Trade(APIView):
                     except Exception as cal_err:
                         logger.error(f"Trade #{tra.id} 캘린더 생성 실패: {cal_err}")
 
+                # ━━━ 미수금 자동 업데이트 ━━━
+                try:
+                    recalculate_customer_receivable(tra.customer_id)
+                except Exception as e:
+                    logger.error(f"미수금 업데이트 실패 (Trade 생성): {e}")
+
             logger.info(
                 f"{req.user.username}이 {tra.id} : [{tra.customer_name}]의 [{tra.get_category()}] 내역을 생성하였습니다."
             )
@@ -1081,6 +1088,7 @@ class Trade(APIView):
         except Exception as e:
             print(e)
             return ReturnError()
+
 
 
 class TradeDetail(APIView):
@@ -1104,28 +1112,7 @@ class TradeDetail(APIView):
         return ReturnData(data={"tra": tra_serializer.data, "his": his_serializer.data})
 
     def put(self, req, trade_id):
-        """
-            특정 Trade에 관한 정보를 수정하는 API
-            ---
-            # 내용
-                - category_1 : 구분1(INT)
-                - category_2 : 구분2(INT)
-                - category_3 : 구분3(INT)
-                - content : 접수내용(TEXT)
-                - memo : 메모(TEXT)
-                - symptom : 고장증상(TEXT)
-                - completed_content : 완료내역(TEXT)
-                - engineer : 담당기사(TEXT)
-                - visit_date : 방문일(DATE)
-                - complete_date : 완료일(DATE)
-                - price : 금액(INT)
-                - tax : 부가세(BOOLEAN)
-                - cash : 현금(INT)
-                - credit : 카드(INT)
-                - bank : 은행(INT)
-                - customer_id : 고객아이디(TEXT)
-                - customer_name : 고객이름(TEXT)
-        """
+
         data = req.data
 
         try:
@@ -1232,7 +1219,7 @@ class TradeDetail(APIView):
                                 CalModel.objects.create(
                                     title=new_title, start=cal_date, end=cal_end,
                                     isAllDay=True, category='allday',
-                                    engineer=tra.engineer,calendarId=str(tra.engineer.id) if tra.engineer else '',  bg_color=bg_color,
+                                    engineer=tra.engineer, calendarId=str(tra.engineer.id) if tra.engineer else '', bg_color=bg_color,
                                     google_event_id=google_event_id or '', trade=tra,
                                 )
                                 logger.info(f"Trade #{tra.id} 캘린더 신규 생성: {new_title}")
@@ -1264,6 +1251,12 @@ class TradeDetail(APIView):
                 except:
                     pass
 
+                # ━━━ 미수금 자동 업데이트 ━━━
+                try:
+                    recalculate_customer_receivable(tra.customer_id)
+                except Exception as e:
+                    logger.error(f"미수금 업데이트 실패 (Trade 수정): {e}")
+
             return ReturnAccept()
         except Exception as e:
             print(e)
@@ -1273,6 +1266,13 @@ class TradeDetail(APIView):
         """
             특정 Trade에 관한 데이터를 삭제하는 API
         """
+        # ━━━ 미수금 업데이트용: 삭제 전에 customer_id 저장 ━━━
+        try:
+            _trade_for_cid = Tra.objects.get(id=trade_id)
+            _customer_id_for_update = _trade_for_cid.customer_id
+        except:
+            _customer_id_for_update = None
+
         try:
             with transaction.atomic():
                 histories = Tra.objects.get(id=trade_id).histories.all()
@@ -1306,6 +1306,13 @@ class TradeDetail(APIView):
 
         except:
             return ReturnNoContent()
+
+        # ━━━ 미수금 자동 업데이트 ━━━
+        try:
+            if _customer_id_for_update:
+                recalculate_customer_receivable(_customer_id_for_update)
+        except Exception as e:
+            logger.error(f"미수금 업데이트 실패 (Trade 삭제): {e}")
 
         return ReturnAccept()
 
@@ -1470,6 +1477,13 @@ class HistoryDetail(APIView):
                 f"{req.user.username} 이 [{his.id}] : [{his.name}] 상세내역을 수정하였습니다."
             )
 
+            # ━━━ 미수금 자동 업데이트 ━━━
+            try:
+                trade = Tra.objects.get(id=his.trade_id)
+                recalculate_customer_receivable(trade.customer_id)
+            except Exception as e:
+                logger.error(f"미수금 업데이트 실패 (History 수정): {e}")
+
             return ReturnAccept()
         except Exception as e:
             print(e)
@@ -1484,6 +1498,10 @@ class HistoryDetail(APIView):
             his = His.objects.get(id=history_id)
         except:
             return ReturnNoContent()
+
+        # ━━━ 미수금 업데이트용: 삭제 전에 trade_id 저장 ━━━
+        _trade_id_for_update = his.trade_id
+
         try:
             with transaction.atomic():
                 if his.product_id:
@@ -1509,6 +1527,14 @@ class HistoryDetail(APIView):
 
         except:
             return ReturnNoContent()
+
+        # ━━━ 미수금 자동 업데이트 ━━━
+        try:
+            trade = Tra.objects.get(id=_trade_id_for_update)
+            recalculate_customer_receivable(trade.customer_id)
+        except Exception as e:
+            logger.error(f"미수금 업데이트 실패 (History 삭제): {e}")
+
         return ReturnAccept("해당 데이터 삭제를 완료했습니다.")
 
 class Calendar(APIView):
@@ -1960,6 +1986,13 @@ class HistoryAllDelete(APIView):
                     f"{return_username(req.user).name} 이 [{delete_his_id}] : [{delete_his_name}] 상세내역을 삭제하였습니다."
                 )
 
+            # ━━━ 미수금 자동 업데이트 ━━━
+            try:
+                trade = Tra.objects.get(id=trade_id)
+                recalculate_customer_receivable(trade.customer_id)
+            except Exception as e:
+                logger.error(f"미수금 업데이트 실패 (History 전체삭제): {e}")
+
             return ReturnAccept()
         except Exception as e:
             print(e)
@@ -2022,6 +2055,42 @@ class ReceivableView(APIView):
                 total_count.append(total_price)
                 receivalble.append(result)
         return ReturnAccept()
+
+class ReceivableListView(APIView):
+
+    def get(self, req):
+        list_type = req.GET.get("type", "plus")
+
+        if list_type == "plus":
+            customers = Cus.objects.filter(receivable__gt=0).order_by("-last_receivable_date")
+        else:
+            customers = Cus.objects.filter(receivable__lt=0).order_by("-last_receivable_date")
+
+        results = []
+        for cus in customers:
+            address = ""
+            if cus.address_1:
+                address += cus.address_1
+                if cus.address_2:
+                    address += cus.address_2
+
+            results.append({
+                "id": cus.id,
+                "name": cus.name or "",
+                "phone": cus.phone or "",
+                "tel": cus.tel or "",
+                "address": address,
+                "fax_number": cus.fax_number or "",
+                "email": cus.email or "",
+                "customer_grade": cus.customer_grade or "",
+                "price_grade": cus.price_grade or "",
+                "memo": cus.memo or "",
+                "register_id": cus.register_id or "",
+                "receivable": cus.receivable or 0,
+                "last_receivable_date": cus.last_receivable_date.isoformat() if cus.last_receivable_date else None,
+            })
+
+        return ReturnData(data={"results": results})
 
 
 class MyasView(APIView):

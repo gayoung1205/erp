@@ -43,6 +43,7 @@ from .views import (
     PendingStockSellView,
     AsInternalProcessView,
     AsInternalProcessDetailView,
+    ReceivableListView,
 )
 
 
@@ -65,6 +66,7 @@ urlpatterns = [
     url(r"^hisall/(?P<trade_id>\d+)/$", HistoryAllDelete.as_view()),
     url(r"^myas", MyasView.as_view()),
     url(r"^test", Test.as_view()),
+    url(r"^receivable-list$", ReceivableListView.as_view()),
     url(r"^receivable", ReceivableView.as_view()),
     url(r"^dashboard", DashBoardView.as_view()),
     url(r"^package/(?P<package_id>\d+)/$", ProductPackageDetailView.as_view()),
