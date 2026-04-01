@@ -736,7 +736,7 @@ class Trade(APIView):
             customer_id = req.GET.get("id", None)
             history = req.GET.get("history", None)
             category = req.GET.get("category", None)
-            category_1 = ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모"]
+            category_1 = ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모", "공사"]
             category_2 = ["접수", "완료", "진행", "취소"]
             category_3 = ["출장", "내방", "공사", "내부처리"]
             logger.info(f"{req.user.username} 이 전체거래내역을 조회하였습니다.")
@@ -1009,6 +1009,8 @@ class Trade(APIView):
             with transaction.atomic():
                 tra = Tra.objects.create()
                 for i in req.data:
+                    if i == 'participants':
+                        continue
                     setattr(tra, i, req.data[i])
                 setattr(tra, "register_id", req.user.username)
                 if req.data["category_1"] in [1, 2]:
@@ -1029,6 +1031,10 @@ class Trade(APIView):
                     if req.data["credit"] > 0:
                         tra.content += "카드결제/"
                 tra.save()
+
+                participants = req.data.get('participants', [])
+                if participants:
+                    tra.participants.set(participants)
 
                 # ★ AS(0) 또는 납품(7) 접수 시 캘린더 자동 생성
                 if tra.category_1 in [0, 7]:
@@ -1141,7 +1147,7 @@ class TradeDetail(APIView):
                     pass
 
                 for i in data["trade"]:
-                    if i == "id" or i == "customer" or i == "engineer":
+                    if i == "id" or i == "customer" or i == "engineer" or i == "participants":
                         pass
                     else:
                         setattr(tra, i, data["trade"][i])
@@ -1166,6 +1172,9 @@ class TradeDetail(APIView):
                     if req.data["trade"]["credit"] > 0:
                         tra.content += "카드결제/"
                 tra.save()
+
+                if 'participants' in data.get('trade', {}):
+                    tra.participants.set(data['trade']['participants'])
 
                 if tra.category_1 in [0, 7]:
                     try:

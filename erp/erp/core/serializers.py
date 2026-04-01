@@ -158,6 +158,8 @@ class TradeSerializer(serializers.ModelSerializer):
     engineer_name = serializers.SerializerMethodField()
     internal_process_count = serializers.SerializerMethodField()
     internal_process_engineers = serializers.SerializerMethodField()
+    participants_ids = serializers.SerializerMethodField()
+    participants_names = serializers.SerializerMethodField()
 
     class Meta:
         model = Trade
@@ -215,7 +217,7 @@ class TradeSerializer(serializers.ModelSerializer):
         return contents[:-1]
 
     def get_category_name1(self, obj):
-        category = ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모"]
+        category = ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모", "공사"]
         return category[obj.category_1]
 
     def get_category_name2(self, obj):
@@ -246,6 +248,18 @@ class TradeSerializer(serializers.ModelSerializer):
         except:
             return ""
 
+    def get_participants_ids(self, obj):
+        try:
+            return list(obj.participants.values_list('id', flat=True))
+        except:
+            return []
+
+    def get_participants_names(self, obj):
+        try:
+            return [e.name for e in obj.participants.all()]
+        except:
+            return []
+
 
 class AllTradeSerializer(serializers.ModelSerializer):
     total_price = serializers.SerializerMethodField()
@@ -274,6 +288,7 @@ class HistorySerializer(serializers.ModelSerializer):
     out_price = serializers.SerializerMethodField()
     sale_price = serializers.SerializerMethodField()
     stock = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
 
     class Meta:
         model = History
@@ -334,6 +349,12 @@ class HistorySerializer(serializers.ModelSerializer):
             return obj.product.stock
         except:
             return
+
+    def get_name(self, obj):
+        try:
+            return obj.product.name
+        except:
+            return obj.name
 
 
 class RecordSerializer(serializers.ModelSerializer):
@@ -651,6 +672,8 @@ class CurrentSituationSerializer(serializers.ModelSerializer):
     internal_process_count = serializers.SerializerMethodField()
     internal_process_engineers = serializers.SerializerMethodField()
     internal_process_contents = serializers.SerializerMethodField()
+    participants_ids = serializers.SerializerMethodField()
+    participants_names = serializers.SerializerMethodField()
 
     class Meta:
         model = Trade
@@ -660,6 +683,7 @@ class CurrentSituationSerializer(serializers.ModelSerializer):
             'register_date', 'visit_date', 'complete_date', 'completed_content',
             'memo', 'register_id', 'symptom', 'internal_process_count',
             'internal_process_engineers', 'internal_process_contents',
+            'participants_ids', 'participants_names',
         ]
 
     def get_customer_name(self, obj):
@@ -732,3 +756,15 @@ class CurrentSituationSerializer(serializers.ModelSerializer):
             return ' / '.join(contents)
         except:
             return ''
+
+    def get_participants_ids(self, obj):
+        try:
+            return list(obj.participants.values_list('id', flat=True))
+        except:
+            return []
+
+    def get_participants_names(self, obj):
+        try:
+            return [e.name for e in obj.participants.all()]
+        except:
+            return []

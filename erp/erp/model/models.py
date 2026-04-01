@@ -122,6 +122,7 @@ class Trade(models.Model):
     OUTCOME = 6  # 히스토리 미존재 미수금 미존재
     DELIVER = 7  # 히스토리 존재 미수금 값 +
     MEMO = 8  # 메모
+    CONSTRUCTION = 9 # 공사
 
     STATUS_CHOICES_1 = (
         (AS, "AS"),
@@ -133,6 +134,7 @@ class Trade(models.Model):
         (OUTCOME, "OUTCOME"),
         (DELIVER, "DELIVER"),
         (MEMO, "MEMO"),
+        (CONSTRUCTION, "CONSTRUCTION"),
     )
 
     ACCEPT = 0
@@ -196,9 +198,14 @@ class Trade(models.Model):
     updated_date = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    participants = models.ManyToManyField(
+        Engineer,
+        blank=True,
+        related_name='participated_trades',
+    )
 
     def get_category(self):
-        return ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모"][self.category_1]
+        return ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모", "공사"][self.category_1]
 
     def get_category_name2(self):
         if self.category_2 == None:
