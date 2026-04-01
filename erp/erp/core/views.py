@@ -567,7 +567,10 @@ class Product(APIView):
             with transaction.atomic():
                 pro = Pro.objects.create()
                 for i in req.data:
-                    setattr(pro, i, req.data[i])
+                    if i == 'code' and (req.data[i] is None or str(req.data[i]).strip() == ''):
+                        setattr(pro, 'code', None)
+                    else:
+                        setattr(pro, i, req.data[i])
                 setattr(pro, "register_id", req.user.username)
                 pro.save()
         except IntegrityError as e:
@@ -648,7 +651,10 @@ class ProductDetail(APIView):
 
         with transaction.atomic():
             for i in req.data:
-                setattr(pro, i, req.data[i])
+                if i == 'code' and (req.data[i] is None or str(req.data[i]).strip() == ''):
+                    setattr(pro, 'code', None)
+                else:
+                    setattr(pro, i, req.data[i])
             pro.save()
         logger.info(f"{req.user.username} 이 [{pro.id}] : [{pro.name}]을 수정하였습니다.")
 
