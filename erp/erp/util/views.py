@@ -67,8 +67,11 @@ def FindMissingData(require_data, compare_data):
 
 # Model Method
 def get_category_name1(obj):
-    category = ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모"]
-    return category[obj["category_1"]]
+    category = ["AS", "수금", "지불", "판매", "구매", "수입", "지출", "납품", "메모", "공사"]
+    try:
+        return category[obj["category_1"]]
+    except (IndexError, TypeError, KeyError):
+        return "미정"
 
 
 def get_category_name2(obj):
