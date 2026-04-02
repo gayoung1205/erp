@@ -1244,6 +1244,7 @@ class TradeDetail(APIView):
                 try:
                     for history in data["history"]:
                         try:
+                            # ① 기존 history가 있으면 → 수정
                             his = His.objects.get(id=history["id"])
                             if history.get("product_id"):
                                 his.product_id = history["product_id"]
@@ -1251,18 +1252,50 @@ class TradeDetail(APIView):
                                 if tra.category_1 in [0, 3, 7]:
                                     pro.add_stock(his.amount)
                                     pro.minus_stock(history["amount"])
+                                elif tra.category_1 == 4:
+                                    try:
+                                        pending = PendingStock.objects.filter(
+                                            trade_id=tra.id,
+                                            product_id=history.get("product_id"),
+                                            status=0
+                                        ).first()
+                                        if pending:
+                                            pending.amount = history["amount"]
+                                            pending.price = history.get("price", pending.price)
+                                            pending.save()
+                                    except Exception as e:
+                                        logger.error(f"PendingStock 수량 업데이트 실패: {e}")
                             for i in history:
                                 setattr(his, i, history[i])
                             his.save()
+
                         except His.DoesNotExist:
+                            # ② 새 history면 → 생성
                             his = His.objects.create()
                             for i in history:
                                 setattr(his, i, history[i])
+                            his.save()  # ✅ id 확보를 위해 먼저 save
+
                             if history.get("product_id"):
                                 pro = Pro.objects.get(id=history["product_id"])
                                 if tra.category_1 in [0, 3, 7]:
                                     pro.minus_stock(history["amount"])
-                            his.save()
+                                # ✅ 구매(4)일 때: 새 PendingStock 생성
+                                elif tra.category_1 == 4:
+                                    try:
+                                        PendingStock.objects.create(
+                                            product=pro,
+                                            product_name=pro.name,
+                                            product_category=pro.category,
+                                            amount=history["amount"],
+                                            price=history.get("price", pro.in_price),
+                                            supplier_name=tra.customer_name or "",
+                                            register_name=return_username(req.user).name,
+                                            trade_id=tra.id,
+                                            history_id=his.id,
+                                        )
+                                    except Exception as e:
+                                        logger.error(f"PendingStock 생성 실패 (수정 중): {e}")
                 except:
                     pass
 
@@ -1525,7 +1558,16 @@ class HistoryDetail(APIView):
                     if tra.category_1 in [0, 3, 7]:
                         pro.add_stock(his.amount)
                     elif tra.category_1 == 4:
-                        pass
+                        try:
+                            pending = PendingStock.objects.filter(
+                                trade_id=tra.id,
+                                product_id=his.product_id,  # ← his 변수 사용 (delete라서!)
+                                status=0
+                            ).first()
+                            if pending:
+                                pending.cancel()  # 수량 변경 X, 취소 처리
+                        except Exception as e:
+                            logger.error(f"PendingStock 취소 실패 (History 삭제): {e}")
                     else:
                         pro.minus_stock(his.amount)
         except:
