@@ -1,0 +1,58 @@
+[02/Apr/2026 10:17:45] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 10:17:47] INFO [core:217] Google Calendar 동기화 완료: 생성 11, 수정 0, 삭제 2
+[02/Apr/2026 10:30:46] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 10:30:47] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 10:31:03] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 10:31:04] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 10:31:25] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 10:31:26] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 10:31:41] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 10:31:42] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 10:32:59] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 10:33:00] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 11:06:45] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 11:06:46] INFO [core:217] Google Calendar 동기화 완료: 생성 3, 수정 0, 삭제 0
+[02/Apr/2026 13:39:52] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:39:53] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 13:40:42] INFO [core:69] Google Calendar 일정 생성 성공: 235uhb8u9kq07f696113sd8eac
+[02/Apr/2026 13:40:42] INFO [core.views:1593] 테스트2 이 13095 일정을 생성하였습니다.
+[02/Apr/2026 13:40:43] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:40:45] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 13:40:50] ERROR [core:86] Google Calendar 일정 수정 실패: start 또는 end 변환 불가
+[02/Apr/2026 13:40:50] INFO [core.views:1642] test2 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 13:40:51] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:40:52] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[02/Apr/2026 13:41:03] ERROR [core:86] Google Calendar 일정 수정 실패: start 또는 end 변환 불가
+[02/Apr/2026 13:41:03] INFO [core.views:1642] test2 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 13:41:04] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:41:05] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[02/Apr/2026 13:41:49] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:41:51] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 13:44:42] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:44:44] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 13:44:52] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:44:53] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 13:45:02] ERROR [core:86] Google Calendar 일정 수정 실패: start 또는 end 변환 불가
+[02/Apr/2026 13:45:02] INFO [core.views:1642] test2 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 13:45:03] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:45:04] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[02/Apr/2026 13:46:27] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:46:28] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 13:46:35] ERROR [core:86] Google Calendar 일정 수정 실패: start 또는 end 변환 불가
+[02/Apr/2026 13:46:35] INFO [core.views:1642] test2 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 13:46:35] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:46:37] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[02/Apr/2026 13:47:14] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:47:15] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 13:49:39] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:49:41] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 13:49:46] ERROR [core:86] Google Calendar 일정 수정 실패: start 또는 end 변환 불가
+[02/Apr/2026 13:49:46] INFO [core.views:1642] test2 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 13:49:47] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:49:48] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[02/Apr/2026 13:49:55] ERROR [core:86] Google Calendar 일정 수정 실패: start 또는 end 변환 불가
+[02/Apr/2026 13:49:55] INFO [core.views:1642] test2 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 13:49:55] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:49:57] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[02/Apr/2026 13:50:21] INFO [core.views:1827] 테스트2 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 13:50:23] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
