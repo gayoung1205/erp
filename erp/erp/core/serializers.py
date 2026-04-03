@@ -640,6 +640,7 @@ class PendingStockSerializer(serializers.ModelSerializer):
             "history",
             "supplier_name",
             "register_name",
+            'participants_names',
             "memo",
             "confirmed_date",
             "confirmed_by",
@@ -766,6 +767,7 @@ class CurrentSituationSerializer(serializers.ModelSerializer):
 
     def get_participants_names(self, obj):
         try:
-            return [e.name for e in obj.participants.all()]
+            names = [eng.name for eng in obj.participants.all()]
+            return ', '.join(names)
         except:
-            return []
+            return ''
