@@ -642,6 +642,7 @@ class PendingStockSerializer(serializers.ModelSerializer):
             "register_name",
             "memo",
             "confirmed_date",
+            "confirmed_by",
             "created_date",
             "updated_date",
         ]

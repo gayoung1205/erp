@@ -1270,17 +1270,15 @@ class TradeDetail(APIView):
                             his.save()
 
                         except His.DoesNotExist:
-                            # ② 새 history면 → 생성
                             his = His.objects.create()
                             for i in history:
                                 setattr(his, i, history[i])
-                            his.save()  # ✅ id 확보를 위해 먼저 save
+                            his.save()
 
                             if history.get("product_id"):
                                 pro = Pro.objects.get(id=history["product_id"])
                                 if tra.category_1 in [0, 3, 7]:
                                     pro.minus_stock(history["amount"])
-                                # ✅ 구매(4)일 때: 새 PendingStock 생성
                                 elif tra.category_1 == 4:
                                     try:
                                         PendingStock.objects.create(
@@ -1659,17 +1657,26 @@ class CalendarDetail(APIView):
             return ReturnError()
 
     def put(self, req, calendar_id):
-        """
-            특정 일정을 수정 + Google Calendar 동기화
-        """
         try:
             cal = Cal.objects.get(id=calendar_id)
         except:
             return ReturnNoContent()
         try:
             with transaction.atomic():
+                allowed_fields = {'title', 'start', 'end', 'isAllDay', 'category', 'bg_color', 'calendarId'}
                 for i in req.data:
-                    setattr(cal, i, req.data[i])
+                    if i in allowed_fields:
+                        val = req.data[i]
+                        if i in ('start', 'end') and isinstance(val, str):
+                            val = val[:19]
+                        setattr(cal, i, val)
+
+                if 'engineer_id' in req.data and req.data['engineer_id']:
+                    try:
+                        cal.engineer_id = int(req.data['engineer_id'])
+                    except (ValueError, TypeError):
+                        pass
+
                 cal.save()
 
                 if cal.google_event_id:
@@ -3869,7 +3876,8 @@ class PendingStockConfirmView(APIView):
 
         try:
             with transaction.atomic():
-                result = pending.confirm_stock()
+                confirmer_name = return_username(req.user).name
+                result = pending.confirm_stock(confirmed_by=confirmer_name)
 
                 if not result:
                     return CustomResponse(

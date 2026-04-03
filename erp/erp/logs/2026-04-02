@@ -136,3 +136,201 @@
 [02/Apr/2026 14:41:11] INFO [core.views:359] admin123 이 [8346] : [(주)다온에스디] 고객을 조회하였습니다.
 [02/Apr/2026 14:41:17] INFO [core.views:742] admin123 이 전체거래내역을 조회하였습니다.
 [02/Apr/2026 14:41:17] INFO [core.views:359] admin123 이 [8346] : [(주)다온에스디] 고객을 조회하였습니다.
+[02/Apr/2026 14:52:03] INFO [core.views:742] admin123 이 전체거래내역을 조회하였습니다.
+[02/Apr/2026 14:52:03] INFO [core.views:359] admin123 이 [8346] : [(주)다온에스디] 고객을 조회하였습니다.
+[02/Apr/2026 14:52:06] INFO [core.views:359] admin123 이 [8346] : [(주)다온에스디] 고객을 조회하였습니다.
+[02/Apr/2026 14:52:06] INFO [core.views:359] admin123 이 [8346] : [(주)다온에스디] 고객을 조회하였습니다.
+[02/Apr/2026 15:28:53] INFO [core.views:1867] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 15:28:54] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 15:29:54] INFO [core:69] Google Calendar 일정 생성 성공: 7i42s91rhnjj07nckn11pji5j0
+[02/Apr/2026 15:29:54] INFO [core.views:1633] 뿡키키 이 13096 일정을 생성하였습니다.
+[02/Apr/2026 15:29:56] INFO [core.views:1867] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 15:29:57] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 15:30:05] INFO [core:69] Google Calendar 일정 생성 성공: u7hp1ft1m1auimp18aveiiqukc
+[02/Apr/2026 15:30:05] INFO [core.views:1633] 뿡키키 이 13097 일정을 생성하였습니다.
+[02/Apr/2026 15:30:06] INFO [core.views:1867] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 15:30:08] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 15:32:46] INFO [core.views:1867] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 15:32:48] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 15:34:33] INFO [core.views:1867] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 15:34:34] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 15:34:42] INFO [core.views:1867] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 15:34:43] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 15:47:03] INFO [core.views:1867] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 15:47:04] INFO [core:217] Google Calendar 동기화 완료: 생성 1, 수정 0, 삭제 0
+[02/Apr/2026 15:47:16] ERROR [core:86] Google Calendar 일정 수정 실패: start 또는 end 변환 불가
+[02/Apr/2026 15:47:16] INFO [core.views:1682] admin123 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 15:47:17] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[02/Apr/2026 15:47:23] INFO [core.views:1867] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 15:47:24] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 15:47:29] ERROR [core:86] Google Calendar 일정 수정 실패: start 또는 end 변환 불가
+[02/Apr/2026 15:47:29] INFO [core.views:1682] admin123 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 15:47:30] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 1, 삭제 0
+[02/Apr/2026 15:47:43] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 15:49:10] INFO [core.views:1867] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 15:49:11] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:01:53] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:01:54] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:01:59] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:02:00] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:02:06] INFO [core:105] Google Calendar 일정 수정 성공: 235uhb8u9kq07f696113sd8eac
+[02/Apr/2026 16:02:06] INFO [core.views:1691] admin123 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 16:02:07] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:02:53] INFO [core:105] Google Calendar 일정 수정 성공: 235uhb8u9kq07f696113sd8eac
+[02/Apr/2026 16:02:53] INFO [core.views:1691] admin123 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 16:02:54] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:03:02] INFO [core:105] Google Calendar 일정 수정 성공: 235uhb8u9kq07f696113sd8eac
+[02/Apr/2026 16:03:02] INFO [core.views:1691] admin123 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 16:03:03] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:03:19] INFO [core:105] Google Calendar 일정 수정 성공: 235uhb8u9kq07f696113sd8eac
+[02/Apr/2026 16:03:19] INFO [core.views:1691] admin123 이 13095 일정을 수정하였습니다.
+[02/Apr/2026 16:03:20] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:04:24] INFO [core:69] Google Calendar 일정 생성 성공: bvq9ok1jdtthgvai9qmc3gagm0
+[02/Apr/2026 16:04:24] INFO [core.views:1633] 뿡키키 이 13099 일정을 생성하였습니다.
+[02/Apr/2026 16:04:25] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:04:33] INFO [core:105] Google Calendar 일정 수정 성공: bvq9ok1jdtthgvai9qmc3gagm0
+[02/Apr/2026 16:04:33] INFO [core.views:1691] admin123 이 13099 일정을 수정하였습니다.
+[02/Apr/2026 16:04:34] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:05:07] INFO [core:120] Google Calendar 일정 삭제 성공: 235uhb8u9kq07f696113sd8eac
+[02/Apr/2026 16:05:07] INFO [core.views:1716] 뿡키키 이 13095 일정을 삭제하였습니다.
+[02/Apr/2026 16:05:09] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:05:10] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:06:45] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:06:46] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:07:10] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:07:11] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:07:18] INFO [core:105] Google Calendar 일정 수정 성공: bvq9ok1jdtthgvai9qmc3gagm0
+[02/Apr/2026 16:07:18] INFO [core.views:1691] admin123 이 13099 일정을 수정하였습니다.
+[02/Apr/2026 16:07:19] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:07:25] INFO [core:105] Google Calendar 일정 수정 성공: bvq9ok1jdtthgvai9qmc3gagm0
+[02/Apr/2026 16:07:25] INFO [core.views:1691] admin123 이 13099 일정을 수정하였습니다.
+[02/Apr/2026 16:07:26] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:07:31] INFO [core:105] Google Calendar 일정 수정 성공: bvq9ok1jdtthgvai9qmc3gagm0
+[02/Apr/2026 16:07:31] INFO [core.views:1691] admin123 이 13099 일정을 수정하였습니다.
+[02/Apr/2026 16:07:32] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:07:42] INFO [core:120] Google Calendar 일정 삭제 성공: bvq9ok1jdtthgvai9qmc3gagm0
+[02/Apr/2026 16:07:42] INFO [core.views:1716] 뿡키키 이 13099 일정을 삭제하였습니다.
+[02/Apr/2026 16:07:43] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:07:44] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:07:59] INFO [core:69] Google Calendar 일정 생성 성공: 0u111575svo4jkdgpr830oalcg
+[02/Apr/2026 16:07:59] INFO [core.views:1633] 뿡키키 이 13100 일정을 생성하였습니다.
+[02/Apr/2026 16:08:00] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:08:06] INFO [core:105] Google Calendar 일정 수정 성공: 0u111575svo4jkdgpr830oalcg
+[02/Apr/2026 16:08:06] INFO [core.views:1691] admin123 이 13100 일정을 수정하였습니다.
+[02/Apr/2026 16:08:08] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:08:13] INFO [core:105] Google Calendar 일정 수정 성공: 0u111575svo4jkdgpr830oalcg
+[02/Apr/2026 16:08:13] INFO [core.views:1691] admin123 이 13100 일정을 수정하였습니다.
+[02/Apr/2026 16:08:14] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:08:20] INFO [core:105] Google Calendar 일정 수정 성공: 0u111575svo4jkdgpr830oalcg
+[02/Apr/2026 16:08:20] INFO [core.views:1691] admin123 이 13100 일정을 수정하였습니다.
+[02/Apr/2026 16:08:21] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:08:29] INFO [core:105] Google Calendar 일정 수정 성공: 0u111575svo4jkdgpr830oalcg
+[02/Apr/2026 16:08:29] INFO [core.views:1691] admin123 이 13100 일정을 수정하였습니다.
+[02/Apr/2026 16:08:31] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:08:43] INFO [core:105] Google Calendar 일정 수정 성공: 0u111575svo4jkdgpr830oalcg
+[02/Apr/2026 16:08:43] INFO [core.views:1691] admin123 이 13100 일정을 수정하였습니다.
+[02/Apr/2026 16:08:44] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:08:50] INFO [core:120] Google Calendar 일정 삭제 성공: 0u111575svo4jkdgpr830oalcg
+[02/Apr/2026 16:08:50] INFO [core.views:1716] 뿡키키 이 13100 일정을 삭제하였습니다.
+[02/Apr/2026 16:08:52] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:08:53] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:14:53] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:14:55] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:15:00] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:15:02] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:15:13] INFO [core:69] Google Calendar 일정 생성 성공: luf2jk8egl0bj2g3frggjgmu94
+[02/Apr/2026 16:15:13] INFO [core.views:1633] 뿡키키 이 13101 일정을 생성하였습니다.
+[02/Apr/2026 16:15:14] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:15:22] INFO [core:120] Google Calendar 일정 삭제 성공: luf2jk8egl0bj2g3frggjgmu94
+[02/Apr/2026 16:15:22] INFO [core.views:1716] 뿡키키 이 13101 일정을 삭제하였습니다.
+[02/Apr/2026 16:15:23] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:15:24] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:21:04] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:21:06] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:21:24] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:21:26] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:21:52] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:21:53] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:21:54] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:21:56] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:22:02] INFO [core:69] Google Calendar 일정 생성 성공: nc0mdcm71o8l3rsif7tsas8aj8
+[02/Apr/2026 16:22:02] INFO [core.views:1633] 뿡키키 이 13102 일정을 생성하였습니다.
+[02/Apr/2026 16:22:03] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:22:09] INFO [core:120] Google Calendar 일정 삭제 성공: nc0mdcm71o8l3rsif7tsas8aj8
+[02/Apr/2026 16:22:09] INFO [core.views:1716] 뿡키키 이 13102 일정을 삭제하였습니다.
+[02/Apr/2026 16:22:10] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:22:11] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:22:23] INFO [core:69] Google Calendar 일정 생성 성공: 62o1ouoqjpsja14n7v2edjq5c8
+[02/Apr/2026 16:22:23] INFO [core.views:1633] 뿡키키 이 13103 일정을 생성하였습니다.
+[02/Apr/2026 16:22:24] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:22:33] INFO [core:120] Google Calendar 일정 삭제 성공: 62o1ouoqjpsja14n7v2edjq5c8
+[02/Apr/2026 16:22:33] INFO [core.views:1716] 뿡키키 이 13103 일정을 삭제하였습니다.
+[02/Apr/2026 16:22:33] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:22:34] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:23:01] INFO [core:69] Google Calendar 일정 생성 성공: 80vucnp9jcd8cdbhb5vpgmlhik
+[02/Apr/2026 16:23:01] INFO [core.views:1633] 뿡키키 이 13104 일정을 생성하였습니다.
+[02/Apr/2026 16:23:03] INFO [core:217] Google Calendar 동기화 완료: 생성 1, 수정 0, 삭제 0
+[02/Apr/2026 16:23:12] INFO [core:105] Google Calendar 일정 수정 성공: 80vucnp9jcd8cdbhb5vpgmlhik
+[02/Apr/2026 16:23:12] INFO [core.views:1691] admin123 이 13104 일정을 수정하였습니다.
+[02/Apr/2026 16:23:13] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:23:19] INFO [core:120] Google Calendar 일정 삭제 성공: 80vucnp9jcd8cdbhb5vpgmlhik
+[02/Apr/2026 16:23:19] INFO [core.views:1716] 뿡키키 이 13104 일정을 삭제하였습니다.
+[02/Apr/2026 16:23:20] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:23:21] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:23:33] INFO [core:120] Google Calendar 일정 삭제 성공: u7hp1ft1m1auimp18aveiiqukc
+[02/Apr/2026 16:23:33] INFO [core.views:1716] 뿡키키 이 13097 일정을 삭제하였습니다.
+[02/Apr/2026 16:23:34] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:23:35] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:23:43] INFO [core:120] Google Calendar 일정 삭제 성공: 7i42s91rhnjj07nckn11pji5j0
+[02/Apr/2026 16:23:43] INFO [core.views:1716] 뿡키키 이 13096 일정을 삭제하였습니다.
+[02/Apr/2026 16:23:43] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:23:45] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:25:56] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:25:57] INFO [core:217] Google Calendar 동기화 완료: 생성 1, 수정 0, 삭제 0
+[02/Apr/2026 16:30:47] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:30:49] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:30:52] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:30:54] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:31:11] INFO [core:69] Google Calendar 일정 생성 성공: bu7j17odvi99u15nhcdvc6mgf8
+[02/Apr/2026 16:31:11] INFO [core.views:1633] 뿡키키 이 13107 일정을 생성하였습니다.
+[02/Apr/2026 16:31:12] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:31:18] INFO [core:105] Google Calendar 일정 수정 성공: bu7j17odvi99u15nhcdvc6mgf8
+[02/Apr/2026 16:31:18] INFO [core.views:1691] admin123 이 13107 일정을 수정하였습니다.
+[02/Apr/2026 16:31:19] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:31:34] INFO [core:120] Google Calendar 일정 삭제 성공: bu7j17odvi99u15nhcdvc6mgf8
+[02/Apr/2026 16:31:34] INFO [core.views:1716] 뿡키키 이 13107 일정을 삭제하였습니다.
+[02/Apr/2026 16:31:35] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:32:53] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:32:54] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:33:03] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:33:04] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:33:13] INFO [core:69] Google Calendar 일정 생성 성공: hreupks2minrp2cck5cbpqhjdc
+[02/Apr/2026 16:33:13] INFO [core.views:1633] 뿡키키 이 13108 일정을 생성하였습니다.
+[02/Apr/2026 16:33:14] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:33:18] INFO [core:105] Google Calendar 일정 수정 성공: hreupks2minrp2cck5cbpqhjdc
+[02/Apr/2026 16:33:18] INFO [core.views:1691] admin123 이 13108 일정을 수정하였습니다.
+[02/Apr/2026 16:33:20] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:33:47] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:33:48] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:35:47] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:35:48] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:38:53] INFO [core.views:1876] 뿡키키 이 전체 직원을 조회하였습니다.
+[02/Apr/2026 16:38:55] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:39:03] INFO [core:120] Google Calendar 일정 삭제 성공: hreupks2minrp2cck5cbpqhjdc
+[02/Apr/2026 16:39:03] INFO [core.views:1716] 뿡키키 이 13108 일정을 삭제하였습니다.
+[02/Apr/2026 16:39:05] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:39:11] INFO [core:69] Google Calendar 일정 생성 성공: l6rhqg7bmaou5r8scrpjmv0r6s
+[02/Apr/2026 16:39:11] INFO [core.views:1633] 뿡키키 이 13109 일정을 생성하였습니다.
+[02/Apr/2026 16:39:13] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:39:20] INFO [core:105] Google Calendar 일정 수정 성공: l6rhqg7bmaou5r8scrpjmv0r6s
+[02/Apr/2026 16:39:20] INFO [core.views:1691] admin123 이 13109 일정을 수정하였습니다.
+[02/Apr/2026 16:39:21] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:39:33] INFO [core:105] Google Calendar 일정 수정 성공: l6rhqg7bmaou5r8scrpjmv0r6s
+[02/Apr/2026 16:39:33] INFO [core.views:1691] admin123 이 13109 일정을 수정하였습니다.
+[02/Apr/2026 16:39:35] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:39:39] INFO [core:105] Google Calendar 일정 수정 성공: l6rhqg7bmaou5r8scrpjmv0r6s
+[02/Apr/2026 16:39:39] INFO [core.views:1691] admin123 이 13109 일정을 수정하였습니다.
+[02/Apr/2026 16:39:40] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0
+[02/Apr/2026 16:39:46] INFO [core:120] Google Calendar 일정 삭제 성공: l6rhqg7bmaou5r8scrpjmv0r6s
+[02/Apr/2026 16:39:46] INFO [core.views:1716] 뿡키키 이 13109 일정을 삭제하였습니다.
+[02/Apr/2026 16:39:47] INFO [core:217] Google Calendar 동기화 완료: 생성 0, 수정 0, 삭제 0

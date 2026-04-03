@@ -570,16 +570,17 @@ class PendingStock(models.Model):
     register_name = models.CharField(max_length=50, null=True, blank=True)   # 등록자
     memo = models.TextField(null=True, blank=True)
     confirmed_date = models.DateTimeField(null=True, blank=True)  # 입고확정일
+    confirmed_by = models.CharField(max_length=50, null=True, blank=True)
     updated_date = models.DateTimeField(auto_now=True)
     created_date = models.DateTimeField(auto_now_add=True)
 
-    def confirm_stock(self):
-        """입고 확정 - 재고 증가"""
+    def confirm_stock(self, confirmed_by=None):
         import datetime
         if self.status == self.PENDING:
             self.product.add_stock(self.amount)
             self.status = self.CONFIRMED
             self.confirmed_date = datetime.datetime.now()
+            self.confirmed_by = confirmed_by
             self.save()
             return True
         return False
