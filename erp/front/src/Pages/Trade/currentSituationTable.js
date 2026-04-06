@@ -12,6 +12,7 @@ import 'tui-pagination/dist/tui-pagination.css';
 import cloneDeep from 'lodash/cloneDeep';
 import notNull from '../../App/components/notNull.js';
 import currentSituationTableGridColumns from './currentSituationTableGridColumns';
+import constructionSituationTableGridColumns from './constructionSituationTableGridColumns';
 import requestCurrentSituationTradeGet from '../../Axios/Trade/requestCurrnetSituationTradeGet';
 import PaginationComponent from '../../App/components/PaginationComponent';
 import * as XLSX from 'xlsx';
@@ -24,85 +25,172 @@ const { RangePicker } = DatePicker;
 
 const CurrentSituationTable = ({ match }) => {
   const isDesktop = useMediaQuery({ query: '(min-device-width: 768px)' });
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const isMobile  = useMediaQuery({ query: '(max-width: 768px)' });
   let { type } = match.params;
-  const [data, setData] = useState([]);
-  const gridRef = React.createRef();
-  const history = useHistory();
+  const [data, setData]               = useState([]);
+  const gridRef                       = React.createRef();
+  const history                       = useHistory();
   const [gridColumns, setGridColumns] = useState([]);
   const [contextMenuText, setContextMenuText] = useState('확대');
-  const page = parseInt(match.params.page);
-  const [maxPage, setMaxPage] = useState();
+  const page                          = parseInt(match.params.page);
+  const [maxPage, setMaxPage]         = useState();
   const [excelLoading, setExcelLoading] = useState(false);
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [excelPermission, setExcelPermission] = useState(false);
-  const [overdueCount, setOverdueCount] = useState(0);
+  const [statusFilters, setStatusFilters] = useState(['all']);
+  const [excelPermission, setExcelPermission]   = useState(false);
+  const [overdueCount, setOverdueCount]         = useState(0);
   const [excelModalVisible, setExcelModalVisible] = useState(false);
-  const [downloadType, setDownloadType] = useState('range');
-  const [dateRange, setDateRange] = useState(null);
+  const [downloadType, setDownloadType]         = useState('range');
+  const [dateRange, setDateRange]               = useState(null);
+  const [searchDateRange, setSearchDateRange] = useState(null);
+  const [ordering, setOrdering] = useState(null);
 
   const statusButtons = [
     { label: '전체', value: 'all' },
-    { label: '접수', value: '0' },
-    { label: '진행', value: '2' },
-    { label: '완료', value: '1' },
-    { label: '취소', value: '3' },
+    { label: '접수', value: '0'   },
+    { label: '진행', value: '2'   },
+    { label: '완료', value: '1'   },
+    { label: '취소', value: '3'   },
   ];
+
+  useEffect(() => {
+    setData([]);
+    setStatusFilters(['all']);
+    setOverdueCount(0);
+    setMaxPage(undefined);
+    setSearchDateRange(null);
+    setOrdering(null);
+  }, [type]);
 
   const isOverdue = (registerDate, category2) => {
     if (category2 === 1 || category2 === 3) return false;
-    const regDate = new Date(registerDate);
-    const today = new Date();
-    const diffTime = today - regDate;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil((new Date() - new Date(registerDate)) / (1000 * 60 * 60 * 24));
     return diffDays >= 7;
   };
 
   const getDaysOverdue = (registerDate) => {
-    const regDate = new Date(registerDate);
-    const today = new Date();
-    const diffTime = today - regDate;
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.ceil((new Date() - new Date(registerDate)) / (1000 * 60 * 60 * 24));
   };
 
   useEffect(() => {
-    const filter = statusFilter === 'all' ? null : statusFilter;
-    requestCurrentSituationTradeGet(page, type, false, filter).then((res) => {
+    let cancelled = false;
+
+    let startDate = null;
+    let endDate = null;
+    if (searchDateRange && searchDateRange.length === 2) {
+      startDate = searchDateRange[0].format('YYYY-MM-DD');
+      endDate = searchDateRange[1].format('YYYY-MM-DD');
+    }
+
+    requestCurrentSituationTradeGet(page, type, false, statusFilters, startDate, endDate, ordering).then((res) => {
+      if (cancelled || !res) return;
       setMaxPage(res.max_page);
       let results = notNull(res.results);
 
       let count = 0;
-      results.forEach(item => {
+      results.forEach((item) => {
         if (isOverdue(item.register_date, item.category_2)) {
           count++;
           const days = getDaysOverdue(item.register_date);
           item._attributes = {
-            className: {
-              row: [days >= 14 ? 'overdue-row-severe' : 'overdue-row']
-            }
+            className: { row: [days >= 14 ? 'overdue-row-severe' : 'overdue-row'] },
           };
         }
       });
       setOverdueCount(count);
       setData(results);
     });
-  }, [type, page, statusFilter]);
+
+    return () => { cancelled = true; };
+  }, [type, page, statusFilters, searchDateRange, ordering]);
 
   const handleStatusFilter = (value) => {
-    setStatusFilter(value);
-    if (page !== 1) {
-      history.push(`/Trade/currentSituationTable/${type}/1`);
+    let next;
+
+    if (value === 'all') {
+      // 전체 클릭 → 전체만 선택
+      next = ['all'];
+    } else {
+      // 개별 클릭
+      const without = statusFilters.filter((v) => v !== 'all' && v !== value);
+      const isAlreadySelected = statusFilters.includes(value);
+
+      if (isAlreadySelected) {
+        next = without.length === 0 ? ['all'] : without;
+      } else {
+        next = [...without, value];
+      }
     }
+
+    setStatusFilters(next);
+    if (page !== 1) history.push(`/Trade/currentSituationTable/${type}/1`);
+  };
+
+  const handleSearchDateChange = (dates) => {
+    setSearchDateRange(dates);
+    if (page !== 1) history.push(`/Trade/currentSituationTable/${type}/1`);
+  };
+
+  const handleResetSearch = () => {
+    setSearchDateRange(null);
+    setOrdering(null);
+    if (page !== 1) history.push(`/Trade/currentSituationTable/${type}/1`);
+  };
+
+  const handleSortColumn = (columnName) => {
+    const sortableColumns = ['register_date', 'visit_date', 'complete_date', 'category_name2'];
+    if (!sortableColumns.includes(columnName)) return false;
+
+    const serverField = columnName === 'category_name2' ? 'category_2' : columnName;
+
+    let newOrdering;
+
+    if (serverField === 'category_2') {
+      const statusCycle = ['category_2_0', 'category_2_2', 'category_2_1', 'category_2_3'];
+      const currentIndex = statusCycle.indexOf(ordering);
+      if (currentIndex === -1) {
+        newOrdering = statusCycle[0];
+      } else {
+        newOrdering = statusCycle[(currentIndex + 1) % statusCycle.length];
+      }
+    } else {
+      if (ordering === `-${serverField}`) {
+        newOrdering = serverField;
+      } else {
+        newOrdering = `-${serverField}`;
+      }
+    }
+
+    setOrdering(newOrdering);
+    if (page !== 1) history.push(`/Trade/currentSituationTable/${type}/1`);
+    return true;
+  };
+
+  const getSortLabel = () => {
+    if (!ordering) return null;
+    const labels = {
+      '-register_date': '등록일 ↓', 'register_date': '등록일 ↑',
+      '-visit_date': '방문일 ↓', 'visit_date': '방문일 ↑',
+      '-complete_date': '완료일 ↓', 'complete_date': '완료일 ↑',
+    };
+    return labels[ordering] || null;
   };
 
   useEffect(() => {
-    let dummyColumns = cloneDeep(currentSituationTableGridColumns);
-    for (const i in dummyColumns) {
-      dummyColumns[i].minWidth = 100;
-      dummyColumns[i].ellipsis = true;
+    const baseColumns = type === 'construction'
+        ? cloneDeep(constructionSituationTableGridColumns)
+        : cloneDeep(currentSituationTableGridColumns);
+    for (const i in baseColumns) {
+      if (baseColumns[i].name === 'participants_names') {
+        baseColumns[i].width = 200;
+        baseColumns[i].minWidth = 80;
+        baseColumns[i].ellipsis = false;
+      } else {
+        baseColumns[i].minWidth = 100;
+        baseColumns[i].ellipsis = true;
+      }
     }
-    setGridColumns(dummyColumns);
-  }, []);
+    setGridColumns(baseColumns);
+  }, [type]);
 
   useEffect(() => {
     requestExcelPermissionCheck().then((res) => {
@@ -112,7 +200,13 @@ const CurrentSituationTable = ({ match }) => {
 
   const moveTradePage = (id, customer_id) => {
     window.sessionStorage.setItem('customerId', customer_id);
-    type === 'delivery' ? history.push(`/Trade/Delivery/deliveryUpdate/${id}`) : history.push(`/Trade/As/asUpdate/${id}`);
+    if (type === 'delivery') {
+      history.push(`/Trade/Delivery/deliveryUpdate/${id}`);
+    } else if (type === 'construction') {
+      history.push(`/Trade/Construction/constructionUpdate/${id}`);
+    } else {
+      history.push(`/Trade/As/asUpdate/${id}`);
+    }
   };
 
   const handleContextMenu = () => {
@@ -125,27 +219,27 @@ const CurrentSituationTable = ({ match }) => {
       }
       setContextMenuText('축소');
     } else {
-      dummyColumns = cloneDeep(currentSituationTableGridColumns);
-      for (const i in dummyColumns) {
-        dummyColumns[i].minWidth = 100;
-        dummyColumns[i].ellipsis = true;
+      const base = type === 'construction'
+          ? cloneDeep(constructionSituationTableGridColumns)
+          : cloneDeep(currentSituationTableGridColumns);
+      for (const i in base) {
+        if (base[i].name === 'participants_names') {
+          base[i].width = 200;
+          base[i].minWidth = 80;
+          base[i].ellipsis = false;
+        } else {
+          base[i].minWidth = 100;
+          base[i].ellipsis = true;
+        }
       }
+      dummyColumns = base;
       setContextMenuText('확대');
     }
     setGridColumns(dummyColumns);
   };
 
-  const openExcelModal = () => {
-    setExcelModalVisible(true);
-    setDownloadType('range');
-    setDateRange(null);
-  };
-
-  const closeExcelModal = () => {
-    setExcelModalVisible(false);
-    setDateRange(null);
-    setDownloadType('range');
-  };
+  const openExcelModal  = () => { setExcelModalVisible(true);  setDownloadType('range'); setDateRange(null); };
+  const closeExcelModal = () => { setExcelModalVisible(false); setDateRange(null);       setDownloadType('range'); };
 
   const exportToExcel = async () => {
     setExcelModalVisible(false);
@@ -153,36 +247,35 @@ const CurrentSituationTable = ({ match }) => {
     message.loading('데이터를 가져오는 중...', 0);
 
     try {
-      const filter = statusFilter === 'all' ? null : statusFilter;
-      const res = await requestCurrentSituationTradeGet(1, type, true, filter);
-      let allData = notNull(res.results);
-
+      let startDate = null;
+      let endDate   = null;
       if (downloadType === 'range' && dateRange && dateRange.length === 2) {
-        const startDate = dateRange[0].format('YYYY-MM-DD');
-        const endDate = dateRange[1].format('YYYY-MM-DD');
-
-        allData = allData.filter(item => {
-          const regDate = item.register_date ? item.register_date.slice(0, 10) : '';
-          return regDate >= startDate && regDate <= endDate;
-        });
+        startDate = dateRange[0].format('YYYY-MM-DD');
+        endDate   = dateRange[1].format('YYYY-MM-DD');
       }
 
-      const exportData = allData.map(item => ({
+      const res = await requestCurrentSituationTradeGet(
+          1, type, true, statusFilters, startDate, endDate, ordering
+      );
+      const allData = notNull(res.results);
+
+      const exportData = allData.map((item) => ({
         '등록일': item.register_date ? item.register_date.slice(0, 10) : '',
         '고객명': item.customer_name || '',
         '담당자': item.engineer_name || '',
-        '내용': item.content || '',
-        '증상': item.symptom || '',
-        '상태': item.category_name2 || '',
-        '방문일': item.visit_date ? item.visit_date.slice(0, 10) : '',
+        '내용':   item.content || '',
+        '증상':   item.symptom || '',
+        '상태':   item.category_name2 || '',
+        '방문일': item.visit_date    ? item.visit_date.slice(0, 10)    : '',
         '완료일': item.complete_date ? item.complete_date.slice(0, 10) : '',
         '내부처리': item.internal_process_count > 0
             ? `${item.internal_process_count}건${item.internal_process_engineers ? ` (${item.internal_process_engineers})` : ''}`
             : '',
+        '내부처리 내용': item.internal_process_contents || '',
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
-      const workbook = XLSX.utils.book_new();
+      const workbook  = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
       const typeText = type === 'delivery' ? '납품현황' : type === 'myas' ? 'MY_AS' : 'AS현황';
@@ -209,21 +302,44 @@ const CurrentSituationTable = ({ match }) => {
     switch (type) {
       case 'delivery': return '납품현황';
       case 'myas': return 'MY AS';
+      case 'construction': return '공사현황';
       default: return 'AS현황';
     }
   };
 
   const quickRanges = {
-    '오늘': [moment(), moment()],
-    '이번 주': [moment().startOf('week'), moment().endOf('week')],
-    '이번 달': [moment().startOf('month'), moment().endOf('month')],
-    '지난 달': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-    '최근 3개월': [moment().subtract(3, 'month'), moment()],
-    '올해': [moment().startOf('year'), moment()],
+    '오늘':      [moment(), moment()],
+    '이번 주':   [moment().startOf('week'),  moment().endOf('week')],
+    '이번 달':   [moment().startOf('month'), moment().endOf('month')],
+    '지난 달':   [moment().subtract(1,'month').startOf('month'), moment().subtract(1,'month').endOf('month')],
+    '최근 3개월':[moment().subtract(3,'month'), moment()],
+    '올해':      [moment().startOf('year'),  moment()],
   };
+
+  const FilterButtons = () => (
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+        {statusButtons.map((btn) => {
+          const isActive =
+              btn.value === 'all'
+                  ? statusFilters.includes('all')
+                  : statusFilters.includes(btn.value);
+          return (
+              <Button
+                  key={btn.value}
+                  variant={isActive ? 'primary' : 'outline-primary'}
+                  size="sm"
+                  onClick={() => handleStatusFilter(btn.value)}
+              >
+                {btn.label}
+              </Button>
+          );
+        })}
+      </div>
+  );
 
   return (
       <>
+        {/* 엑셀 다운로드 모달 */}
         <Modal
             title={`${getTypeTitle()} 엑셀 다운로드`}
             visible={excelModalVisible}
@@ -231,16 +347,10 @@ const CurrentSituationTable = ({ match }) => {
             onCancel={closeExcelModal}
             okText="다운로드"
             cancelText="취소"
-            okButtonProps={{
-              disabled: downloadType === 'range' && (!dateRange || dateRange.length !== 2)
-            }}
+            okButtonProps={{ disabled: downloadType === 'range' && (!dateRange || dateRange.length !== 2) }}
             centered
         >
-          <Radio.Group
-              value={downloadType}
-              onChange={(e) => setDownloadType(e.target.value)}
-              style={{ marginBottom: '20px' }}
-          >
+          <Radio.Group value={downloadType} onChange={(e) => setDownloadType(e.target.value)} style={{ marginBottom: '20px' }}>
             <Space direction="vertical">
               <Radio value="range">기간 선택</Radio>
               <Radio value="all">전체 (오래 걸릴 수 있음)</Radio>
@@ -257,7 +367,6 @@ const CurrentSituationTable = ({ match }) => {
                   placeholder={['시작일', '종료일']}
               />
           )}
-
           {downloadType === 'all' && (
               <div style={{ padding: '10px', backgroundColor: '#fff3cd', borderRadius: '5px' }}>
                 ⚠️ 전체 데이터는 시간이 오래 걸릴 수 있습니다.
@@ -265,36 +374,34 @@ const CurrentSituationTable = ({ match }) => {
           )}
         </Modal>
 
+        {/* ===== 데스크톱 ===== */}
         {isDesktop && (
             <Aux>
               <Row>
                 <Col>
                   <Card>
-                    <Card.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Card.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                       <Card.Title as="h5" style={{ marginBottom: 0 }}>{getTypeTitle()}</Card.Title>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        {type === 'as' && (
-                            <div>
-                              {statusButtons.map((btn) => (
-                                  <Button
-                                      key={btn.value}
-                                      variant={statusFilter === btn.value ? 'primary' : 'outline-primary'}
-                                      size="sm"
-                                      style={{ marginRight: '4px' }}
-                                      onClick={() => handleStatusFilter(btn.value)}
-                                  >
-                                    {btn.label}
-                                  </Button>
-                              ))}
-                            </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                        {/* ★ [추가] 기간 검색 */}
+                        <RangePicker
+                            value={searchDateRange}
+                            onChange={handleSearchDateChange}
+                            format="YYYY-MM-DD"
+                            ranges={quickRanges}
+                            placeholder={['시작일', '종료일']}
+                            size="small"
+                            style={{ width: '280px' }}
+                        />
+                        {(searchDateRange || ordering) && (
+                            <Button variant="outline-secondary" size="sm" onClick={handleResetSearch}>
+                              초기화
+                            </Button>
                         )}
+                        {/* ★ 3탭 모두 필터 버튼 표시 */}
+                        <FilterButtons />
                         {excelPermission && (
-                            <Button
-                                variant="success"
-                                size="sm"
-                                onClick={openExcelModal}
-                                disabled={excelLoading}
-                            >
+                            <Button variant="success" size="sm" onClick={openExcelModal} disabled={excelLoading}>
                               {excelLoading ? '다운로드 중...' : '📥 엑셀 출력'}
                             </Button>
                         )}
@@ -306,6 +413,19 @@ const CurrentSituationTable = ({ match }) => {
                             ⚠️ <strong>1주일 이상 미처리 건이 {overdueCount}건 있습니다!</strong>
                           </Alert>
                       )}
+                      {/* ★ [추가] 현재 검색/정렬 상태 표시 */}
+                      {(searchDateRange || ordering) && (
+                          <div style={{ marginBottom: '10px', fontSize: '13px', color: '#666' }}>
+                            {searchDateRange && searchDateRange.length === 2 && (
+                                <span style={{ marginRight: '15px' }}>
+                                  📅 {searchDateRange[0].format('YYYY-MM-DD')} ~ {searchDateRange[1].format('YYYY-MM-DD')}
+                                </span>
+                            )}
+                            {getSortLabel() && (
+                                <span>🔽 정렬: {getSortLabel()}</span>
+                            )}
+                          </div>
+                      )}
                       <ContextMenuTrigger id="currentSituationTableContextMenu">
                         <div className="currentSituationTableContextMenuDiv">
                           <Grid
@@ -314,7 +434,7 @@ const CurrentSituationTable = ({ match }) => {
                               scrollX={true}
                               scrollY={true}
                               columns={gridColumns}
-                              rowHeight={25}
+                              rowHeight={'auto'}
                               bodyHeight="auto"
                               columnOptions={{ resizable: true }}
                               selectionUnit="cell"
@@ -327,17 +447,25 @@ const CurrentSituationTable = ({ match }) => {
                                 }
                               }}
                               onClick={(e) => {
-                                if (e.targetType === 'columnHeader' && e.nativeEvent.target.className.indexOf('tui-grid-cell-header') !== -1) {
-                                  for (const i in gridColumns) {
-                                    if (gridColumns[i].name === e.columnName) {
-                                      if (gridColumns[i].width === undefined) {
-                                        gridColumns[i].width = 'auto';
-                                        gridColumns[i].ellipsis = false;
-                                      } else {
-                                        delete gridColumns[i].width;
-                                        gridColumns[i].ellipsis = true;
+                                if (e.targetType === 'columnHeader') {
+                                  const handled = handleSortColumn(e.columnName);
+                                  if (handled) {
+                                    try { gridRef.current.getInstance().unsort(); } catch (err) {}
+                                    return;
+                                  }
+
+                                  if (e.nativeEvent.target.className.indexOf('tui-grid-cell-header') !== -1) {
+                                    for (const i in gridColumns) {
+                                      if (gridColumns[i].name === e.columnName) {
+                                        if (gridColumns[i].width === undefined) {
+                                          gridColumns[i].width = 'auto';
+                                          gridColumns[i].ellipsis = false;
+                                        } else {
+                                          delete gridColumns[i].width;
+                                          gridColumns[i].ellipsis = true;
+                                        }
+                                        setGridColumns([...gridColumns]);
                                       }
-                                      setGridColumns([...gridColumns]);
                                     }
                                   }
                                 }
@@ -347,9 +475,7 @@ const CurrentSituationTable = ({ match }) => {
                       </ContextMenuTrigger>
                       <ContextMenu id="currentSituationTableContextMenu">
                         <MenuItem onClick={() => handleContextMenu()}>전체 열 {contextMenuText}</MenuItem>
-                        {excelPermission && (
-                            <MenuItem onClick={openExcelModal}>엑셀 출력</MenuItem>
-                        )}
+                        {excelPermission && <MenuItem onClick={openExcelModal}>엑셀 출력</MenuItem>}
                       </ContextMenu>
                     </Card.Body>
                   </Card>
@@ -358,32 +484,39 @@ const CurrentSituationTable = ({ match }) => {
               <PaginationComponent page={page} maxPage={maxPage} url={`/Trade/currentSituationTable/${type}/`} />
             </Aux>
         )}
+
+        {/* ===== 모바일 ===== */}
         {isMobile && (
             <Aux>
               <Row>
                 <Col md={12} xl={12} className="m-b-30">
+                  <div style={{ marginBottom: '8px' }}>
+                    <RangePicker
+                        value={searchDateRange}
+                        onChange={handleSearchDateChange}
+                        format="YYYY-MM-DD"
+                        ranges={quickRanges}
+                        placeholder={['시작일', '종료일']}
+                        size="small"
+                        style={{ width: '100%' }}
+                    />
+                  </div>
+                  {(searchDateRange || ordering) && (
+                      <div style={{ marginBottom: '8px' }}>
+                        <Button variant="outline-secondary" size="sm" onClick={handleResetSearch}>
+                          초기화
+                        </Button>
+                        {getSortLabel() && (
+                            <span style={{ marginLeft: '10px', fontSize: '13px', color: '#666' }}>
+                              🔽 정렬: {getSortLabel()}
+                            </span>
+                        )}
+                      </div>
+                  )}
                   <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                    {type === 'as' && (
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                          {statusButtons.map((btn) => (
-                              <Button
-                                  key={btn.value}
-                                  variant={statusFilter === btn.value ? 'primary' : 'outline-primary'}
-                                  size="sm"
-                                  onClick={() => handleStatusFilter(btn.value)}
-                              >
-                                {btn.label}
-                              </Button>
-                          ))}
-                        </div>
-                    )}
+                    <FilterButtons />
                     {excelPermission && (
-                        <Button
-                            variant="success"
-                            size="sm"
-                            onClick={openExcelModal}
-                            disabled={excelLoading}
-                        >
+                        <Button variant="success" size="sm" onClick={openExcelModal} disabled={excelLoading}>
                           {excelLoading ? '다운로드 중...' : '📥 엑셀 출력'}
                         </Button>
                     )}
@@ -395,7 +528,7 @@ const CurrentSituationTable = ({ match }) => {
                   )}
                   {data.map((el, i) => {
                     const overdue = isOverdue(el.register_date, el.category_2);
-                    const days = getDaysOverdue(el.register_date);
+                    const days    = getDaysOverdue(el.register_date);
                     return (
                         <Card
                             className="Recent-Users"
@@ -407,16 +540,9 @@ const CurrentSituationTable = ({ match }) => {
                             <Card.Title as="h5">
                               {el.customer_name}
                               {overdue && (
-                                  <span style={{
-                                    marginLeft: '10px',
-                                    padding: '2px 8px',
-                                    backgroundColor: '#dc3545',
-                                    color: 'white',
-                                    borderRadius: '10px',
-                                    fontSize: '12px'
-                                  }}>
-                                    {days}일 경과
-                                  </span>
+                                  <span style={{ marginLeft: '10px', padding: '2px 8px', backgroundColor: '#dc3545', color: 'white', borderRadius: '10px', fontSize: '12px' }}>
+                            {days}일 경과
+                          </span>
                               )}
                             </Card.Title>
                           </Card.Header>
