@@ -680,7 +680,7 @@ class CurrentSituationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trade
         fields = [
-            'id', 'customer_name', 'customer_id', 'tel', 'phone', 'address',
+            'id', 'category_1', 'customer_name', 'customer_id', 'tel', 'phone', 'address',
             'category_2', 'category_name2', 'engineer_name', 'content',
             'register_date', 'visit_date', 'complete_date', 'completed_content',
             'memo', 'register_id', 'symptom', 'internal_process_count',
