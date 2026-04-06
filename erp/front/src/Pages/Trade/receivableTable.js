@@ -8,7 +8,7 @@ import '../../assets/css/overdue-style.css';
 import Aux from '../../hoc/_Aux';
 import Grid from '@toast-ui/react-grid';
 import 'tui-grid/dist/tui-grid.css';
-import { message } from 'antd';
+import { message, Spin } from 'antd';  // ← Spin 추가
 import 'antd/dist/antd.css';
 import axios from 'axios';
 import cloneDeep from 'lodash/cloneDeep';
@@ -38,6 +38,7 @@ const CustomerTable = (props) => {
   const [excelPermission, setExcelPermission] = useState(false);
   const [downloadModalVisible, setDownloadModalVisible] = useState(false);
   const [overdueCount, setOverdueCount] = useState(0);
+  const [loading, setLoading] = useState(true);  // ← 추가: 로딩 상태
 
   const isOverdue = (lastReceivableDate) => {
     if (!lastReceivableDate) return false;
@@ -64,42 +65,52 @@ const CustomerTable = (props) => {
       message.error('권한이 없습니다.');
       history.goBack();
     }
-    let url = type === 'plus' ? `?receivable=1` : `?receivable=0`;
+
+    // ━━━ 변경: 새 경량 API 호출 ━━━
+    setLoading(true);
+    let apiType = type === 'plus' ? 'plus' : 'minus';
 
     axios({
-      url: `${config.backEndServerAddress}api/customers${url}`,
+      url: `${config.backEndServerAddress}api/receivable-list?type=${apiType}`,
       method: 'GET',
       headers: { Authorization: `JWT ${token}` },
     })
-        .then((res) => {
-          let { results } = res.data.data;
-          results = notNull(results);
+    .then((res) => {
+      let { results } = res.data.data;
+      results = notNull(results);
 
-          let count = 0;
-          results.forEach(item => {
-            if (isOverdue(item.last_receivable_date)) {
-              count++;
-              const days = getDaysOverdue(item.last_receivable_date);
-              item._attributes = {
-                className: {
-                  row: [days >= 14 ? 'overdue-row-severe' : 'overdue-row']
-                }
-              };
+      let count = 0;
+      results.forEach(item => {
+        const days = getDaysOverdue(item.last_receivable_date);
+        item.days_overdue = days || 0;
+
+        if (isOverdue(item.last_receivable_date)) {
+          count++;
+          item._attributes = {
+            className: {
+              row: [days >= 14 ? 'overdue-row-severe' : 'overdue-row']
             }
-          });
-          setOverdueCount(count);
+          };
+        }
+      });
+      setOverdueCount(count);
 
-          if (isMobile) {
-            let total = 0;
-            for (const i in results) {
-              total += results[i].receivable;
-            }
-            setTotalReceivable(total);
-          }
+      if (isMobile) {
+        let total = 0;
+        for (const i in results) {
+          total += results[i].receivable;
+        }
+        setTotalReceivable(total);
+      }
 
-          setData(results);
-        })
-        .catch((err) => CheckToken(err));
+      console.log("첫번째 데이터:", results[0]);
+
+      setData(results);
+    })
+    .catch((err) => CheckToken(err))
+    .finally(() => {
+      setLoading(false);  // ← 추가: 성공/실패 모두 로딩 종료
+    });
   }, [token, type]);
 
   useEffect(() => {
@@ -153,148 +164,201 @@ const CustomerTable = (props) => {
       <>
         {isDesktop && (
             <>
-              {overdueCount > 0 && (
-                  <Alert variant="danger" style={{ margin: '0 15px 15px 15px' }}>
-                    ⚠️ <strong>1주일 이상 경과된 미수금이 {overdueCount}건 있습니다!</strong>
-                    <span style={{ marginLeft: '10px', fontSize: '12px' }}>
-              (연한 빨강: 1주일 경과 / 진한 빨강: 2주일 이상)
-            </span>
-                  </Alert>
-              )}
+              {/* ━━━ 로딩 중일 때 ━━━ */}
+              {loading ? (
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '100px 0',
+                  }}>
+                    <Spin size="large" />
+                    <p style={{ marginTop: '20px', color: '#666', fontSize: '14px' }}>
+                      {type === 'plus' ? '미수금' : '지불금'} 데이터를 불러오는 중...
+                    </p>
+                  </div>
+              ) : data.length === 0 ? (
+                  /* ━━━ 데이터 없을 때 ━━━ */
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '100px 0',
+                  }}>
+                    <i className="feather icon-inbox" style={{ fontSize: '48px', color: '#ccc', marginBottom: '15px' }} />
+                    <p style={{ color: '#999', fontSize: '16px' }}>
+                      {type === 'plus' ? '미수금' : '지불금'} 데이터가 없습니다.
+                    </p>
+                  </div>
+              ) : (
+                  /* ━━━ 데이터 있을 때 (기존 로직 그대로) ━━━ */
+                  <>
+                    {overdueCount > 0 && (
+                        <Alert variant="danger" style={{ margin: '0 15px 15px 15px' }}>
+                          ⚠️ <strong>1주일 이상 경과된 미수금이 {overdueCount}건 있습니다!</strong>
+                          <span style={{ marginLeft: '10px', fontSize: '12px' }}>
+                            (연한 빨강: 1주일 경과 / 진한 빨강: 2주일 이상)
+                          </span>
+                        </Alert>
+                    )}
 
-              <div style={{ marginBottom: '10px', textAlign: 'right', paddingRight: '15px' }}>
-                <Button
-                    variant="success"
-                    size="sm"
-                    onClick={() => downloadModalProcessing(true)}
-                    disabled={!excelPermission}
-                >
-                  {excelPermission ? '📥 엑셀 출력 (전체)' : '📥 엑셀 출력 (권한 없음)'}
-                </Button>
-              </div>
+                    <div style={{ marginBottom: '10px', textAlign: 'right', paddingRight: '15px' }}>
+                      <Button
+                          variant="success"
+                          size="sm"
+                          onClick={() => downloadModalProcessing(true)}
+                          disabled={!excelPermission}
+                      >
+                        {excelPermission ? '📥 엑셀 출력 (전체)' : '📥 엑셀 출력 (권한 없음)'}
+                      </Button>
+                    </div>
 
-              <ContextMenuTrigger id="receivableTableContextMenu">
-                <div className="receivableTableContextMenuDiv">
-                  <Grid
-                      data={data}
-                      scrollX={true}
-                      scrollY={true}
-                      columns={gridColumns}
-                      rowHeight={25}
-                      bodyHeight="auto"
-                      columnOptions={{ resizable: true }}
-                      selectionUnit="cell"
-                      contextMenu={null}
-                      onDblclick={(e) => {
-                        if (e.targetType !== 'etc') updateModal(e.rowKey);
-                      }}
-                      onClick={(e) => {
-                        if (e.targetType === 'columnHeader' && e.nativeEvent.target.className.indexOf('tui-grid-cell-header') !== -1) {
-                          for (const i in gridColumns) {
-                            if (gridColumns[i].name === e.columnName) {
-                              if (gridColumns[i].width === undefined) {
-                                gridColumns[i].width = 'auto';
-                                gridColumns[i].ellipsis = false;
-                              } else {
-                                delete gridColumns[i].width;
-                                gridColumns[i].ellipsis = true;
+                    <ContextMenuTrigger id="receivableTableContextMenu">
+                      <div className="receivableTableContextMenuDiv">
+                        <Grid
+                            data={data}
+                            scrollX={true}
+                            scrollY={true}
+                            columns={gridColumns}
+                            rowHeight={25}
+                            bodyHeight="auto"
+                            columnOptions={{ resizable: true }}
+                            selectionUnit="cell"
+                            contextMenu={null}
+                            onDblclick={(e) => {
+                              if (e.targetType !== 'etc') updateModal(e.rowKey);
+                            }}
+                            onClick={(e) => {
+                              if (e.targetType === 'columnHeader' && e.nativeEvent.target.className.indexOf('tui-grid-cell-header') !== -1) {
+                                for (const i in gridColumns) {
+                                  if (gridColumns[i].name === e.columnName) {
+                                    if (gridColumns[i].width === undefined) {
+                                      gridColumns[i].width = 'auto';
+                                      gridColumns[i].ellipsis = false;
+                                    } else {
+                                      delete gridColumns[i].width;
+                                      gridColumns[i].ellipsis = true;
+                                    }
+                                    setGridColumns([...gridColumns]);
+                                  }
+                                }
                               }
-                              setGridColumns([...gridColumns]);
-                            }
-                          }
-                        }
-                      }}
-                      summary={{
-                        height: 40,
-                        position: 'top',
-                        columnContent: {
-                          receivable: {
-                            template: function (val) {
-                              return `TOTAL = ${setComma(val.sum)}`;
-                            },
-                          },
-                        },
-                      }}
-                  />
-                </div>
-              </ContextMenuTrigger>
-              <ContextMenu id="receivableTableContextMenu">
-                <MenuItem onClick={() => handleContextMenu()}>전체 열 {contextMenuText}</MenuItem>
-                {excelPermission ? (
-                    <MenuItem onClick={() => downloadModalProcessing(true)}>엑셀 출력</MenuItem>
-                ) : (
-                    <MenuItem disabled>엑셀 출력 (권한 없음)</MenuItem>
-                )}
-              </ContextMenu>
-              <DynamicProgress
-                  visible={downloadModalVisible}
-                  type={receivableType}
-                  downloadModalProcessing={downloadModalProcessing}
-              />
+                            }}
+                            summary={{
+                              height: 40,
+                              position: 'top',
+                              columnContent: {
+                                receivable: {
+                                  template: function (val) {
+                                    return `TOTAL = ${setComma(val.sum)}`;
+                                  },
+                                },
+                              },
+                            }}
+                        />
+                      </div>
+                    </ContextMenuTrigger>
+                    <ContextMenu id="receivableTableContextMenu">
+                      <MenuItem onClick={() => handleContextMenu()}>전체 열 {contextMenuText}</MenuItem>
+                      {excelPermission ? (
+                          <MenuItem onClick={() => downloadModalProcessing(true)}>엑셀 출력</MenuItem>
+                      ) : (
+                          <MenuItem disabled>엑셀 출력 (권한 없음)</MenuItem>
+                      )}
+                    </ContextMenu>
+                    <DynamicProgress
+                        visible={downloadModalVisible}
+                        type={receivableType}
+                        downloadModalProcessing={downloadModalProcessing}
+                    />
+                  </>
+              )}
             </>
         )}
         {isMobile && (
             <Aux>
               <Row>
                 <Col md={12} xl={12} className="m-b-30">
-                  <Card className="Recent-Users">
-                    <Card.Header>
-                      <Card.Title as="h5">
-                        총{type === 'plus' ? '미수' : '지불'}금액 : {setComma(totalReceivable)}
-                      </Card.Title>
-                    </Card.Header>
-                  </Card>
-                  {overdueCount > 0 && (
-                      <Alert variant="danger" style={{ marginBottom: '10px' }}>
-                        ⚠️ 1주일 이상 경과: <strong>{overdueCount}건</strong>
-                      </Alert>
-                  )}
-                  {data.map((el, i) => {
-                    const overdue = isOverdue(el.last_receivable_date);
-                    const days = getDaysOverdue(el.last_receivable_date);
-                    return (
-                        <Card
-                            className="Recent-Users"
-                            key={i}
-                            style={overdue ? { borderLeft: '4px solid #dc3545', backgroundColor: '#fff5f5' } : {}}
-                        >
+                  {/* ━━━ 모바일: 로딩 중 ━━━ */}
+                  {loading ? (
+                      <div style={{ textAlign: 'center', padding: '50px 0' }}>
+                        <Spin size="large" />
+                        <p style={{ marginTop: '15px', color: '#666' }}>
+                          {type === 'plus' ? '미수금' : '지불금'} 데이터를 불러오는 중...
+                        </p>
+                      </div>
+                  ) : data.length === 0 ? (
+                      /* ━━━ 모바일: 데이터 없음 ━━━ */
+                      <div style={{ textAlign: 'center', padding: '50px 0' }}>
+                        <p style={{ color: '#999', fontSize: '16px' }}>
+                          {type === 'plus' ? '미수금' : '지불금'} 데이터가 없습니다.
+                        </p>
+                      </div>
+                  ) : (
+                      /* ━━━ 모바일: 데이터 있을 때 (기존 로직 그대로) ━━━ */
+                      <>
+                        <Card className="Recent-Users">
                           <Card.Header>
                             <Card.Title as="h5">
-                              {el.name}
-                              {overdue && (
-                                  <span style={{
-                                    marginLeft: '10px',
-                                    padding: '2px 8px',
-                                    backgroundColor: days >= 14 ? '#c62828' : '#dc3545',
-                                    color: 'white',
-                                    borderRadius: '10px',
-                                    fontSize: '12px'
-                                  }}>
-                            {days}일 경과
-                          </span>
-                              )}
+                              총{type === 'plus' ? '미수' : '지불'}금액 : {setComma(totalReceivable)}
                             </Card.Title>
                           </Card.Header>
-                          <Card.Body>
-                            <div style={{ display: 'block' }}>
-                              {el.tel !== '' && el.tel !== ' ' && <Card.Text>Tel : {el.tel}</Card.Text>}
-                              {el.phone !== '' && el.phone !== ' ' && <Card.Text>Phone : {el.phone}</Card.Text>}
-                              <Card.Text>총미수금 : {setComma(el.receivable)}</Card.Text>
-                              {el.last_receivable_date && (
-                                  <Card.Text style={{ color: overdue ? '#dc3545' : 'inherit' }}>
-                                    마지막 거래일 : {el.last_receivable_date.slice(0, 10)}
-                                  </Card.Text>
-                              )}
-                            </div>
-                            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                              <Button variant="primary" size="sm" style={{ borderRadius: '15px' }} onClick={() => updateModal(i)}>
-                                수정
-                              </Button>
-                            </div>
-                          </Card.Body>
                         </Card>
-                    );
-                  })}
+                        {overdueCount > 0 && (
+                            <Alert variant="danger" style={{ marginBottom: '10px' }}>
+                              ⚠️ 1주일 이상 경과: <strong>{overdueCount}건</strong>
+                            </Alert>
+                        )}
+                        {data.map((el, i) => {
+                          const overdue = isOverdue(el.last_receivable_date);
+                          const days = getDaysOverdue(el.last_receivable_date);
+                          return (
+                              <Card
+                                  className="Recent-Users"
+                                  key={i}
+                                  style={overdue ? { borderLeft: '4px solid #dc3545', backgroundColor: '#fff5f5' } : {}}
+                              >
+                                <Card.Header>
+                                  <Card.Title as="h5">
+                                    {el.name}
+                                    {overdue && (
+                                        <span style={{
+                                          marginLeft: '10px',
+                                          padding: '2px 8px',
+                                          backgroundColor: days >= 14 ? '#c62828' : '#dc3545',
+                                          color: 'white',
+                                          borderRadius: '10px',
+                                          fontSize: '12px'
+                                        }}>
+                                          {days}일 경과
+                                        </span>
+                                    )}
+                                  </Card.Title>
+                                </Card.Header>
+                                <Card.Body>
+                                  <div style={{ display: 'block' }}>
+                                    {el.tel !== '' && el.tel !== ' ' && <Card.Text>Tel : {el.tel}</Card.Text>}
+                                    {el.phone !== '' && el.phone !== ' ' && <Card.Text>Phone : {el.phone}</Card.Text>}
+                                    <Card.Text>총미수금 : {setComma(el.receivable)}</Card.Text>
+                                    {el.last_receivable_date && (
+                                        <Card.Text style={{ color: overdue ? '#dc3545' : 'inherit' }}>
+                                          마지막 거래일 : {el.last_receivable_date.slice(0, 10)}
+                                        </Card.Text>
+                                    )}
+                                  </div>
+                                  <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                                    <Button variant="primary" size="sm" style={{ borderRadius: '15px' }} onClick={() => updateModal(i)}>
+                                      수정
+                                    </Button>
+                                  </div>
+                                </Card.Body>
+                              </Card>
+                          );
+                        })}
+                      </>
+                  )}
                 </Col>
               </Row>
             </Aux>

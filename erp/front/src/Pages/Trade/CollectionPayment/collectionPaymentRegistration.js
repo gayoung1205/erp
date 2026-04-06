@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Row, Col, Card, Form, Button } from 'react-bootstrap';
 import Aux from '../../../hoc/_Aux';
@@ -20,6 +20,8 @@ const CollectionPaymentRegistration = (props) => {
     credit: 0,
     bank: 0,
   }); // Trade Data
+  const isSubmittingRef = useRef(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   React.useEffect(() => {
     const permission = window.sessionStorage.getItem('permission');
@@ -43,23 +45,35 @@ const CollectionPaymentRegistration = (props) => {
     }
   }, [type]);
 
-  // collection, payment Create
-  const tradeCreate = () => {
+  const tradeCreate = async () => {
     if (data.register_date === undefined) {
       message.warning('등록일을 입력해주세요.');
       return null;
     }
     if (
-      data.cash === undefined ||
-      data.credit === undefined ||
-      data.bank === undefined ||
-      (data.cash === 0 && data.credit === 0 && data.bank === 0)
+        data.cash === undefined ||
+        data.credit === undefined ||
+        data.bank === undefined ||
+        (data.cash === 0 && data.credit === 0 && data.bank === 0)
     ) {
       message.warning('현금결제, 카드결제, 은행입금 중 최소 한 개를 입력해주세요.');
       return null;
     }
 
-    requestTradeCreate(data).then(() => history.push(`/Trade/tradeTable/1`));
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+
+    try {
+      await requestTradeCreate(data);
+      history.push(`/Trade/tradeTable/1`);
+    } catch (err) {
+      message.error('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
+    }
   };
 
   // data rendering전에 data 값이 undefined일 경우 Warning 있어서
@@ -161,8 +175,8 @@ const CollectionPaymentRegistration = (props) => {
               </Row>
               <Row>
                 <Col style={{ textAlign: 'right' }}>
-                  <Button variant="primary" onClick={() => tradeCreate()}>
-                    등록
+                  <Button variant="primary" onClick={() => tradeCreate()} disabled={isSubmitting}>
+                    {isSubmitting ? '등록 중...' : '등록'}
                   </Button>
                 </Col>
               </Row>

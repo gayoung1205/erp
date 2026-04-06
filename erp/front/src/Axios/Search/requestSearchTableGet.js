@@ -3,7 +3,7 @@ import config from '../../config.js';
 import CheckToken from '../../App/components/checkToken';
 
 const requestSearchTableGet = async (props) => {
-  let token = sessionStorage.getItem('token'); // Login Token
+  let token = sessionStorage.getItem('token');
   let returnData;
 
   let table, searchText;
@@ -31,23 +31,38 @@ const requestSearchTableGet = async (props) => {
     }
   }
 
-  let url = `${config.backEndServerAddress}api/${table}?search=${encodeURIComponent(searchText)}`;
+  let baseUrl = `${config.backEndServerAddress}api/${table}?search=${encodeURIComponent(searchText)}`;
 
   if (table === 'products' && props.productCategory && props.productCategory !== '전체') {
-    url += `&category=${encodeURIComponent(props.productCategory)}`;
+    baseUrl += `&category=${encodeURIComponent(props.productCategory)}`;
   }
 
   await axios({
-    url: url,
+    url: baseUrl + '&page=1',
     method: 'GET',
     headers: { Authorization: `JWT ${token}` },
   })
-      .then((res) => {
-        let { results } = res.data.data;
+  .then(async (res) => {
+    const { results, max_page } = res.data.data;
+    let allResults = [...results];
 
-        returnData = results;
-      })
-      .catch((err) => CheckToken(err));
+    if (max_page > 1) {
+      for (let page = 2; page <= max_page; page++) {
+        await axios({
+          url: baseUrl + `&page=${page}`,
+          method: 'GET',
+          headers: { Authorization: `JWT ${token}` },
+        })
+        .then((pageRes) => {
+          allResults = [...allResults, ...pageRes.data.data.results];
+        })
+        .catch((err) => CheckToken(err));
+      }
+    }
+
+    returnData = allResults;
+  })
+  .catch((err) => CheckToken(err));
 
   return returnData;
 };

@@ -40,16 +40,20 @@ export default [
     header: '경과일',
     sortable: true,
     align: 'center',
-    formatter({ row }) {
-      const days = getDaysOverdue(row.last_receivable_date);
-      if (days === '' || days <= 0) return '-';
+    formatter({ value }) {
+      if (value === null || value === undefined || value <= 0) return '-';
 
-      if (days >= 14) {
-        return `<span style="color: #c62828; font-weight: bold;">${days}일</span>`;
-      } else if (days >= 7) {
-        return `<span style="color: #dc3545; font-weight: bold;">${days}일</span>`;
+      if (value >= 14) {
+        return `<span style="color: #c62828; font-weight: bold;">${value}일</span>`;
+      } else if (value >= 7) {
+        return `<span style="color: #dc3545; font-weight: bold;">${value}일</span>`;
       }
-      return `${days}일`;
+      return `${value}일`;
+    },
+    comparator(a, b) {
+      const valA = a === null || a === undefined ? -1 : a;
+      const valB = b === null || b === undefined ? -1 : b;
+      return valA - valB;
     },
   },
 ];

@@ -9,7 +9,7 @@ import Aux from '../../hoc/_Aux';
 import Grid from '@toast-ui/react-grid';
 import 'tui-grid/dist/tui-grid.css';
 import 'tui-pagination/dist/tui-pagination.css';
-import { message } from 'antd';
+import { message, Spin } from 'antd';
 import 'antd/dist/antd.css';
 import cloneDeep from 'lodash/cloneDeep';
 import notNull from '../../App/components/notNull.js';
@@ -31,51 +31,31 @@ const SearchTradeTable = (props) => {
   const history = useHistory(); // location 객체 접근
   const [gridColumns, setGridColumns] = useState([]);
   const [contextMenuText, setContextMenuText] = useState('확대');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // requestTradeGet()이 처음에만 실행되도록
   useEffect(() => {
+    let cancelled = false;
+
+    setIsLoading(true);
+    setData([]);
     requestSearchTableGet(props).then((res) => {
+      if (cancelled) return;
+
       if (isEmptyObject(res)) {
         message.warning('검색내용이 없습니다.');
         props.handleCancel();
+        setIsLoading(false);
         return null;
       } else {
-        // null 값 제거
         res = notNull(res);
-
-        for (const i in res) {
-          // price값 등을 이용해서 table에 뿌려줄 column
-          let col = ['collect', 'payment', 'transaction', 'payment_2', 'receivable'];
-
-          // category_1 : AS=0, COLLECTION=1, PAYMENT=2, SELL=3, PURCHASE=4, INCOME=5, OUTCOME=6, DELIVER=7, MEMO=8
-          // category_2 : ACCEPT=0, COMPLETE=1, ONGOING=2, CANCEL=3;
-          // category_3 : INSIDE=0, OUTSIDE=1
-
-          // column 생성 -> insert 0
-          for (const j in col) res[i][col[j]] = 0;
-
-          // category_1이 수금, 지불일 경우 결제금액과 수금일 경우 수금금액, 지불일 경우 지불금액 설정
-          if (res[i].category_1 === 1 || res[i].category_1 === 2) {
-            res[i].payment_2 = res[i].total_price;
-            res[i].category_1 === 1 ? (res[i].collect = res[i].total_price) : (res[i].payment = res[i].total_price);
-          }
-          // 수금, 판매, 구매 일 때 거래금액 = total_price
-          if (res[i].category_1 === 3 || res[i].category_1 === 4 || res[i].category_2 === 1) {
-            res[i].transaction = res[i].total_price;
-          }
-          // 수금, 구매 일 때 당일미수금 = -total_price
-          if (res[i].category_1 === 1 || res[i].category_1 === 4) {
-            res[i].receivable = -res[i].total_price;
-          }
-          // 지불, 판매, AS완료 일 때 당일미수금 = total_price
-          if (res[i].category_1 === 2 || res[i].category_1 === 3 || res[i].category_2 === 1) {
-            res[i].receivable = res[i].total_price;
-          }
-        }
-        // trade data 저장
         setData(res);
+        setIsLoading(false);
       }
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [props.count]);
 
   useEffect(() => {
@@ -126,6 +106,10 @@ const SearchTradeTable = (props) => {
         props.handleCancel();
         break;
 
+      case '공사':
+        history.push(`/Trade/Construction/constructionUpdate/${id}`);
+        break;
+
       default:
         break;
     }
@@ -160,6 +144,11 @@ const SearchTradeTable = (props) => {
     <>
       {isDesktop && (
         <>
+        {isLoading ? (
+                <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                  <Spin size="large" tip="검색 중..." />
+                </div>
+        ) : (
           <ContextMenuTrigger id="searchTradeTableContextMenu">
             <div className="searchTradeTableContextMenuDiv">
               <Grid
@@ -205,6 +194,7 @@ const SearchTradeTable = (props) => {
               />
             </div>
           </ContextMenuTrigger>
+        )}
           <ContextMenu id="searchTradeTableContextMenu">
             <MenuItem onClick={() => handleContextMenu()}>전체 열 {contextMenuText}</MenuItem>
           </ContextMenu>

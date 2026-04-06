@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Row, Col, Card, Form, Button, Table } from 'react-bootstrap';
 import Aux from '../../hoc/_Aux';
@@ -21,6 +21,11 @@ const PackageUpdate = (props) => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchModalVisible, setSearchModalVisible] = useState(false);
     const [loading, setLoading] = useState(true);
+    const updatePackageRef = useRef(false);
+    const [updateLoading, setUpdateLoading] = useState(false);
+
+    const deletePackageRef = useRef(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     // 패키지 상세 조회
     useEffect(() => {
@@ -99,7 +104,7 @@ const PackageUpdate = (props) => {
     };
 
     // 패키지 수정
-    const updatePackage = () => {
+    const updatePackage = async () => {
         if (packageData.name === '') {
             message.warning('패키지명을 입력해주세요.');
             return;
@@ -109,35 +114,52 @@ const PackageUpdate = (props) => {
             return;
         }
 
-        requestPackageUpdate(packageId, {
-            name: packageData.name,
-            memo: packageData.memo,
-            items: items.map((item) => ({
-                product_id: item.product_id,
-                amount: item.amount,
-            })),
-        }).then((res) => {
-            if (res) {
-                history.push('/Package/packageList');
-            }
-        });
+        if (updatePackageRef.current) return;
+        updatePackageRef.current = true;
+        setUpdateLoading(true);
+
+        try {
+            const res = await requestPackageUpdate(packageId, {
+                name: packageData.name,
+                memo: packageData.memo,
+                items: items.map((item) => ({ product_id: item.product_id, amount: item.amount })),
+            });
+            if (res) history.push('/Package/packageList');
+        } catch (err) {
+            message.error('패키지 수정 중 오류가 발생했습니다.');
+            console.error(err);
+        } finally {
+            updatePackageRef.current = false;
+            setUpdateLoading(false);
+        }
     };
 
     // 패키지 삭제
     const deletePackage = () => {
+        if (deletePackageRef.current) return;
+
         Modal.confirm({
             title: '패키지 삭제',
             content: `[${packageData.name}] 패키지를 삭제하시겠습니까?`,
             okText: '삭제',
             okType: 'danger',
             cancelText: '취소',
-            onOk: () => {
-                requestPackageDelete(packageId).then((res) => {
+            onOk: async () => {
+                deletePackageRef.current = true;
+                setDeleteLoading(true);
+                try {
+                    const res = await requestPackageDelete(packageId);
                     if (res) {
                         message.success('패키지가 삭제되었습니다.');
                         history.push('/Package/packageList');
                     }
-                });
+                } catch (err) {
+                    message.error('패키지 삭제 중 오류가 발생했습니다.');
+                    console.error(err);
+                } finally {
+                    deletePackageRef.current = false;
+                    setDeleteLoading(false);
+                }
             },
         });
     };
@@ -325,16 +347,16 @@ const PackageUpdate = (props) => {
                             {/* 버튼 */}
                             <Row>
                                 <Col>
-                                    <Button variant="danger" onClick={deletePackage}>
-                                        패키지 삭제
+                                    <Button variant="danger" onClick={deletePackage} disabled={deleteLoading || updateLoading}>
+                                        {deleteLoading ? '삭제 중...' : '패키지 삭제'}
                                     </Button>
                                 </Col>
                                 <Col style={{ textAlign: 'right' }}>
                                     <Button variant="secondary" onClick={() => history.goBack()} className="mr-2">
                                         취소
                                     </Button>
-                                    <Button variant="primary" onClick={updatePackage}>
-                                        저장
+                                    <Button variant="primary" onClick={updatePackage} disabled={updateLoading || deleteLoading}>
+                                        {updateLoading ? '저장 중...' : '저장'}
                                     </Button>
                                 </Col>
                             </Row>

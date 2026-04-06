@@ -98,6 +98,7 @@ export default {
               type: 'item',
               url: '/Trade/As/asRegistration',
             },
+            { id: 'badgesXX', title: '공사접수', type: 'item', url: '/Trade/Construction/constructionRegistration' },
             {
               id: 'badges07',
               title: '납품접수',
@@ -237,6 +238,10 @@ export default {
               url: '/Trade/currentSituationTable/as/1',
               // target: '_blank',
             },
+            { id: 'badges23',
+              title: '공사현황',
+              type: 'item',
+              url: '/Trade/currentSituationTable/construction/1' },
             {
               id: 'badges22',
               title: 'MY AS',

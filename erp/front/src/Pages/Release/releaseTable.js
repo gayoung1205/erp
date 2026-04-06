@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback, useEffect } from 'react';
+import React, { useState, memo, useCallback, useEffect, useRef } from 'react';
 import { Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { isEmptyObject } from 'jquery';
 import Aux from '../../hoc/_Aux';
@@ -18,22 +18,23 @@ const MemoedReleaseGrid = memo(ReleaseGrid);
 const MemoedProductSearchModal = memo(ProductSearchModal);
 const MemoedReleaseLogGrid = memo(ReleaseLogGrid);
 
+
 const ReleaseTable = () => {
   const [searchModalVisible, setSearchModalVisible] = useState(false);
   const [packageModalVisible, setPackageModalVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [appendRowData, setAppendRowData] = useState({});
   const [appendMultipleRows, setAppendMultipleRows] = useState([]);
+  const insertHistoryRef = useRef(false);
+  const [insertHistoryLoading, setInsertHistoryLoading] = useState(false);
   const [data, setData] = useState({
     name: '',
     amount: 1,
   });
 
-  // ⭐ 엑셀 관련 state 추가
   const [excelPermission, setExcelPermission] = useState(false);
   const [downloadModalVisible, setDownloadModalVisible] = useState(false);
 
-  // ⭐ 엑셀 권한 체크
   useEffect(() => {
     requestExcelPermissionCheck().then((res) => {
       setExcelPermission(res.can_export_release);
@@ -56,18 +57,22 @@ const ReleaseTable = () => {
     });
   };
 
-  const insertHistory = () => {
+  const insertHistory = async () => {
     if (data.name === '') {
       message.warning('제품명을 입력해주세요.');
       return null;
     }
-
     if (data.product_id === undefined) {
       message.warning('등록되어 있지 않은 제품입니다.');
       return null;
     }
 
-    requestReleaseCreate(data).then((res) => {
+    if (insertHistoryRef.current) return;
+    insertHistoryRef.current = true;
+    setInsertHistoryLoading(true);
+
+    try {
+      const res = await requestReleaseCreate(data);
       if (res !== null && res !== undefined) {
         data.id = res.id;
         data.created_date = res.created_date;
@@ -75,10 +80,15 @@ const ReleaseTable = () => {
         data.stock = res.stock;
         setAppendRowData({ ...data });
         message.success(data.name + ' 등록');
+        resetData();
       }
-    });
-
-    resetData();
+    } catch (err) {
+      message.error('출고 등록 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      insertHistoryRef.current = false;
+      setInsertHistoryLoading(false);
+    }
   };
 
   const productStorage = (rowData) => {
@@ -158,11 +168,10 @@ const ReleaseTable = () => {
                           <Button
                               variant="primary"
                               style={{ marginLeft: '2px' }}
-                              onClick={(e) => {
-                                insertHistory();
-                              }}
+                              onClick={() => insertHistory()}
+                              disabled={insertHistoryLoading}
                           >
-                            등록
+                            {insertHistoryLoading ? '등록 중...' : '등록'}
                           </Button>
                         </InputGroup.Append>
                       </InputGroup>
@@ -188,7 +197,6 @@ const ReleaseTable = () => {
                     </Form.Group>
                   </Col>
 
-                  {/* ⭐ 엑셀 출력 버튼 추가 */}
                   <Col md={6} xl={3}>
                     <Form.Group>
                       <Form.Label>엑셀 출력</Form.Label>
@@ -232,7 +240,6 @@ const ReleaseTable = () => {
           </Col>
         </Row>
 
-        {/* ⭐ DynamicProgress 추가 */}
         <DynamicProgress
             visible={downloadModalVisible}
             type={'release'}

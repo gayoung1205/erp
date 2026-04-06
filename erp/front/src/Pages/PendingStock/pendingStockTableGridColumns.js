@@ -1,7 +1,6 @@
 import setComma from '../../App/components/setComma';
 
 export default [
-    { name: 'id', header: 'No', sortable: true, align: 'center', width: 60, minWidth: 50 },
     { name: 'product_name', header: '제품명', sortable: true, align: 'center', minWidth: 150 },
     { name: 'product_category', header: '제품분류', sortable: true, align: 'center', minWidth: 100 },
     {
@@ -60,4 +59,5 @@ export default [
             return value.substring(0, 10);
         },
     },
+    { name: 'confirmed_by', header: '입고자', sortable: true, align: 'center', minWidth: 80 },
 ];

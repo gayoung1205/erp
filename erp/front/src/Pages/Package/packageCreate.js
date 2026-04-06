@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Row, Col, Card, Form, Button, Table } from 'react-bootstrap';
 import Aux from '../../hoc/_Aux';
@@ -17,6 +17,8 @@ const PackageCreate = () => {
     const [searchText, setSearchText] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [searchModalVisible, setSearchModalVisible] = useState(false);
+    const savePackageRef = useRef(false);
+    const [saveLoading, setSaveLoading] = useState(false);
 
     // 제품 검색
     const searchProduct = () => {
@@ -74,7 +76,7 @@ const PackageCreate = () => {
     };
 
     // 패키지 저장
-    const savePackage = () => {
+    const savePackage = async () => {
         if (packageData.name === '') {
             message.warning('패키지명을 입력해주세요.');
             return;
@@ -84,18 +86,27 @@ const PackageCreate = () => {
             return;
         }
 
-        requestPackageCreate({
-            name: packageData.name,
-            memo: packageData.memo,
-            items: items.map((item) => ({
-                product_id: item.product_id,
-                amount: item.amount,
-            })),
-        }).then((res) => {
-            if (res) {
-                history.push('/Package/packageList');
-            }
-        });
+        if (savePackageRef.current) return;
+        savePackageRef.current = true;
+        setSaveLoading(true);
+
+        try {
+            const res = await requestPackageCreate({
+                name: packageData.name,
+                memo: packageData.memo,
+                items: items.map((item) => ({
+                    product_id: item.product_id,
+                    amount: item.amount,
+                })),
+            });
+            if (res) history.push('/Package/packageList');
+        } catch (err) {
+            message.error('패키지 저장 중 오류가 발생했습니다.');
+            console.error(err);
+        } finally {
+            savePackageRef.current = false;
+            setSaveLoading(false);
+        }
     };
 
     // 테이블 셀 공통 스타일
@@ -275,8 +286,8 @@ const PackageCreate = () => {
                                     <Button variant="secondary" onClick={() => history.goBack()} className="mr-2">
                                         취소
                                     </Button>
-                                    <Button variant="primary" onClick={savePackage}>
-                                        저장
+                                    <Button variant="primary" onClick={savePackage} disabled={saveLoading}>
+                                        {saveLoading ? '저장 중...' : '저장'}
                                     </Button>
                                 </Col>
                             </Row>

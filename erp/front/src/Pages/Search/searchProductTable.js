@@ -7,7 +7,7 @@ import '../../assets/css/react-contextmenu.css';
 import Aux from '../../hoc/_Aux';
 import Grid from '@toast-ui/react-grid';
 import 'tui-grid/dist/tui-grid.css';
-import { message } from 'antd';
+import { message, Spin } from 'antd';
 import 'antd/dist/antd.css';
 import cloneDeep from 'lodash/cloneDeep';
 import notNull from '../../App/components/notNull.js';
@@ -24,19 +24,19 @@ const ProductTable = (props) => {
   const [rowData, setRowData] = useState({}); // DbClick 할 때 target rowData 저장할 변수
   const [gridColumns, setGridColumns] = useState([]);
   const [contextMenuText, setContextMenuText] = useState('확대');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // requestProductGet()이 처음에만 실행되도록
   useEffect(() => {
+    setIsLoading(true);
+    setData([]);
     requestSearchTableGet(props).then((res) => {
       if (isEmptyObject(res)) {
         message.warning('검색내용이 없습니다.');
-        props.handleCancel();
-        return null;
+        setIsLoading(false);
+        return;
       } else {
-        // Null Check
-        res = notNull(res);
-
-        setData(res);
+        setData(notNull(res));
+        setIsLoading(false);
       }
     });
   }, [props.count]);
@@ -89,6 +89,11 @@ const ProductTable = (props) => {
     <>
       {isDesktop && (
         <>
+        {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '60px 0' }}>
+              <Spin size="large" tip="검색 중..." />
+            </div>
+        ) : (
           <ContextMenuTrigger id="searchProductTableContextMenu">
             <div className="searchProductTableContextMenuDiv">
               <Grid
@@ -127,6 +132,7 @@ const ProductTable = (props) => {
               />
             </div>
           </ContextMenuTrigger>
+        )}
           <ContextMenu id="searchProductTableContextMenu">
             <MenuItem onClick={() => handleContextMenu()}>전체 열 {contextMenuText}</MenuItem>
           </ContextMenu>

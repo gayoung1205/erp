@@ -1,17 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Row, Col, Card, Form } from 'react-bootstrap';
-import Aux from '../../hoc/_Aux';
-import { Modal } from 'antd';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Form } from 'react-bootstrap';
+import { Modal, message } from 'antd';
 import 'antd/dist/antd.css';
 import dateFormat from 'dateformat';
 import { isEmptyObject } from 'jquery';
 
 const CalendarMobileUpdatePopup = (props) => {
-  const [visible, setVisible] = useState(false); // Memo Modal Visible
-  const [data, setData] = useState({}); // Memo Data
+  const [visible, setVisible] = useState(false);
+  const [data, setData] = useState({});
   const [flag, setFlag] = useState(false);
   const [users, setUsers] = useState({});
-  // requestTradeGet()이 처음에만 실행되도록
+
+  // ===== 추가: datetime-local input에 대한 ref =====
+  const startRef = useRef(null);
+  const endRef = useRef(null);
+  // ===== 추가 끝 =====
+
   useEffect(() => {
     if (!isEmptyObject(props.data)) {
       setData({
@@ -39,36 +43,32 @@ const CalendarMobileUpdatePopup = (props) => {
     }
   }, [props.visible]);
 
-  // Modal Visible -> false
   const handleCancel = () => {
     setVisible(false);
   };
 
   const EngineerSelect = useCallback(() => {
     return (
-      <>
-        <Form.Group controlId="CalendarSelect01">
-          <Form.Control
+        <Form.Control
             as="select"
+            size="sm"
             value={data.calendarId ? data.calendarId : ''}
             onChange={(e) => {
               setData({ ...data, calendarId: e.target.value });
             }}
             required
-          >
-            {users.map((engineer, i) => (
+        >
+          {users.map((engineer, i) => (
               <option key={i} value={engineer.id}>
                 {engineer.name}
               </option>
-            ))}
-          </Form.Control>
-        </Form.Group>
-      </>
+          ))}
+        </Form.Control>
     );
   }, [data, users]);
 
   const handleOk = () => {
-    if (data.title === '') {
+    if (data.title === '' || !data.title) {
       return null;
     } else {
       props.update(data);
@@ -76,76 +76,132 @@ const CalendarMobileUpdatePopup = (props) => {
     }
   };
 
+  const handleDelete = () => {
+    if (window.confirm(`"${data.title}" 일정을 삭제하시겠습니까?`)) {
+      props.delete(data.id);  // calendarMain의 deleteSchedule 호출
+      handleCancel();
+    }
+  };
+
   return (
-    <>
       <Modal
-        visible={visible}
-        onOk={() => handleOk()}
-        onCancel={() => handleCancel()}
-        width="100%"
-        zIndex={1030}
-        closable={false} // Modal 창 오른쪽 X 표시 여부
-        bodyStyle={{ padding: 0 }}
+          visible={visible}
+          onOk={() => handleOk()}
+          onCancel={() => handleCancel()}
+          width={400}
+          zIndex={1100}
+          centered
+          closable={true}
+          bodyStyle={{ padding: '16px 20px' }}
+          mask={true}
+          getContainer={document.body}
+          footer={
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <a onClick={handleDelete} style={{ color: '#ff4d4f', cursor: 'pointer', fontSize: '13px', lineHeight: '32px' }}>
+                삭제
+              </a>
+              <div>
+                <button
+                    onClick={handleCancel}
+                    style={{ marginRight: '8px', padding: '4px 12px', border: '1px solid #d9d9d9', borderRadius: '4px', background: '#fff', cursor: 'pointer' }}
+                >
+                  취소
+                </button>
+                <button
+                    onClick={handleOk}
+                    style={{ padding: '4px 12px', border: 'none', borderRadius: '4px', background: '#1890ff', color: '#fff', cursor: 'pointer' }}
+                >
+                  수정
+                </button>
+              </div>
+            </div>
+          }
       >
-        <Aux>
-          <Row>
-            <Col>
-              <Card style={{ marginBottom: 0 }}>
-                <Card.Body>
-                  <Row>
-                    <Col md={6}>
-                      <EngineerSelect />
-                    </Col>
-                    <Col md={6}>
-                      <Form>
-                        <Form.Group controlId="CalendarInput01">
-                          <Form.Label>내용</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="일정"
-                            value={data.title ? data.title : ''}
-                            onChange={(e) => {
-                              setData({ ...data, title: e.target.value });
-                            }}
-                            required
-                          />
-                        </Form.Group>
-                      </Form>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group controlId="CalendarInput02">
-                        <Form.Label>시작시간</Form.Label>
-                        <Form.Control
-                          type="datetime-local"
-                          value={data.start ? data.start : ''}
-                          onChange={(e) => {
-                            setData({ ...data, start: e.target.value });
-                          }}
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group controlId="CalendarInput03">
-                        <Form.Label>종료시간</Form.Label>
-                        <Form.Control
-                          type="datetime-local"
-                          value={data.end ? data.end : ''}
-                          onChange={(e) => {
-                            setData({ ...data, end: e.target.value });
-                          }}
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Aux>
+        <Form onSubmit={(e) => { e.preventDefault(); handleOk(); }}>
+          <div style={{ marginBottom: '8px', marginTop: '24px' }}>
+            <EngineerSelect />
+          </div>
+          <div style={{ marginBottom: '8px' }}>
+            <Form.Control
+                type="text"
+                placeholder="일정 내용"
+                size="sm"
+                value={data.title ? data.title : ''}
+                onChange={(e) => {
+                  setData({ ...data, title: e.target.value });
+                }}
+                required
+                autoFocus
+            />
+          </div>
+          <div style={{ marginBottom: '8px' }}>
+            <Form.Label style={{ fontSize: '12px', marginBottom: '2px', color: '#888' }}>시작</Form.Label>
+            {/* ===== 수정: 완료 버튼 추가 ===== */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Form.Control
+                  ref={startRef}
+                  type="datetime-local"
+                  size="sm"
+                  value={data.start ? data.start : ''}
+                  onChange={(e) => {
+                    setData({ ...data, start: e.target.value });
+                  }}
+                  required
+              />
+              <button
+                  type="button"
+                  onClick={() => { if (startRef.current) startRef.current.blur(); }}
+                  style={{
+                    padding: '2px 8px',
+                    border: '1px solid #d9d9d9',
+                    borderRadius: '4px',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    whiteSpace: 'nowrap',
+                    color: '#1890ff',
+                  }}
+              >
+                완료
+              </button>
+            </div>
+            {/* ===== 수정 끝 ===== */}
+          </div>
+          <div style={{ marginBottom: '8px' }}>
+            <Form.Label style={{ fontSize: '12px', marginBottom: '2px', color: '#888' }}>종료</Form.Label>
+            {/* ===== 수정: 완료 버튼 추가 ===== */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Form.Control
+                  ref={endRef}
+                  type="datetime-local"
+                  size="sm"
+                  value={data.end ? data.end : ''}
+                  onChange={(e) => {
+                    setData({ ...data, end: e.target.value });
+                  }}
+                  required
+              />
+              <button
+                  type="button"
+                  onClick={() => { if (endRef.current) endRef.current.blur(); }}
+                  style={{
+                    padding: '2px 8px',
+                    border: '1px solid #d9d9d9',
+                    borderRadius: '4px',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    whiteSpace: 'nowrap',
+                    color: '#1890ff',
+                  }}
+              >
+                완료
+              </button>
+            </div>
+            {/* ===== 수정 끝 ===== */}
+          </div>
+        </Form>
       </Modal>
-    </>
   );
 };
 

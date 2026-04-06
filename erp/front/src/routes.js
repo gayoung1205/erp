@@ -84,6 +84,9 @@ const PackageList = React.lazy(() => import('./Pages/Package/packageList.js'));
 const PackageCreate = React.lazy(() => import('./Pages/Package/packageCreate.js'));
 const PackageUpdate = React.lazy(() => import('./Pages/Package/packageUpdate.js'));
 
+const ConstructionRegistration = React.lazy(() => import('./Pages/Trade/Construction/constructionRegistration.js'));
+const ConstructionUpdate = React.lazy(() => import('./Pages/Trade/Construction/constructionUpdate.js'));
+
 const routes = [
   { path: '/dashboard/default', exact: true, name: 'Default', component: DashboardDefault },
   { path: '/basic/button', exact: true, name: 'Basic Button', component: UIBasicButton },
@@ -196,6 +199,19 @@ const routes = [
   { path: '/Package/packageList', exact: true, name: 'Package List', component: PackageList },
   { path: '/Package/packageCreate', exact: true, name: 'Package Create', component: PackageCreate },
   { path: '/Package/packageUpdate/:package_id', exact: true, name: 'Package Update', component: PackageUpdate },
+
+  {
+    path: '/Trade/Construction/constructionRegistration',
+    exact: true,
+    name: 'Construction Registration',
+    component: ConstructionRegistration,
+  },
+  {
+    path: '/Trade/Construction/constructionUpdate/:trade_id',
+    exact: true,
+    name: 'Construction Update',
+    component: ConstructionUpdate,
+  },
 ];
 
 export default routes;

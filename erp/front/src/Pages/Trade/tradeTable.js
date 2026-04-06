@@ -153,6 +153,10 @@ const TradeTable = ({ match }) => {
         history.push(`/Trade/Delivery/deliveryUpdate/${id}`);
         break;
 
+      case '공사':
+        history.push(`/Trade/Construction/constructionUpdate/${id}`);
+        break;
+
       default:
         break;
     }

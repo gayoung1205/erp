@@ -2,7 +2,7 @@ import axios from 'axios';
 import config from '../../config.js';
 import CheckToken from '../../App/components/checkToken';
 
-const requestCurrentSituationTradeGet = async (page, type, fetchAll = false, statusFilter = null) => {
+const requestCurrentSituationTradeGet = async (page, type, fetchAll = false, statusFilters = null, startDate = null, endDate = null, ordering = null) => {
   let token = sessionStorage.getItem('token');
   let returnData;
   let url = `trades?page=${page}`;
@@ -15,14 +15,40 @@ const requestCurrentSituationTradeGet = async (page, type, fetchAll = false, sta
       case 'myas':
         url = `myas?page=${page}`;
         break;
+      case 'construction':
+        url += `&category=9`;
+        break;
       default:
         url += `&category=0`;
         break;
     }
   }
 
-  if (statusFilter !== null && type !== 'myas') {
-    url += `&status=${statusFilter}`;
+  if (statusFilters && !statusFilters.includes('all') && type !== 'myas') {
+    statusFilters.forEach((s) => {
+      url += `&status=${s}`;
+    });
+  }
+
+  if (statusFilters && type === 'myas') {
+    if (statusFilters.includes('all')) {
+      url += `&status=0&status=2`;
+    } else {
+      statusFilters.forEach((s) => {
+        url += `&status=${s}`;
+      });
+    }
+  }
+
+  if (startDate) {
+    url += `&start_date=${startDate}`;
+  }
+  if (endDate) {
+    url += `&end_date=${endDate}`;
+  }
+
+  if (ordering) {
+    url += `&ordering=${ordering}`;
   }
 
   await axios({
@@ -43,11 +69,20 @@ const requestCurrentSituationTradeGet = async (page, type, fetchAll = false, sta
       if (type === 'myas') {
         nextUrl = `myas?page=${i}`;
       } else {
-        nextUrl = `trades?page=${i}&category=${type === 'delivery' ? 7 : 0}`;
-        if (statusFilter !== null) {
-          nextUrl += `&status=${statusFilter}`;
-        }
+        nextUrl = `trades?page=${i}&category=${
+            type === 'delivery' ? 7 : type === 'construction' ? 9 : 0
+        }`;
       }
+
+      if (statusFilters && !statusFilters.includes('all')) {
+        statusFilters.forEach((s) => {
+          nextUrl += `&status=${s}`;
+        });
+      }
+
+      if (startDate) nextUrl += `&start_date=${startDate}`;
+      if (endDate) nextUrl += `&end_date=${endDate}`;
+      if (ordering) nextUrl += `&ordering=${ordering}`;
 
       await axios({
         url: `${config.backEndServerAddress}api/${nextUrl}`,

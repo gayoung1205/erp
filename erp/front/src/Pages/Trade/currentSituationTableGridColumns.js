@@ -12,7 +12,7 @@ export default [
     sortable: true,
     align: 'center',
     formatter({ value }) {
-      return `${value.slice(0, 10)}`;
+      return value ? value.slice(0, 10) : '';
     },
   },
   {
@@ -22,7 +22,7 @@ export default [
     align: 'center',
     ellipsis: true,
     formatter({ value }) {
-      return `${value.slice(0, 10)}`;
+      return value ? value.slice(0, 10) : '';
     },
   },
   {
@@ -32,7 +32,7 @@ export default [
     align: 'center',
     ellipsis: true,
     formatter({ value }) {
-      return `${value.slice(0, 10)}`;
+      return value ? value.slice(0, 10) : '';
     },
   },
   { name: 'completed_content', header: '완료내역', sortable: true, align: 'center', ellipsis: true },

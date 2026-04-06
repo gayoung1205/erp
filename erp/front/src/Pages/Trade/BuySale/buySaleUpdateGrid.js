@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Card, Row } from 'react-bootstrap';
 import { isEmptyObject } from 'jquery';
@@ -17,10 +17,13 @@ import handleTaxCategory from '../../../App/components/handleTaxCategory';
 import AllDeleteButton from '../../../App/components/Button/allDeleteButton';
 import DeleteButton from '../../../App/components/Button/deleteButton';
 import UpdateButton from '../../../App/components/Button/updateButton';
+import {message} from "antd";
 
 const BuySaleUpdateGrid = (props) => {
   const gridRef = React.createRef(); // Toast Ui Grid Function 사용하기 위해서
   const history = useHistory(); //location 객체 접근
+  const buySaleDeleteRef = useRef(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     if (!isEmptyObject(props.appendRowData)) {
@@ -72,8 +75,20 @@ const BuySaleUpdateGrid = (props) => {
     }
   };
 
-  const buySaleDelete = useCallback(() => {
-    requestTradeDelete(props.tradeId).then(() => history.push(`/Trade/tradeTable/1`));
+  const buySaleDelete = useCallback(async () => {
+    if (buySaleDeleteRef.current) return;
+    buySaleDeleteRef.current = true;
+    setDeleteLoading(true);
+
+    try {
+      await requestTradeDelete(props.tradeId);
+      history.push(`/Trade/tradeTable/1`);
+    } catch (err) {
+      message.error('삭제 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+      buySaleDeleteRef.current = false;
+      setDeleteLoading(false);
+    }
   }, [props.tradeId]);
 
   // 내역 전체 삭제
@@ -220,8 +235,8 @@ const BuySaleUpdateGrid = (props) => {
         <Row style={{ float: 'right' }}>
           {props.category1 === 3 ? <ReleaseButton insertRelease={(data) => insertRelease(data)} /> : null}
           <AllDeleteButton allHistoryDelete={() => allHistoryDelete()} />
-          <UpdateButton update={() => buySaleUpdate()} />
-          <DeleteButton tradeId={props.tradeId} delete={() => buySaleDelete()} />
+          <UpdateButton update={() => buySaleUpdate()} disabled={props.isSubmitting} />
+          <DeleteButton tradeId={props.tradeId} delete={() => buySaleDelete()} disabled={deleteLoading || props.isSubmitting} />
         </Row>
       </Card.Header>
       <Card.Body>

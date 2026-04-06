@@ -80,9 +80,9 @@ class NavLeft extends PureComponent {
     tags: [], // 검색 태그 리스트
     inputVisible: false, // 태그 입력 박스 Visible
     inputValue: '', // 태그 입력 박스 값
-    tables: tableData[0], // 검색 대분류 값
-    columns: columnData[tableData[0]], // 검색 중분류 리스트 값
-    selectColumns: [columnData[tableData[0]][0]], // 검색 중분류 리스트 선택 값
+    tables: sessionStorage.getItem('searchTable') || tableData[0],
+    columns: columnData[sessionStorage.getItem('searchTable') || tableData[0]],
+    selectColumns: [columnData[sessionStorage.getItem('searchTable') || tableData[0]][0]],
     customerVisible: false, // 고객검색 Modal Visible
     productVisible: false, // 제품검색 Modal Visible
     tradeVisible: false, // AS 및 목록검색 Modal Visible
@@ -167,6 +167,8 @@ class NavLeft extends PureComponent {
   // Select
   // 대분류 Select 변경
   handleProvinceChange = (val) => {
+    sessionStorage.setItem('searchTable', val);
+
     if (val === 'AS 및 거래') {
       let cmId = window.sessionStorage.getItem('customerId');
 

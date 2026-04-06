@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Row, Col, Card, Form, Button } from 'react-bootstrap';
 import Aux from '../../../hoc/_Aux';
@@ -16,6 +16,9 @@ const MemoRegistration = () => {
     register_date: moment().format().slice(0, 16),
   }); // Trade Data
 
+  const isSubmittingRef = useRef(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // 처음에 customer_name setData, sessionStorage에 Customer Id가 없을 경우 고객목록 page로 이동
   React.useEffect(() => {
     if (data.customer_id === null || data.customer_id === undefined || isNaN(data.customer_id) === true) {
@@ -26,13 +29,26 @@ const MemoRegistration = () => {
   }, []);
 
   // Memo Create
-  const memoCreate = () => {
+  const memoCreate = async () => {
     if (data.content === undefined || data.register_date === undefined) {
       message.warning('필수 입력사항을 입력해주세요.');
       return null;
     }
 
-    requestTradeCreate(data).then(() => history.push(`/Trade/tradeTable/1`));
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+
+    try {
+      await requestTradeCreate(data);
+      history.push(`/Trade/tradeTable/1`);
+    } catch (err) {
+      message.error('등록 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -100,8 +116,8 @@ const MemoRegistration = () => {
               </Row>
               <Row>
                 <Col style={{ textAlign: 'right' }}>
-                  <Button variant="primary" onClick={() => memoCreate()}>
-                    등록
+                  <Button variant="primary" onClick={() => memoCreate()} disabled={isSubmitting}>
+                    {isSubmitting ? '등록 중...' : '등록'}
                   </Button>
                 </Col>
               </Row>

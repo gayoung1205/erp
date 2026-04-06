@@ -8,7 +8,7 @@ import Aux from '../../hoc/_Aux';
 import Grid from '@toast-ui/react-grid';
 import 'tui-grid/dist/tui-grid.css';
 import 'tui-pagination/dist/tui-pagination.css';
-import { message, Modal } from 'antd';  // ⭐ Modal 추가
+import { message, Modal, Spin } from 'antd';
 import 'antd/dist/antd.css';
 import cloneDeep from 'lodash/cloneDeep';
 import notNull from '../../App/components/notNull.js';
@@ -25,18 +25,20 @@ const SearchCustomerTable = (props) => {
   const [rowData, setRowData] = useState({});
   const [gridColumns, setGridColumns] = useState([]);
   const [contextMenuText, setContextMenuText] = useState('확대');
-  // ⭐ 메모 모달용 state 추가
   const [memoModal, setMemoModal] = useState({ visible: false, content: '', title: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
+    setData([]);
     requestSearchTableGet(props).then((res) => {
       if (isEmptyObject(res)) {
         message.warning('검색내용이 없습니다.');
-        props.handleCancel();
-        return null;
+        setIsLoading(false);
+        return;
       } else {
-        res = notNull(res);
-        setData(res);
+        setData(notNull(res));
+        setIsLoading(false);
       }
     });
   }, [props.count]);
@@ -112,6 +114,11 @@ const SearchCustomerTable = (props) => {
 
         {isDesktop && (
             <>
+            {isLoading ? (
+                <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                  <Spin size="large" tip="검색 중..." />
+                </div>
+            ) : (
               <ContextMenuTrigger id="searchCustomerTableContextMenu">
                 <div className="searchCustomerTableContextMenuDiv">
                   <Grid
@@ -150,6 +157,7 @@ const SearchCustomerTable = (props) => {
                   />
                 </div>
               </ContextMenuTrigger>
+            )}
               <ContextMenu id="searchCustomerTableContextMenu">
                 <MenuItem onClick={() => handleContextMenu()}>전체 열 {contextMenuText}</MenuItem>
               </ContextMenu>

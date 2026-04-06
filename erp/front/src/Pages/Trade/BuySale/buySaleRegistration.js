@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { isEmptyObject } from 'jquery';
@@ -43,6 +43,7 @@ const BuySaleRegistration = (typeParams) => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   useEffect(() => {
     const permission = window.sessionStorage.getItem('permission');
@@ -190,7 +191,8 @@ const BuySaleRegistration = (typeParams) => {
   };
 
   const buySaleCreate = async (historyData) => {
-    if (isSubmitting) return;
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
 
     try {
@@ -217,7 +219,14 @@ const BuySaleRegistration = (typeParams) => {
             item.trade_id = tradeId;
           }
 
-          await requestHistoryCreate(historyData.history);
+
+          try {
+            await requestHistoryCreate(historyData.history);
+          } catch (err) {
+            console.error('내역 생성 실패:', err);
+            message.error('구매 내역 등록에 실패했습니다. 다시 시도해주세요.');
+            return;
+          }
 
           const failedItems = [];
 
@@ -238,14 +247,13 @@ const BuySaleRegistration = (typeParams) => {
           }
 
           if (failedItems.length > 0) {
-            message.warning(
-                `구매 등록 완료. 단, 일부 입고대기 등록 실패: ${failedItems.join(', ')}. 입고대기 탭에서 확인해주세요.`
+            message.error(
+                `구매 등록은 완료되었으나, 아래 제품의 입고대기 등록에 실패했습니다: ${failedItems.join(', ')}. 다시 시도하거나 관리자에게 문의하세요.`
             );
           } else {
             message.success('제품구매가 등록되었습니다. 입고대기 탭에서 입고 확정해주세요.');
+            history.push(`/Product/pendingStockTable`);
           }
-
-          history.push(`/Product/pendingStockTable`);
 
         } else {
           const normalItems = [];
@@ -286,6 +294,7 @@ const BuySaleRegistration = (typeParams) => {
       message.error('등록 중 오류가 발생했습니다.');
       console.error(err);
     } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };

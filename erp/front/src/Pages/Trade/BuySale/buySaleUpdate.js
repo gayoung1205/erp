@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { isEmptyObject } from 'jquery';
@@ -23,6 +23,8 @@ const BuySaleUpdate = (props) => {
   const [appendRowData, setAppendRowData] = useState({});
   const [searchModalVisible, setSearchModalVisible] = useState(false); // Modal visible
   const [data, setData] = useState({ register_date: '' }); // Trade Data
+  const buySaleUpdateRef = useRef(false);
+  const [buySaleUpdateLoading, setBuySaleUpdateLoading] = useState(false);
   const [productData, setProductData] = useState({
     name: '',
     price: 0,
@@ -69,19 +71,28 @@ const BuySaleUpdate = (props) => {
   }, []);
 
   // 제품판매, 제품구매 수정
-  const buySaleUpdate = (historyData) => {
-    // Update Data
-    let historyReqData = { history: [], trade: data };
-    let releaseReqData = { history: [], trade: data.id };
+  const buySaleUpdate = async (historyData) => {
+    if (buySaleUpdateRef.current) return;
+    buySaleUpdateRef.current = true;
+    setBuySaleUpdateLoading(true);
 
-    historyReqData = { history: historyData.history, trade: data };
+    try {
+      let historyReqData = { history: historyData.history, trade: data };
 
-    if (!isEmptyObject(historyData.release)) {
-      releaseReqData = { history: historyData.release, trade: data.id };
-      requestReleaseAllUpdate(releaseReqData);
+      if (!isEmptyObject(historyData.release)) {
+        const releaseReqData = { history: historyData.release, trade: data.id };
+        await requestReleaseAllUpdate(releaseReqData);
+      }
+
+      await requestTradeUpdate(props.match.params.trade_id, historyReqData);
+      history.push(`/Trade/tradeTable/1`);
+    } catch (err) {
+      message.error('저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      buySaleUpdateRef.current = false;
+      setBuySaleUpdateLoading(false);
     }
-
-    requestTradeUpdate(props.match.params.trade_id, historyReqData).then(() => history.push(`/Trade/tradeTable/1`));
   };
 
   // 제품명 검색
@@ -106,6 +117,7 @@ const BuySaleUpdate = (props) => {
       price: rowData[priceGrade] === ' ' ? 0 : rowData[priceGrade],
     });
   };
+
 
   // History Insert
   const insertHistory = () => {
@@ -288,10 +300,11 @@ const BuySaleUpdate = (props) => {
       <Row>
         <Col>
           <BuySaleUpdateGrid
-            appendRowData={appendRowData}
-            buySaleUpdate={buySaleUpdate}
-            tradeId={props.match.params.trade_id}
-            category1={data.category_1}
+              appendRowData={appendRowData}
+              buySaleUpdate={buySaleUpdate}
+              tradeId={props.match.params.trade_id}
+              category1={data.category_1}
+              isSubmitting={buySaleUpdateLoading}
           />
         </Col>
       </Row>

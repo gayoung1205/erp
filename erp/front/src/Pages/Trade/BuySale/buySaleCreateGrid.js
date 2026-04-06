@@ -50,10 +50,6 @@ const BuySaleCreateGrid = (props) => {
         message.warning('단가가 누락된 항목이 있습니다.');
         return;
       }
-      if (!item.product_id) {
-        message.warning('제품 정보가 누락된 항목이 있습니다. 제품을 다시 선택해주세요.');
-        return;
-      }
 
       item.tax_category = handleTaxCategory('int', item.tax_category);
 

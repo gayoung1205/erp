@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Row, Col, Card, Form, Button, InputGroup, Table } from 'react-bootstrap';
 import { isEmptyObject } from 'jquery';
 import Aux from '../../../hoc/_Aux';
-import { message, Popconfirm } from 'antd';
+import { message, Popconfirm, Modal } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import CustomerInformation from '../../../App/components/customerInformation';
@@ -27,11 +27,11 @@ import notNull from '../../../App/components/notNull';
 import requestCustomerGet from '../../../Axios/Customer/requestCustomerGet';
 
 const AsUpdate = (props) => {
-  let token = sessionStorage.getItem('token'); // Login Token
-  const history = useHistory(); // location 객체 접근
+  let token = sessionStorage.getItem('token');
+  const history = useHistory();
 
-  const [data, setData] = useState({ register_date: '' }); // Trade Data
-  const [searchModalVisible, setSearchModalVisible] = useState(false); // Modal Product Search Visible
+  const [data, setData] = useState({ register_date: '' });
+  const [searchModalVisible, setSearchModalVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [appendRowData, setAppendRowData] = useState({});
   const [text, setText] = useState(''); // As status Text
@@ -40,30 +40,34 @@ const AsUpdate = (props) => {
     price: 0,
     stock: 1,
     tax_category: '부가세 없음',
-  }); // Product Data
+  });
 
-  // ========== 내부처리 관련 State ==========
-  const [showInternalForm, setShowInternalForm] = useState(false); // 내부처리 폼 표시 여부
-  const [internalProcesses, setInternalProcesses] = useState([]); // 내부처리 이력 목록
+  const [completeModalVisible, setCompleteModalVisible] = useState(false);
+  // ★ [수정] completeData에 engineer_id, category_3, memo 추가
+  const [completeData, setCompleteData] = useState({
+    complete_date: moment().format().slice(0, 16),
+    engineer_id: '',
+    category_3: '',
+    symptom: '',
+    completed_content: '',
+    memo: '',
+  });
+
+  const [showInternalForm, setShowInternalForm] = useState(false);
+  const [internalProcesses, setInternalProcesses] = useState([]);
   const [internalData, setInternalData] = useState({
     process_date: moment().format().slice(0, 16),
     engineer_id: '',
     content: '',
     memo: '',
-  }); // 내부처리 폼 데이터
+  });
 
-  // 처음 실행될 때 Trade Data Get
   useEffect(() => {
     requestTradeGet(props.match.params.trade_id).then((res) => {
-      // trade data 복사
       let tra = res.tra;
-      // history data 복사
       let his = res.his;
-
-      // null 제거
       tra = notNull(tra);
 
-      // As가 완료일 경우에만
       if (tra.category_2 === 1) {
         // history setting
         for (let i = 0; i < his.length; i++) {
@@ -80,25 +84,20 @@ const AsUpdate = (props) => {
         setAppendRowData(his);
       }
 
-      // As category_name2 Text
       tra.category_2 === 0 || tra.category_2 === 2
           ? setText(`${tra.category_name2} 중인 AS입니다.`)
           : setText(`${tra.category_name2}된 AS입니다.`);
 
-      // customer price_grade get
       requestCustomerGet().then((cmRes) => {
         tra.price_grade = cmRes[0].price_grade;
 
-        // trade data 저장
         setData(tra);
       });
     });
 
-    // 내부처리 이력 조회
     loadInternalProcesses();
   }, [props.match.params.trade_id, token]);
 
-  // 내부처리 이력 조회
   const loadInternalProcesses = () => {
     requestAsInternalProcessGet(props.match.params.trade_id).then((res) => {
       if (res) {
@@ -107,64 +106,155 @@ const AsUpdate = (props) => {
     });
   };
 
-  // AS 수정
-  const asUpdate = (historyData) => {
+  const asUpdate = async (historyData) => {
     if (data.register_date === undefined || data.engineer_id === undefined || data.category_3 === undefined || data.content === undefined) {
       message.warning('필수 입력사항을 입력해주세요.');
       return null;
     }
 
-    // Update Data
-    let historyReqData = { history: [], trade: data };
-    let releaseReqData = { history: [], trade: data.id };
+    if (asUpdateRef.current) return;
+    asUpdateRef.current = true;
+    setAsUpdateLoading(true);
 
-    // As 완료일 경우에만
-    if (data.category_2 === 1) {
-      historyReqData = { history: historyData.history, trade: data };
+    try {
+      let historyReqData = { history: [], trade: data };
+      let releaseReqData = { history: [], trade: data.id };
 
-      if (!isEmptyObject(historyData.release)) {
-        releaseReqData = { history: historyData.release, trade: data.id };
-        requestReleaseAllUpdate(releaseReqData);
+      if (data.category_2 === 1) {
+        historyReqData = { history: historyData.history, trade: data };
+        if (!isEmptyObject(historyData.release)) {
+          releaseReqData = { history: historyData.release, trade: data.id };
+          await requestReleaseAllUpdate(releaseReqData);
+        }
       }
+      await requestTradeUpdate(props.match.params.trade_id, historyReqData);
+      history.push(`/Trade/tradeTable/1`);
+    } catch (err) {
+      message.error('저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      asUpdateRef.current = false;
+      setAsUpdateLoading(false);
     }
-
-    requestTradeUpdate(props.match.params.trade_id, historyReqData).then(() => history.push(`/Trade/tradeTable/1`));
   };
 
-  // As Delete
-  const asDelete = () => {
-    requestTradeDelete(props.match.params.trade_id).then(() => history.push(`/Trade/tradeTable/1`));
+  const asDelete = async () => {
+    if (asDeleteRef.current) return;
+    asDeleteRef.current = true;
+    setAsDeleteLoading(true);
+
+    try {
+      await requestTradeDelete(props.match.params.trade_id);
+      history.push(`/Trade/tradeTable/1`);
+    } catch (err) {
+      message.error('삭제 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      asDeleteRef.current = false;
+      setAsDeleteLoading(false);
+    }
   };
 
-  // As Category_2 변경
-  const changeCategory = (num) => {
-    if (data.register_date === undefined || data.engineer_id === undefined || data.category_3 === undefined || data.content === undefined) {
+  const handleProgress = async () => {
+    if (progressRef.current) return;
+    progressRef.current = true;
+    setProgressLoading(true);
+    try {
+      let reqData = { ...data, category_2: 2, visit_date: moment().format().slice(0, 16) };
+      await requestTradeUpdate(props.match.params.trade_id, { history: [], trade: reqData });
+      window.location.reload();
+    } catch (err) {
+      message.error('상태 변경 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      progressRef.current = false;
+      setProgressLoading(false);
+    }
+  };
+
+  const handleComplete = async () => {
+    if (completeRef.current) return;
+    completeRef.current = true;
+    setCompleteLoading(true);
+    try {
+      let reqData = { ...data, category_2: 1, complete_date: moment().format().slice(0, 16) };
+      await requestTradeUpdate(props.match.params.trade_id, { history: [], trade: reqData });
+      window.location.reload();
+    } catch (err) {
+      message.error('상태 변경 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      completeRef.current = false;
+      setCompleteLoading(false);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (cancelRef.current) return;
+    cancelRef.current = true;
+    setCancelLoading(true);
+    try {
+      let reqData = { ...data, category_2: 3 };
+      await requestTradeUpdate(props.match.params.trade_id, { history: [], trade: reqData });
+      window.location.reload();
+    } catch (err) {
+      message.error('상태 변경 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      cancelRef.current = false;
+      setCancelLoading(false);
+    }
+  };
+
+  const openCompleteModal = () => {
+    if (data.register_date === undefined || data.engineer_id === undefined ||
+        data.category_3 === undefined || data.content === undefined) {
       message.warning('필수 입력사항을 입력해주세요.');
       return null;
     }
-
-    let reqData = data;
-    reqData.category_2 = num;
-
-    // Date를 시간까지만
-    if (num === 2) reqData.visit_date = moment().format().slice(0, 16);
-    if (num === 1) reqData.complete_date = moment().format().slice(0, 16);
-
-    requestTradeUpdate(props.match.params.trade_id, { history: [], trade: reqData }).then(() => window.location.reload());
+    setCompleteData({
+      complete_date: data.complete_date || moment().format().slice(0, 16),
+      engineer_id: data.engineer_id || '',
+      category_3: data.category_3 !== undefined ? data.category_3 : '',
+      symptom: data.symptom || '',
+      completed_content: data.completed_content || '',
+      memo: data.memo || '',
+    });
+    setCompleteModalVisible(true);
   };
 
-  // Search Button Click 시 SearchModal Visible false->true, Product Data Get
+  const handleCompleteConfirm = () => {
+    if (!completeData.complete_date) {
+      message.warning('완료일을 입력해주세요.');
+      return;
+    }
+
+    let reqData = { ...data };
+    reqData.category_2 = 1; // 완료 상태로 변경
+    reqData.complete_date = completeData.complete_date;
+    reqData.engineer_id = completeData.engineer_id;
+    reqData.category_3 = completeData.category_3;
+    reqData.symptom = completeData.symptom;
+    reqData.completed_content = completeData.completed_content;
+    reqData.memo = completeData.memo;
+
+    requestTradeUpdate(props.match.params.trade_id, { history: [], trade: reqData })
+    .then(() => {
+      setCompleteModalVisible(false);
+      message.success('AS가 완료 처리되었습니다.');
+      window.location.reload();
+    });
+  };
+
   const searchProduct = () => {
     setSearchText(productData.name);
     setSearchModalVisible(!searchModalVisible);
   };
 
-  // Product Search Modal에서 DbClick으로 등록
   const insertProduct = (rowData) => {
     if (rowData === undefined) return null;
     let priceGrade = handlePriceGrade(data.price_grade);
 
-    // Product price_grade값의 Null여부에 따라 price 변경
     setProductData({
       ...productData,
       id: rowData.id,
@@ -174,7 +264,21 @@ const AsUpdate = (props) => {
     });
   };
 
-  // History Insert
+  const progressRef = useRef(false);
+  const [progressLoading, setProgressLoading] = useState(false);
+
+  const completeRef = useRef(false);
+  const [completeLoading, setCompleteLoading] = useState(false);
+
+  const cancelRef = useRef(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+
+  const asUpdateRef = useRef(false);
+  const [asUpdateLoading, setAsUpdateLoading] = useState(false);
+
+  const asDeleteRef = useRef(false);
+  const [asDeleteLoading, setAsDeleteLoading] = useState(false);
+
   const insertHistory = () => {
     if (productData.name === '') {
       message.warning('제품명을 입력해주세요.');
@@ -183,7 +287,6 @@ const AsUpdate = (props) => {
 
     let taxSet = calcTaxCategory(productData.tax_category, productData.price, productData.stock);
 
-    // Grid에 Row 추가
     setAppendRowData({
       name: productData.name,
       product_category: productData.category,
@@ -199,11 +302,9 @@ const AsUpdate = (props) => {
       id: null,
     });
 
-    // ProductData 초기화
     resetProductData();
   };
 
-  // ProductData 초기화
   const resetProductData = () => {
     setProductData({
       name: '',
@@ -213,7 +314,6 @@ const AsUpdate = (props) => {
     });
   };
 
-  // 제품명/코드 InputText에서 Enter 시 자동 검색 기능
   const enterCode = () => {
     if (window.event.keyCode === 13) {
       if (productData.name === '') {
@@ -248,12 +348,9 @@ const AsUpdate = (props) => {
     }
   };
 
-  // ========== 내부처리 관련 함수 ==========
 
-  // 내부처리 폼 토글
   const toggleInternalForm = () => {
     if (!showInternalForm) {
-      // 폼 열 때 초기화
       setInternalData({
         process_date: moment().format().slice(0, 16),
         engineer_id: '',
@@ -264,9 +361,7 @@ const AsUpdate = (props) => {
     setShowInternalForm(!showInternalForm);
   };
 
-  // 내부처리 등록
   const createInternalProcess = () => {
-    // 필수값 체크
     if (!internalData.engineer_id || internalData.engineer_id === '담당자 선택') {
       message.warning('담당자를 선택해주세요.');
       return null;
@@ -287,7 +382,6 @@ const AsUpdate = (props) => {
     requestAsInternalProcessCreate(reqData).then((res) => {
       if (res) {
         message.success('내부처리가 등록되었습니다.');
-        // 폼 초기화 및 닫기
         setInternalData({
           process_date: moment().format().slice(0, 16),
           engineer_id: '',
@@ -295,7 +389,6 @@ const AsUpdate = (props) => {
           memo: '',
         });
         setShowInternalForm(false);
-        // 목록 새로고침
         loadInternalProcesses();
       } else {
         message.error('내부처리 등록에 실패했습니다.');
@@ -303,7 +396,6 @@ const AsUpdate = (props) => {
     });
   };
 
-  // 내부처리 삭제
   const deleteInternalProcess = (processId) => {
     requestAsInternalProcessDelete(processId).then((res) => {
       if (res) {
@@ -315,36 +407,21 @@ const AsUpdate = (props) => {
     });
   };
 
-  // ========== 컴포넌트 ==========
-
-  // data rendering전에 data 값이 undefined일 경우 Warning 있어서
   if (data === undefined) {
     return null;
   }
 
-  // AS접수일 경우 진행 Button
-  const AsProgressButton = () => {
-    return (
-        <>
-          <Button variant="primary" onClick={() => changeCategory(2)}>
-            진행
-          </Button>
-        </>
-    );
-  };
+  const AsProgressButton = () => (
+      <Button variant="primary" onClick={handleProgress} disabled={progressLoading}>
+        {progressLoading ? '처리 중...' : '진행'}
+      </Button>
+  );
+  const AsCompleteButton = () => (
+      <Button variant="primary" onClick={openCompleteModal} disabled={completeLoading}>
+        완료
+      </Button>
+  );
 
-  // AS진행일 경우 완료 Button
-  const AsCompleteButton = () => {
-    return (
-        <>
-          <Button variant="primary" onClick={() => changeCategory(1)}>
-            완료
-          </Button>
-        </>
-    );
-  };
-
-  // 내부처리 Button
   const AsInternalButton = () => {
     return (
         <>
@@ -359,18 +436,12 @@ const AsUpdate = (props) => {
     );
   };
 
-  // AS접수, AS진행, AS완료일 경우 Cancel Button
-  const AsCancelButton = () => {
-    return (
-        <>
-          <Button variant="primary" onClick={() => changeCategory(3)}>
-            취소
-          </Button>
-        </>
-    );
-  };
+  const AsCancelButton = () => (
+      <Button variant="primary" onClick={handleCancel} disabled={cancelLoading}>
+        {cancelLoading ? '처리 중...' : '취소'}
+      </Button>
+  );
 
-  // AS완료, AS진행일 경우 visit_date
   const AsVisitDate = () => {
     return (
         <>
@@ -389,7 +460,6 @@ const AsUpdate = (props) => {
     );
   };
 
-  // AS완료, AS진행일 경우 complete_date
   const AsCompleteDate = () => {
     return (
         <>
@@ -408,7 +478,6 @@ const AsUpdate = (props) => {
     );
   };
 
-  // 단가, 수량 값이 비게 될 경우 0으로 변경
   const handleEmpty = (e) => {
     if (isEmptyObject(e.target.value)) {
       setProductData({ ...productData, [e.target.name]: e.target.name === 'price' ? 0 : 1 });
@@ -542,11 +611,15 @@ const AsUpdate = (props) => {
                 <Row>
                   <Col style={{ textAlign: 'right' }}>
                     {data.category_2 !== 3 && data.category_2 !== 1 ? <AsCancelButton /> : null}
-                    {data.category_2 !== 1 ? <DeleteButton tradeId={data.id} delete={() => asDelete()} /> : null}
+                    {data.category_2 !== 1 ? (
+                        <DeleteButton tradeId={data.id} delete={() => asDelete()} disabled={asDeleteLoading} />
+                    ) : null}
                     {data.category_2 === 0 ? <AsProgressButton /> : null}
                     {data.category_2 === 2 ? <AsInternalButton /> : null}
                     {data.category_2 === 2 ? <AsCompleteButton /> : null}
-                    {data.category_2 !== 1 ? <UpdateButton update={() => asUpdate()} /> : null}
+                    {data.category_2 !== 1 ? (
+                        <UpdateButton update={() => asUpdate()} disabled={asUpdateLoading} />
+                    ) : null}
                   </Col>
                 </Row>
               </Card.Body>
@@ -675,7 +748,7 @@ const AsUpdate = (props) => {
                             <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                               {item.process_date ? item.process_date.slice(0, 16).replace('T', ' ') : '-'}
                             </td>
-                            <td style={{ textAlign: 'left', verticalAlign: 'middle' }}>{item.content}</td>
+                            <td style={{ textAlign: 'left', verticalAlign: 'middle', whiteSpace: 'pre-wrap' }}>{item.content}</td>
                             <td style={{ textAlign: 'left', verticalAlign: 'middle' }}>{item.memo || '-'}</td>
                             <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{item.register_name}</td>
                             <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
@@ -822,6 +895,103 @@ const AsUpdate = (props) => {
               </Col>
             </Row>
         ) : null}
+
+        {/* ★ [수정] 완료 모달 - 담당자/출장구분/참고사항 추가 */}
+        <Modal
+            title="AS 완료 처리"
+            visible={completeModalVisible}
+            onOk={handleCompleteConfirm}
+            onCancel={() => setCompleteModalVisible(false)}
+            okText="저장"
+            cancelText="취소"
+            width={600}
+        >
+          <Form>
+            <Form.Group controlId="completeModalInput1">
+              <Form.Label><span style={{ color: 'red' }}>*</span> 완료일</Form.Label>
+              <Form.Control
+                  type="datetime-local"
+                  value={completeData.complete_date}
+                  onChange={(e) => {
+                    setCompleteData({ ...completeData, complete_date: e.target.value });
+                  }}
+                  required
+              />
+            </Form.Group>
+
+            {/* ★ [추가] 담당자 */}
+            <Form.Group controlId="completeModalInput2" style={{ marginTop: '15px' }}>
+              <Form.Label>담당자</Form.Label>
+              <Form.Control
+                  as="select"
+                  value={completeData.engineer_id}
+                  onChange={(e) => {
+                    setCompleteData({ ...completeData, engineer_id: Number(e.target.value) });
+                  }}
+              >
+                <EngineerSelect />
+              </Form.Control>
+            </Form.Group>
+
+            {/* ★ [추가] 출장구분 */}
+            <Form.Group controlId="completeModalInput3" style={{ marginTop: '15px' }}>
+              <Form.Label>출장구분</Form.Label>
+              <Form.Control
+                  as="select"
+                  value={completeData.category_3}
+                  onChange={(e) => {
+                    setCompleteData({ ...completeData, category_3: parseInt(e.target.value) });
+                  }}
+              >
+                <option value="">선택해주세요</option>
+                <option value="0">출장</option>
+                <option value="1">내방</option>
+                <option value="2">공사</option>
+                <option value="3">내부처리</option>
+              </Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="completeModalInput4" style={{ marginTop: '15px' }}>
+              <Form.Label>고장증상</Form.Label>
+              <Form.Control
+                  as="textarea"
+                  rows="3"
+                  placeholder="고장증상을 입력해주세요"
+                  value={completeData.symptom}
+                  onChange={(e) => {
+                    setCompleteData({ ...completeData, symptom: e.target.value });
+                  }}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="completeModalInput5" style={{ marginTop: '15px' }}>
+              <Form.Label>완료내역</Form.Label>
+              <Form.Control
+                  as="textarea"
+                  rows="3"
+                  placeholder="완료내역을 입력해주세요"
+                  value={completeData.completed_content}
+                  onChange={(e) => {
+                    setCompleteData({ ...completeData, completed_content: e.target.value });
+                  }}
+              />
+            </Form.Group>
+
+            {/* ★ [추가] 참고사항 */}
+            <Form.Group controlId="completeModalInput6" style={{ marginTop: '15px' }}>
+              <Form.Label>참고사항</Form.Label>
+              <Form.Control
+                  as="textarea"
+                  rows="2"
+                  placeholder="참고사항을 입력해주세요"
+                  value={completeData.memo}
+                  onChange={(e) => {
+                    setCompleteData({ ...completeData, memo: e.target.value });
+                  }}
+              />
+            </Form.Group>
+          </Form>
+        </Modal>
       </Aux>
   );
 };
