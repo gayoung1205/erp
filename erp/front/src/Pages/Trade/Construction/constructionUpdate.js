@@ -57,13 +57,11 @@ const ConstructionUpdate = (props) => {
       });
     });
 
-    // 전체 직원 목록 로드
     requestEngineerGet(true).then((res) => {
       if (res) setEngineers(res);
     });
   }, [props.match.params.trade_id, token]);
 
-  // 참여자 체크박스 토글
   const toggleParticipant = (engineerId) => {
     setSelectedParticipants(prev =>
         prev.includes(engineerId)
@@ -72,7 +70,6 @@ const ConstructionUpdate = (props) => {
     );
   };
 
-  // 공사 저장
   const constructionUpdate = async () => {
     if (data.register_date === undefined || data.engineer_id === undefined || data.content === undefined) {
       message.warning('필수 입력사항을 입력해주세요.');
@@ -154,7 +151,6 @@ const ConstructionUpdate = (props) => {
 
   if (data === undefined) return null;
 
-  // 완료 버튼
   const ConstructionCompleteButton = () => (
       <Button
           variant="primary"
@@ -211,7 +207,6 @@ const ConstructionUpdate = (props) => {
                         />
                       </Form.Group>
 
-                      {/* 완료일 (완료 상태일 때만 표시) */}
                       {data.category_2 === 1 && (
                           <Form.Group controlId="constructionInput2">
                             <Form.Label>완료일</Form.Label>
@@ -236,7 +231,6 @@ const ConstructionUpdate = (props) => {
                         </Form.Control>
                       </Form.Group>
 
-                      {/* 참여자 선택 */}
                       <Form.Group controlId="constructionInput4">
                         <Form.Label>참여자</Form.Label>
                         <div style={{
@@ -294,7 +288,6 @@ const ConstructionUpdate = (props) => {
                       />
                     </Form.Group>
 
-                    {/* 완료내역 (완료 상태일 때만 표시) */}
                     {data.category_2 === 1 && (
                         <Form.Group controlId="constructionInput7">
                           <Form.Label>완료내역</Form.Label>
@@ -312,9 +305,7 @@ const ConstructionUpdate = (props) => {
 
                 <Row>
                   <Col style={{ textAlign: 'right' }}>
-                    {/* 취소 버튼: 접수/진행 중일 때만 표시 */}
                     {data.category_2 !== 3 && data.category_2 !== 1 && <ConstructionCancelButton />}
-                    {/* 삭제 버튼: 완료가 아닐 때만 */}
                     {data.category_2 !== 1 && (
                         <DeleteButton
                             tradeId={data.id}

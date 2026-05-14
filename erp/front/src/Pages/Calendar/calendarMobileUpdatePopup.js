@@ -10,11 +10,8 @@ const CalendarMobileUpdatePopup = (props) => {
   const [data, setData] = useState({});
   const [flag, setFlag] = useState(false);
   const [users, setUsers] = useState({});
-
-  // ===== 추가: datetime-local input에 대한 ref =====
   const startRef = useRef(null);
   const endRef = useRef(null);
-  // ===== 추가 끝 =====
 
   useEffect(() => {
     if (!isEmptyObject(props.data)) {
@@ -136,7 +133,6 @@ const CalendarMobileUpdatePopup = (props) => {
           </div>
           <div style={{ marginBottom: '8px' }}>
             <Form.Label style={{ fontSize: '12px', marginBottom: '2px', color: '#888' }}>시작</Form.Label>
-            {/* ===== 수정: 완료 버튼 추가 ===== */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Form.Control
                   ref={startRef}
@@ -165,11 +161,9 @@ const CalendarMobileUpdatePopup = (props) => {
                 완료
               </button>
             </div>
-            {/* ===== 수정 끝 ===== */}
           </div>
           <div style={{ marginBottom: '8px' }}>
             <Form.Label style={{ fontSize: '12px', marginBottom: '2px', color: '#888' }}>종료</Form.Label>
-            {/* ===== 수정: 완료 버튼 추가 ===== */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Form.Control
                   ref={endRef}
@@ -198,7 +192,6 @@ const CalendarMobileUpdatePopup = (props) => {
                 완료
               </button>
             </div>
-            {/* ===== 수정 끝 ===== */}
           </div>
         </Form>
       </Modal>

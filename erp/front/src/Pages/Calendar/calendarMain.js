@@ -24,6 +24,7 @@ const CalendarMain = () => {
   const [updatePopupVisible, setUpdatePopupVisible] = useState(false);
   const [createPopupData, setCreatePopupData] = useState({});
   const [updatePopupData, setUpdatePopupData] = useState({});
+  const [completedTodos, setCompletedTodos] = useState(new Set());
 
   const calendarRef = useRef(null);
   const calendarTypesRef = useRef([]);
@@ -111,7 +112,6 @@ const CalendarMain = () => {
     });
   }, []);
 
-  // schedules 갱신 시 현재 뷰 복원
   useEffect(() => {
     setTimeout(() => {
       const inst = calendarRef.current && calendarRef.current.getInstance();
@@ -239,7 +239,6 @@ const CalendarMain = () => {
     });
   };
 
-  // ✅ onBeforeDeleteSchedule 제거, 팝업에서 직접 호출
   const deleteSchedule = (id) => {
     requestCalendarDelete(id).then(() => {
       message.success('일정이 삭제되었습니다. (구글 캘린더 동기화 완료)');
@@ -273,8 +272,26 @@ const CalendarMain = () => {
     });
   }, [refreshCalendar, schedules]);
 
+  // ✅ 오늘 일정 필터링
+  const getTodaySchedules = () => {
+    const today = new Date();
+    return schedules.filter((s) => {
+      const start = new Date(s.start);
+      return (
+          start.getFullYear() === today.getFullYear() &&
+          start.getMonth() === today.getMonth() &&
+          start.getDate() === today.getDate()
+      );
+    }).filter((s) => !completedTodos.has(s.id));
+  };
+
+  const handleTodoComplete = (id) => {
+    setCompletedTodos(prev => new Set([...prev, id]));
+  };
+
   return (
       <>
+        {/* 툴바 */}
         <div style={{ padding: '10px' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '5px' }}>
             <Button variant="outline-primary" size="sm" onClick={handleChangeView}>변경</Button>
@@ -287,6 +304,7 @@ const CalendarMain = () => {
           </div>
         </div>
 
+        {/* 캘린더 */}
         <div style={{ padding: '0 10px' }}>
           <Calendar
               key={isDesktop ? 'pc-month' : 'mobile-day'}
@@ -304,18 +322,60 @@ const CalendarMain = () => {
               onBeforeCreateSchedule={handleBeforeCreateSchedule}
               onClickSchedule={handleClickSchedule}
               onBeforeUpdateSchedule={handleBeforeUpdateSchedule}
-              // ✅ onBeforeDeleteSchedule 완전 제거
               onAfterRenderSchedule={() => { updateDateRange(); }}
           />
         </div>
 
+        {/* ✅ TODO 섹션 */}
+        <div style={{ padding: '20px 10px 10px' }}>
+          <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '10px' }}>
+            오늘의 일정 TODO
+          </div>
+          {getTodaySchedules().length === 0 ? (
+              <div style={{ color: '#aaa', fontSize: '13px' }}>오늘 등록된 일정이 없습니다.</div>
+          ) : (
+              getTodaySchedules().map((todo) => {
+                const engineer = calendarTypes.find(t => String(t.id) === String(todo.calendarId));
+                return (
+                    <div
+                        key={todo.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '6px 0',
+                          borderBottom: '1px solid #f0f0f0',
+                        }}
+                    >
+                      <input
+                          type="checkbox"
+                          onChange={() => handleTodoComplete(todo.id)}
+                          style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                      />
+                      <span style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: todo.bgColor || '#888',
+                        flexShrink: 0,
+                      }}/>
+                      <span style={{ flex: 1, fontSize: '14px' }}>{todo.title}</span>
+                      <span style={{ fontSize: '12px', color: '#aaa' }}>
+                  {engineer ? engineer.name : ''}
+                </span>
+                    </div>
+                );
+              })
+          )}
+        </div>
+
+        {/* 팝업 */}
         <CalendarMobileCreatePopup
             visible={createPopupVisible}
             data={createPopupData}
             users={engineers}
             create={createSchedule}
         />
-
         <CalendarMobileUpdatePopup
             visible={updatePopupVisible}
             data={updatePopupData}

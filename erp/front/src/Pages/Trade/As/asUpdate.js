@@ -627,7 +627,6 @@ const AsUpdate = (props) => {
           </Col>
         </Row>
 
-        {/* ========== 내부처리 등록 폼 ========== */}
         {showInternalForm && data.category_2 === 2 ? (
             <Row>
               <Col>
@@ -716,7 +715,6 @@ const AsUpdate = (props) => {
             </Row>
         ) : null}
 
-        {/* ========== 내부처리 이력 목록 ========== */}
         {internalProcesses.length > 0 ? (
             <Row>
               <Col>
@@ -896,7 +894,6 @@ const AsUpdate = (props) => {
             </Row>
         ) : null}
 
-        {/* ★ [수정] 완료 모달 - 담당자/출장구분/참고사항 추가 */}
         <Modal
             title="AS 완료 처리"
             visible={completeModalVisible}
@@ -919,7 +916,6 @@ const AsUpdate = (props) => {
               />
             </Form.Group>
 
-            {/* ★ [추가] 담당자 */}
             <Form.Group controlId="completeModalInput2" style={{ marginTop: '15px' }}>
               <Form.Label>담당자</Form.Label>
               <Form.Control
@@ -933,7 +929,6 @@ const AsUpdate = (props) => {
               </Form.Control>
             </Form.Group>
 
-            {/* ★ [추가] 출장구분 */}
             <Form.Group controlId="completeModalInput3" style={{ marginTop: '15px' }}>
               <Form.Label>출장구분</Form.Label>
               <Form.Control
@@ -977,7 +972,6 @@ const AsUpdate = (props) => {
               />
             </Form.Group>
 
-            {/* ★ [추가] 참고사항 */}
             <Form.Group controlId="completeModalInput6" style={{ marginTop: '15px' }}>
               <Form.Label>참고사항</Form.Label>
               <Form.Control

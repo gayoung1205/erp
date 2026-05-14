@@ -87,14 +87,12 @@ const SearchCustomerTable = (props) => {
     setGridColumns(dummyColumns);
   };
 
-  // ⭐ 메모 모달 열기
   const openMemoModal = (name, memo) => {
     setMemoModal({ visible: true, content: memo, title: name });
   };
 
   return (
       <>
-        {/* ⭐ 메모 전체보기 모달 */}
         <Modal
             title={`📝 ${memoModal.title} 메모`}
             visible={memoModal.visible}
@@ -105,7 +103,7 @@ const SearchCustomerTable = (props) => {
               </Button>
             ]}
             bodyStyle={{ maxHeight: '60vh', overflow: 'auto' }}
-            zIndex={1050}  // ⭐ 검색 모달보다 위에 표시
+            zIndex={1050}
         >
           <div style={{ whiteSpace: 'pre-wrap', fontSize: '14px', lineHeight: '1.6' }}>
             {memoModal.content}

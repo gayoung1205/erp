@@ -301,9 +301,8 @@ class NavLeft extends PureComponent {
               </a>
             </li>
             <li className={navItemClass.join(' ')} style={{ lineHeight: '40px' }}>
-              {/* ✅ 수정: 대분류 Select - 크기 통일 */}
               <Select
-                  defaultValue={tableData[0]}
+                  value={this.state.tables}
                   style={selectStyle}
                   onChange={this.handleProvinceChange}
               >
@@ -312,7 +311,6 @@ class NavLeft extends PureComponent {
                 ))}
               </Select>
 
-              {/* ✅ 추가: 제품분류 드롭다운 (제품 선택 시에만 표시) */}
               {this.state.tables === '제품' && (
                   <>
                     <MediaQuery maxDeviceWidth={480}>
@@ -344,7 +342,6 @@ class NavLeft extends PureComponent {
                   </>
               )}
 
-              {/* ✅ 수정: 중분류 Select - 크기 통일 */}
               <MediaQuery maxDeviceWidth={480}>
                 <Select
                     mode="tags"
@@ -423,7 +420,6 @@ class NavLeft extends PureComponent {
                 </>
                 {/* Tag */}
 
-                {/* ✅ 수정: 검색 버튼 크기 통일 */}
                 {!inputVisible && (
                     <div
                         id="main-search"
@@ -450,7 +446,6 @@ class NavLeft extends PureComponent {
               tables={this.state.tables}
               tags={this.state.tags}
           />
-          {/* ✅ 수정: 제품검색 모달에 selectedProductCategory 전달 */}
           <SearchProductTableModal
               visible={this.state.productVisible}
               tables={this.state.tables}

@@ -15,7 +15,7 @@ const ConstructionRegistration = () => {
   let cmId = window.sessionStorage.getItem('customerId');
   const history = useHistory();
   const [selectLoading, setSelectLoading] = useState(false);
-  const [engineers, setEngineers] = useState([]);  // 참여자 선택용 전체 직원 목록
+  const [engineers, setEngineers] = useState([]);
   const [data, setData] = useState({
     customer_id: cmId,
     category_1: 9,   // 공사
@@ -48,7 +48,6 @@ const ConstructionRegistration = () => {
     }
   }, []);
 
-  // 참여자 체크박스 토글
   const toggleParticipant = (engineerId) => {
     setSelectedParticipants(prev =>
         prev.includes(engineerId)
@@ -122,7 +121,6 @@ const ConstructionRegistration = () => {
                         </Form.Control>
                       </Form.Group>
 
-                      {/* ✅ 참여자 선택 (체크박스) */}
                       <Form.Group controlId="constructionInput3">
                         <Form.Label>참여자</Form.Label>
                         <div style={{

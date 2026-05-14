@@ -338,7 +338,6 @@ const DeliveryUpdate = (props) => {
     });
   };
 
-  // 제품명/코드 InputText에서 Enter 시 자동 검색 기능
   const enterCode = () => {
     if (window.event.keyCode === 13) {
       if (productData.name === '') {
@@ -373,7 +372,6 @@ const DeliveryUpdate = (props) => {
     }
   };
 
-  // data rendering전에 data 값이 undefined일 경우 Warning 있어서
   if (data === undefined) {
     return null;
   }
@@ -390,7 +388,6 @@ const DeliveryUpdate = (props) => {
       </Button>
   );
 
-  // ★ [추가] 내부처리 Button
   const DeliveryInternalButton = () => {
     return (
         <>
@@ -543,7 +540,6 @@ const DeliveryUpdate = (props) => {
           </Col>
         </Row>
 
-        {/* ★ [추가] 내부처리 등록 폼 */}
         {showInternalForm && data.category_2 === 0 ? (
             <Row>
               <Col>
@@ -632,7 +628,6 @@ const DeliveryUpdate = (props) => {
             </Row>
         ) : null}
 
-        {/* ★ [추가] 내부처리 이력 목록 */}
         {internalProcesses.length > 0 ? (
             <Row>
               <Col>
@@ -801,7 +796,6 @@ const DeliveryUpdate = (props) => {
             </Row>
         ) : null}
 
-        {/* ★ [추가] 납품 완료 처리 모달 */}
         <Modal
             title="납품 완료 처리"
             visible={completeModalVisible}
