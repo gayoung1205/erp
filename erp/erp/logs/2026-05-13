@@ -1,0 +1,24 @@
+[13/May/2026 09:34:30] INFO [core.views:1876] 테스트2 이 전체 직원을 조회하였습니다.
+[13/May/2026 09:34:32] INFO [core:236] Google Calendar 동기화 완료: 생성 171, 수정 15, 삭제 0
+[13/May/2026 09:34:40] INFO [core:69] Google Calendar 일정 생성 성공: 2s0knefe04mtkipta2dnuu2jio
+[13/May/2026 09:34:40] INFO [core.views:1633] 테스트2 이 13300 일정을 생성하였습니다.
+[13/May/2026 09:34:41] INFO [core:236] Google Calendar 동기화 완료: 생성 3, 수정 0, 삭제 0
+[13/May/2026 13:24:33] INFO [core.views:1911] 테스트2 이 전체 직원을 조회하였습니다.
+[13/May/2026 13:24:34] INFO [core:236] Google Calendar 동기화 완료: 생성 4, 수정 1, 삭제 13
+[13/May/2026 13:52:01] INFO [core.views:1876] 테스트2 이 전체 직원을 조회하였습니다.
+[13/May/2026 13:52:03] INFO [core:236] Google Calendar 동기화 완료: 생성 6, 수정 0, 삭제 1
+[13/May/2026 14:00:36] INFO [core:69] Google Calendar 일정 생성 성공: 7l3up8cgorojue5ph0k5fdd9bs
+[13/May/2026 14:00:36] INFO [core.views:1633] 테스트2 이 13314 일정을 생성하였습니다.
+[13/May/2026 14:00:37] INFO [core:236] Google Calendar 동기화 완료: 생성 3, 수정 0, 삭제 0
+[13/May/2026 14:00:40] INFO [core.views:1876] 테스트2 이 전체 직원을 조회하였습니다.
+[13/May/2026 14:00:41] INFO [core:236] Google Calendar 동기화 완료: 생성 3, 수정 0, 삭제 0
+[13/May/2026 14:01:26] INFO [core.views:1876] 테스트2 이 전체 직원을 조회하였습니다.
+[13/May/2026 14:01:27] INFO [core:236] Google Calendar 동기화 완료: 생성 3, 수정 0, 삭제 0
+[13/May/2026 14:01:33] INFO [core:120] Google Calendar 일정 삭제 성공: 7l3up8cgorojue5ph0k5fdd9bs
+[13/May/2026 14:01:33] INFO [core.views:1716] 테스트2 이 13314 일정을 삭제하였습니다.
+[13/May/2026 14:01:34] INFO [core:236] Google Calendar 동기화 완료: 생성 3, 수정 0, 삭제 0
+[13/May/2026 14:01:40] INFO [core:69] Google Calendar 일정 생성 성공: g2qt61fi700o85iv1jdrcpv39c
+[13/May/2026 14:01:40] INFO [core.views:1633] 테스트2 이 13327 일정을 생성하였습니다.
+[13/May/2026 14:01:41] INFO [core:236] Google Calendar 동기화 완료: 생성 3, 수정 0, 삭제 0
+[13/May/2026 14:06:56] INFO [core.views:1876] 테스트2 이 전체 직원을 조회하였습니다.
+[13/May/2026 14:06:57] INFO [core:236] Google Calendar 동기화 완료: 생성 3, 수정 0, 삭제 0

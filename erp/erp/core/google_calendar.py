@@ -133,18 +133,37 @@ def sync_google_events_to_db():
     return {"created": 0, "updated": 0, "deleted": 0}
 
   try:
-    events_result = service.events().list(
-        calendarId=CALENDAR_ID,
-        maxResults=500,
-        singleEvents=True,
-        orderBy="startTime",
-    ).execute()
+    # ✅ 30일 전부터 미래 이벤트만 가져옴
+    time_min = (dt.datetime.utcnow() - dt.timedelta(days=30)).isoformat() + 'Z'
 
-    google_events = events_result.get("items", [])
+    # ✅ 페이지네이션으로 전체 가져오기
+    google_events = []
+    page_token = None
+
+    while True:
+      events_result = service.events().list(
+          calendarId=CALENDAR_ID,
+          maxResults=500,
+          singleEvents=True,
+          orderBy="startTime",
+          timeMin=time_min,
+          pageToken=page_token,
+      ).execute()
+
+      google_events.extend(events_result.get("items", []))
+      page_token = events_result.get("nextPageToken")
+      if not page_token:
+        break
+
+    # ✅ 30일 이내 DB 레코드만 비교 대상
+    cutoff = dt.datetime.utcnow() - dt.timedelta(days=30)
 
     db_events = {
       cal.google_event_id: cal
-      for cal in Cal.objects.filter(google_event_id__isnull=False).exclude(google_event_id='')
+      for cal in Cal.objects.filter(
+          google_event_id__isnull=False,
+          start__gte=cutoff
+      ).exclude(google_event_id='')
     }
 
     created_count = 0

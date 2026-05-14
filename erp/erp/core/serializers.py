@@ -640,7 +640,6 @@ class PendingStockSerializer(serializers.ModelSerializer):
             "history",
             "supplier_name",
             "register_name",
-            'participants_names',
             "memo",
             "confirmed_date",
             "confirmed_by",
