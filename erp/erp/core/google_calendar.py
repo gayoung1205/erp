@@ -229,9 +229,6 @@ def sync_google_events_to_db():
         created_count += 1
 
     deleted_count = 0
-    for g_id, cal in db_events.items():
-      cal.delete()
-      deleted_count += 1
 
     logger.info(f"Google Calendar 동기화 완료: 생성 {created_count}, 수정 {updated_count}, 삭제 {deleted_count}")
     return {"created": created_count, "updated": updated_count, "deleted": deleted_count}
@@ -261,7 +258,8 @@ def get_engineer_color(engineer_name):
 
 def get_trade_calendar_title(category_1, category_2, customer_name, engineer_name):
 
-  type_name = "AS" if category_1 == 0 else "납품"
+  type_names = {0: "AS", 7: "납품", 9: "공사"}
+  type_name = type_names.get(category_1, "납품")
   status_names = {0: "접수", 1: "완료", 2: "진행", 3: "취소"}
   status_name = status_names.get(category_2, "접수")
 

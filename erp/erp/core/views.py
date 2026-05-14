@@ -1036,8 +1036,7 @@ class Trade(APIView):
                 if participants:
                     tra.participants.set(participants)
 
-                # ★ AS(0) 또는 납품(7) 접수 시 캘린더 자동 생성
-                if tra.category_1 in [0, 7]:
+                if tra.category_1 in [0, 7, 9]:
                     try:
                         from model.models import Calendar as CalModel
                         import datetime as dt
@@ -1176,7 +1175,7 @@ class TradeDetail(APIView):
                 if 'participants' in data.get('trade', {}):
                     tra.participants.set(data['trade']['participants'])
 
-                if tra.category_1 in [0, 7]:
+                if tra.category_1 in [0, 7, 9]:
                     try:
                         from model.models import Calendar as CalModel
                         import datetime as dt

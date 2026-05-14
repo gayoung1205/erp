@@ -272,17 +272,30 @@ const CalendarMain = () => {
     });
   }, [refreshCalendar, schedules]);
 
-  // ✅ 오늘 일정 필터링
-  const getTodaySchedules = () => {
-    const today = new Date();
-    return schedules.filter((s) => {
-      const start = new Date(s.start);
-      return (
-          start.getFullYear() === today.getFullYear() &&
-          start.getMonth() === today.getMonth() &&
-          start.getDate() === today.getDate()
-      );
-    }).filter((s) => !completedTodos.has(s.id));
+  const getPendingTradeList = () => {
+    const now = new Date();
+    const tagPattern = /^\[(AS|납품|공사)(접수|진행|완료|취소)\]/;
+
+    return schedules
+    .filter((s) => {
+      const title = s.title || '';
+      const m = title.match(tagPattern);
+      if (!m) return false;
+      const status = m[2];
+      if (status === '완료' || status === '취소') return false;
+      return true;
+    })
+    .map((s) => {
+      const m = s.title.match(tagPattern);
+      const type = m[1];      // "AS" | "납품" | "공사"
+      const status = m[2];    // "접수" | "진행"
+
+      const startDate = new Date(s.start);
+      const diffMs = now - startDate;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      return { ...s, daysPassed: diffDays, tradeType: type, tradeStatus: status };
+    })
+    .sort((a, b) => b.daysPassed - a.daysPassed);
   };
 
   const handleTodoComplete = (id) => {
@@ -326,19 +339,27 @@ const CalendarMain = () => {
           />
         </div>
 
-        {/* ✅ TODO 섹션 */}
+        {/* ✅ 미완료 거래 알림 섹션 */}
         <div style={{ padding: '20px 10px 10px' }}>
           <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '10px' }}>
-            오늘의 일정 TODO
+            미완료 업무 목록 (AS / 납품 / 공사)
           </div>
-          {getTodaySchedules().length === 0 ? (
-              <div style={{ color: '#aaa', fontSize: '13px' }}>오늘 등록된 일정이 없습니다.</div>
+          {getPendingTradeList().length === 0 ? (
+              <div style={{ color: '#aaa', fontSize: '13px' }}>접수된 업무가 없습니다.</div>
           ) : (
-              getTodaySchedules().map((todo) => {
-                const engineer = calendarTypes.find(t => String(t.id) === String(todo.calendarId));
+              getPendingTradeList().map((item) => {
+                // 경과일에 따라 색상 강조 (3일 이상 빨강, 1~2일 주황, 당일 초록)
+                let badgeColor = '#52c41a';
+                if (item.daysPassed >= 3) badgeColor = '#ff4d4f';
+                else if (item.daysPassed >= 1) badgeColor = '#fa8c16';
+
+                // 종류별 뱃지 색상
+                const typeColors = { 'AS': '#1890ff', '납품': '#722ed1', '공사': '#13c2c2' };
+                const typeColor = typeColors[item.tradeType] || '#888';
+
                 return (
                     <div
-                        key={todo.id}
+                        key={item.id}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -347,22 +368,45 @@ const CalendarMain = () => {
                           borderBottom: '1px solid #f0f0f0',
                         }}
                     >
-                      <input
-                          type="checkbox"
-                          onChange={() => handleTodoComplete(todo.id)}
-                          style={{ cursor: 'pointer', width: '16px', height: '16px' }}
-                      />
+                      {/* 종류 뱃지 (AS/납품/공사) */}
+                      <span style={{
+                        fontSize: '11px',
+                        color: '#fff',
+                        background: typeColor,
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontWeight: 'bold',
+                        minWidth: '36px',
+                        textAlign: 'center',
+                        flexShrink: 0,
+                      }}>
+                {item.tradeType}
+              </span>
+
+                      {/* 담당자 색 점 */}
                       <span style={{
                         width: '10px',
                         height: '10px',
                         borderRadius: '50%',
-                        background: todo.bgColor || '#888',
+                        background: item.bgColor || '#888',
                         flexShrink: 0,
                       }}/>
-                      <span style={{ flex: 1, fontSize: '14px' }}>{todo.title}</span>
-                      <span style={{ fontSize: '12px', color: '#aaa' }}>
-                  {engineer ? engineer.name : ''}
-                </span>
+
+                      {/* 제목 */}
+                      <span style={{ flex: 1, fontSize: '14px' }}>{item.title}</span>
+
+                      {/* 경과일 뱃지 */}
+                      <span style={{
+                        fontSize: '12px',
+                        color: '#fff',
+                        background: badgeColor,
+                        padding: '2px 8px',
+                        borderRadius: '10px',
+                        fontWeight: 'bold',
+                        whiteSpace: 'nowrap',
+                      }}>
+                {item.daysPassed === 0 ? '오늘 접수' : `${item.daysPassed}일 경과`}
+              </span>
                     </div>
                 );
               })
